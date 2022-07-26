@@ -7,7 +7,7 @@ import { Grid } from "antd";
 import Camera from "./camera";
 
 import Mouse from "./mechanics/mouse";
-import BufferModel from "../models/buffer-model";
+import BufferModel from "./mechanics/buffer-model";
 
 import CursorProvider from "./providers/cursor-providers";
 

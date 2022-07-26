@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import Script from "next/script";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import ToolsPanel from "../../components/telegram/tools";
-import TopBar from "../../components/telegram/topbar";
-import View from "../../components/telegram/view";
+import ToolsPanel from "./tools";
+import TopBar from "./topbar";
+import View from "./view";
 import Scene from "../../components/scene/scene";
 
-import Export from "../../components/telegram/export";
+import Export from "./export";
 import CursorProvider from "../../components/scene/providers/cursor-providers";
 
 const CoreLayout = styled.div`
