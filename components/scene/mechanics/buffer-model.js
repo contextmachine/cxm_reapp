@@ -6,9 +6,18 @@ import {
   disposeBoundsTree,
   acceleratedRaycast,
 } from "three-mesh-bvh";
+import useStatusStore from "../../../store/status-store";
 
-const BufferModel = ({ path, way }) => {
+const BufferModel = ({ path, way, index }) => {
   const [loaded, setLoaded] = useState(false);
+  const [fetched, SetFetched] = useState(false);
+
+  const loadingFileIndex = useStatusStore(
+    ({ loadingFileIndex }) => loadingFileIndex
+  );
+  const setLoadingFileIndex = useStatusStore(
+    ({ setLoadingFileIndex }) => setLoadingFileIndex
+  );
 
   const [dataGeometry, setDataGeometry] = useState(null);
 
@@ -16,39 +25,44 @@ const BufferModel = ({ path, way }) => {
   const { scene } = useThree();
 
   useEffect(() => {
-    console.log("path", path);
+    if (!fetched && index === loadingFileIndex) {
+      console.log("path", path);
 
-    fetch(path)
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseJSON) => {
-        console.log("responseJSON", responseJSON);
+      fetch(path)
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseJSON) => {
+          let prepairedJSON = [];
 
-        let prepairedJSON = [];
-
-        if (way === "s" || way === "l" || way === "s2") {
-          prepairedJSON = responseJSON;
-        } else {
-          if (responseJSON) {
-            Object.keys(responseJSON).map((name) => {
-              prepairedJSON = [...prepairedJSON, ...responseJSON[name]];
-            });
+          if (way === "s" || way === "l" || way === "s2") {
+            prepairedJSON = responseJSON;
+          } else {
+            if (responseJSON) {
+              Object.keys(responseJSON).map((name) => {
+                prepairedJSON = [...prepairedJSON, ...responseJSON[name]];
+              });
+            }
           }
-        }
 
-        setDataGeometry(prepairedJSON);
-      });
-  }, [path, way]);
+          setDataGeometry(prepairedJSON);
+          SetFetched(true);
+        })
+        .catch((error) => {
+          console.log("error", error);
+          setLoadingFileIndex(loadingFileIndex + 1);
+        });
+    }
+  }, [path, way, index, loadingFileIndex, fetched]);
+
+  useEffect(() => {
+    console.log("updateing Buffer-model.js");
+  });
 
   useEffect(() => {
     if (!loaded) {
-      if (dataGeometry) {
+      if (dataGeometry && index === loadingFileIndex) {
         dataGeometry.map((element = {}) => {
-          THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
-          THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
-          THREE.Mesh.prototype.raycast = acceleratedRaycast;
-
           const geometry = new THREE.BufferGeometry();
 
           const { data = {}, metadata = {} } = element;
@@ -68,34 +82,25 @@ const BufferModel = ({ path, way }) => {
             );
           });
 
-          //geometry.computeBoundsTree();
-
           let material;
 
           if (matData && Array.isArray(matData) && matData.length > 0) {
             let rgba = matData[0];
 
             if (!(Array.isArray(rgba) && rgba.length === 4)) {
-              console.log("rgba", rgba);
-
               rgba = [1, 1, 1, 1];
             }
 
-            material = new THREE.MeshLambertMaterial({
+            material = new THREE.MeshStandardMaterial({
               color: new THREE.Color(
                 `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
                   rgba[1] * 255
                 )}, ${Math.round(rgba[2] * 255)})`
               ),
-              transparent: true,
               side: THREE.DoubleSide,
-              opacity: rgba[3],
             });
           } else {
-            material = new THREE.MeshNormalMaterial({
-              transparent: true,
-              opacity: /*0.8*/ 1,
-            });
+            material = new THREE.MeshNormalMaterial();
           }
           const mesh = new THREE.Mesh(geometry, material);
 
@@ -103,11 +108,18 @@ const BufferModel = ({ path, way }) => {
         });
 
         setLoaded(true);
+        setLoadingFileIndex(loadingFileIndex + 1);
       }
     }
-  }, [loaded, dataGeometry]);
+  }, [loaded, dataGeometry, index, loadingFileIndex]);
 
   return <></>;
 };
 
 export default BufferModel;
+
+//THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+//THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+//THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
+//geometry.computeBoundsTree();

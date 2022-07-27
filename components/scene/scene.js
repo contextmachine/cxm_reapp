@@ -10,6 +10,7 @@ import Mouse from "./mechanics/mouse";
 import BufferModel from "./mechanics/buffer-model";
 
 import CursorProvider from "./providers/cursor-providers";
+import useStatusStore from "../../store/status-store";
 
 const MeasurerCanvas = styled.div`
   width: 100vw;
@@ -48,22 +49,60 @@ const Scene = ({ viewType }) => {
 
   /* Approach 1 */
   const [JSONlinks, setJSONllinks] = useState();
+  const [serverInit, setServerInit] = useState(false);
+  const [serverFinish, setServerFinish] = useState(false);
+  const setLoadingMessage = useStatusStore(
+    ({ setLoadingMessage }) => setLoadingMessage
+  );
+
+  const setLoadingFileIndex = useStatusStore(
+    ({ setLoadingFileIndex }) => setLoadingFileIndex
+  );
+  const loadingFileIndex = useStatusStore(
+    ({ loadingFileIndex }) => loadingFileIndex
+  );
 
   useEffect(() => {
-    fetch("https://mmodel.contextmachine.online:8181/get_keys")
-      .then((response) => {
-        return response.json();
-      })
-      .then((keys) => {
-        console.log("keys", keys);
+    console.log("updating Scene.js");
+  });
 
-        setJSONllinks(
-          keys.map((item) => {
-            return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
-          })
-        );
-      });
-  }, []);
+  useEffect(() => {
+    if (!serverInit) {
+      setLoadingMessage("Подлкючаемся к серверу");
+
+      fetch("https://mmodel.contextmachine.online:8181/get_keys")
+        .then((response) => {
+          return response.json();
+        })
+        .then((keys) => {
+          setJSONllinks(
+            keys.map((item) => {
+              return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
+            })
+          );
+          setServerInit(true);
+          setLoadingMessage("Подключился");
+        });
+    }
+  }, [serverInit]);
+
+  useEffect(() => {
+    if (serverInit) {
+      if (JSONlinks && JSONlinks.length > 0) {
+        setLoadingFileIndex(0);
+      }
+    }
+  }, [JSONlinks, serverInit]);
+
+  useEffect(() => {
+    if (serverInit) {
+      if (loadingFileIndex < JSONlinks.length) {
+        setLoadingMessage(`Загружается файл - ${loadingFileIndex}`);
+      } else {
+        setLoadingMessage(null);
+      }
+    }
+  }, [serverInit, loadingFileIndex, JSONlinks]);
 
   const meshRef = useRef();
 
@@ -104,12 +143,19 @@ const Scene = ({ viewType }) => {
           <ambientLight />
           <pointLight position={[50, 50, 60]} intensity={8} />
 
-          <Mouse {...{ measurer2d, setMeasurer2d }} />
+          {/*<Mouse {...{ measurer2d, setMeasurer2d }} />*/}
 
           {JSONlinks &&
             JSONlinks.length > 0 &&
             JSONlinks.map((path, i) => {
-              return <BufferModel way={way} key={`b:${i}`} path={path} />;
+              return (
+                <BufferModel
+                  {...{ index: i }}
+                  way={way}
+                  key={`b:${i}`}
+                  path={path}
+                />
+              );
             })}
         </Canvas>
       </CursorProvider>

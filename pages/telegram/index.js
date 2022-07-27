@@ -9,6 +9,7 @@ import Scene from "../../components/scene/scene";
 
 import Export from "./export";
 import CursorProvider from "../../components/scene/providers/cursor-providers";
+import Loading from "./loading";
 
 const CoreLayout = styled.div`
   width: 100vw;
@@ -176,6 +177,8 @@ const App = () => {
         />
 
         <View {...{ fullsize, viewType, setViewType }} />
+
+        <Loading />
 
         <Space3D>
           <CursorProvider>
