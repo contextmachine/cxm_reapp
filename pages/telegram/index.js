@@ -184,7 +184,7 @@ const App = () => {
 
         <Space3D>
           <CursorProvider>
-            {/*<Scene
+            <Scene
               {...{
                 rhinoConnected,
                 needsData,
@@ -193,7 +193,7 @@ const App = () => {
                 viewType,
                 setViewType,
               }}
-            />*/}
+            />
           </CursorProvider>
         </Space3D>
 
