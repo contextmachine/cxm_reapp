@@ -10,7 +10,9 @@ const Panel = styled.div`
   /* border-radius: 10px 10px 0 0; */
   border-radius: 10px;
   z-index: 20;
-  background: #262628;
+  /*background: #262628;*/
+  background: white;
+  box-shadow: 0 4px 20px -5px rgb(26 86 245 / 40%);
 
   &&&&[data-mode="mini"] {
     top: auto;
@@ -20,7 +22,7 @@ const Panel = styled.div`
 
   &&,
   && * {
-    color: white;
+    color: black;
   }
 
   position: absolute;
@@ -63,17 +65,28 @@ const Item = styled.div`
 
 const Label = styled.div`
   font-size: 11px;
-  line-height: 18px;
+  line-height: 1.63;
   text-align: center;
   letter-spacing: -0.4px;
 
   color: white;
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+  }
 `;
 
 const Icon = styled.div`
   width: 30px;
   height: 30px;
   background: lightgrey;
+
+  @media (max-width: 480px) {
+    & {
+      width: 22px;
+      height: 22px;
+    }
+  }
 
   background: url("/icons/panel-${({ int }) => int}.svg");
   background-size: cover;

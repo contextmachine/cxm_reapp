@@ -12,6 +12,8 @@ import BufferModel from "./mechanics/buffer-model";
 import CursorProvider from "./providers/cursor-providers";
 import useStatusStore from "../../store/status-store";
 
+import file_size_url from "file_size_url";
+
 const MeasurerCanvas = styled.div`
   width: 100vw;
   height: 100vh;

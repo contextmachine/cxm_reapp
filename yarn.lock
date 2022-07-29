@@ -1658,6 +1658,11 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
+file_size_url@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/file_size_url/-/file_size_url-1.0.4.tgz#bc6d34a828ba7468348331a137e3d0b8aff93f7e"
+  integrity sha512-JubFtm5UEjocnPNPBXk1eUK3OkoT+COpPFn6XUdFywD4qRypru7je1/vtfSiHJzxzeQwle0YGCgm/p0KbUXfuw==
+
 fill-range@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"
@@ -3420,6 +3425,11 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+url-file-size@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/url-file-size/-/url-file-size-1.0.2.tgz#6f932f2e66b1d2fc36a5272e1cbe7c4d10eee6e1"
+  integrity sha512-IkQzPSmhFSM94wDuSwLj8KsdiP2Izr/32rvNBhu+EJUyREg6gKR7N8D4spwxA4v9e4B6Icj3X5ZqBGnXSfF3jQ==
 
 use-sync-external-store@1.2.0:
   version "1.2.0"

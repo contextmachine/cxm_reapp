@@ -30,9 +30,15 @@ const Bar = styled.div`
 const LeftSide = styled.div`
   width: max-content;
   height: 50px;
-  background: #262628;
+  background: white;
   border-radius: 10px;
   overflow: hidden;
+
+  @media (max-width: 480px) {
+    & {
+      height: 40px;
+    }
+  }
 
   position: absolute;
   left: 10px;
@@ -44,8 +50,15 @@ const LeftSide = styled.div`
 LeftSide.Btn = styled.div`
   width: 50px;
   height: 50px;
-  background: #262628;
+  background: white;
   cursor: pointer;
+
+  @media (max-width: 480px) {
+    & {
+      width: 40px;
+      height: 40px;
+    }
+  }
 
   display: flex;
   justify-content: center;
@@ -56,6 +69,13 @@ LeftSide.Btn = styled.div`
     width: 31px;
     height: 31px;
 
+    @media (max-width: 480px) {
+      & {
+        width: 23px;
+        height: 23px;
+      }
+    }
+
     ${({ section }) =>
       section === "layers"
         ? `
@@ -65,6 +85,7 @@ LeftSide.Btn = styled.div`
       background: url('/icons/history-ic-1.svg');
       `}
     background-size: cover;
+    mix-blend-mode: difference;
   }
 `;
 
@@ -72,9 +93,16 @@ const RightSide = styled.div`
   width: 150px;
   height: 50px;
 
+  @media (max-width: 480px) {
+    & {
+      width: 110px;
+      height: 40px;
+    }
+  }
+
   transition: all 0.2s ease-in-out;
 
-  background: #262628;
+  background: white;
   border-radius: 10px;
 
   position: absolute;
@@ -94,6 +122,12 @@ const ChartHeader = styled.div`
   position: absolute;
   cursor: pointer;
 
+  @media (max-width: 480px) {
+    & {
+      height: 40px;
+    }
+  }
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,10 +138,16 @@ const ChartHeader = styled.div`
 
   &&,
   && * {
-    color: white;
+    color: black;
     font-size: 14px;
     line-height: 22px;
     letter-spacing: -0.4px;
+
+    @media (max-width: 480px) {
+      & {
+        font-size: 9px;
+      }
+    }
   }
 `;
 
@@ -115,6 +155,7 @@ const Arrow = styled.div`
   min-width: 7.18px;
   height: 4.59px;
   background: url("/icons/arrow-bar.svg");
+  mix-blend-mode: difference;
   transition: all 0.3s ease-in-out;
 
   &[data-rotation="up"] {

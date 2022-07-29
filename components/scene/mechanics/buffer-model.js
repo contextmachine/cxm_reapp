@@ -26,42 +26,27 @@ const BufferModel = ({ path, way, index }) => {
 
   useEffect(() => {
     if (!fetched && index === loadingFileIndex) {
-      console.log("path", path);
-
       fetch(path)
         .then((response) => {
           return response.json();
         })
         .then((responseJSON) => {
-          let prepairedJSON = [];
-
-          if (way === "s" || way === "l" || way === "s2") {
-            prepairedJSON = responseJSON;
-          } else {
-            if (responseJSON) {
-              Object.keys(responseJSON).map((name) => {
-                prepairedJSON = [...prepairedJSON, ...responseJSON[name]];
-              });
-            }
-          }
-
-          setDataGeometry(prepairedJSON);
+          setDataGeometry(responseJSON);
           SetFetched(true);
         })
         .catch((error) => {
           console.log("error", error);
           setLoadingFileIndex(loadingFileIndex + 1);
+          SetFetched(true);
         });
     }
   }, [path, way, index, loadingFileIndex, fetched]);
 
   useEffect(() => {
-    console.log("updateing Buffer-model.js");
-  });
-
-  useEffect(() => {
     if (!loaded) {
       if (dataGeometry && index === loadingFileIndex) {
+        let materialsData = {};
+
         dataGeometry.map((element = {}) => {
           const geometry = new THREE.BufferGeometry();
 
@@ -91,14 +76,18 @@ const BufferModel = ({ path, way, index }) => {
               rgba = [1, 1, 1, 1];
             }
 
-            material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(
-                `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
-                  rgba[1] * 255
-                )}, ${Math.round(rgba[2] * 255)})`
-              ),
-              side: THREE.DoubleSide,
-            });
+            let colorString = `${rgba[0]}${rgba[1]}${rgba[2]}${rgba[3]}`;
+            if (!materialsData[colorString])
+              materialsData[colorString] = new THREE.MeshStandardMaterial({
+                color: new THREE.Color(
+                  `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
+                    rgba[1] * 255
+                  )}, ${Math.round(rgba[2] * 255)})`
+                ),
+                side: THREE.DoubleSide,
+              });
+
+            material = materialsData[colorString];
           } else {
             material = new THREE.MeshNormalMaterial();
           }

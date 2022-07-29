@@ -46,7 +46,7 @@ const Space3D = styled.div`
 
   /* background: #f2f2f2; */
 
-  background: #dad4d4;
+  background: #4d4242;
 `;
 
 const App = () => {
@@ -184,7 +184,7 @@ const App = () => {
 
         <Space3D>
           <CursorProvider>
-            <Scene
+            {/*<Scene
               {...{
                 rhinoConnected,
                 needsData,
@@ -193,7 +193,7 @@ const App = () => {
                 viewType,
                 setViewType,
               }}
-            />
+            />*/}
           </CursorProvider>
         </Space3D>
 

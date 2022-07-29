@@ -9,6 +9,12 @@ const Wrapper = styled.div`
 
   &&&[data-mode="mini"] {
     bottom: 90px;
+
+    @media (max-width: 480px) {
+      & {
+        bottom: 80px;
+      }
+    }
   }
 
   width: 100%;
@@ -27,7 +33,7 @@ const Panel = styled.div`
   display: flex;
   height: 100%;
   border-radius: 100px;
-  background: #4b4c4e;
+  background: #a3a3a3;
   padding: 2px;
 
   cursor: pointer;
@@ -40,7 +46,13 @@ const Btn = styled.div`
   text-align: center;
   letter-spacing: -0.4px;
 
-  color: #929394;
+  @media (max-width: 480px) {
+    & {
+      font-size: 9px;
+    }
+  }
+
+  color: rgba(0, 0, 0, 0.6);
   border-radius: 100px;
   padding-left: 10px;
   padding-right: 10px;
@@ -54,8 +66,8 @@ const Btn = styled.div`
   ${({ type }) =>
     type === "active"
       ? `
-    background: #717274;
-    color: #D9D9DA;
+    background: white;
+    color: black;
 `
       : ``}
 `;
