@@ -53,7 +53,7 @@ const LogAuth = () => {
 
   const [loadingMeta, setLoadingMeta] = useState(true);
 
-  const useFishMeta = true;
+  const useFishMeta = false;
 
   useEffect(() => {
     if (tgLoaded) {
