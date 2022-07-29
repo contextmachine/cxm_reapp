@@ -106,7 +106,7 @@ const Account = () => {
                   <Project skeleton key={`project:${i}`}>
                     <Project.Wrapper>
                       <Skeleton.Input
-                        style={{ width: "100&", height: "180px" }}
+                        style={{ width: "100%", height: "180px" }}
                         active
                       />
                     </Project.Wrapper>

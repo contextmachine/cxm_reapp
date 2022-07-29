@@ -97,11 +97,6 @@ const ToolsPanel = ({
     >
       <Grid>
         <Item>
-          <Icon int={1}></Icon>
-          <Label>Точки</Label>
-        </Item>
-
-        <Item>
           <Icon int={2}></Icon>
           <Label>Измерения</Label>
         </Item>
