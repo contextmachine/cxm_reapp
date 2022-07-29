@@ -70,7 +70,7 @@ const Scene = ({ viewType }) => {
 
   useEffect(() => {
     if (!serverInit) {
-      setLoadingMessage("Подлкючаемся к серверу");
+      setLoadingMessage({ message: "Подлкючаемся к серверу", type: "full" });
 
       fetch("https://mmodel.contextmachine.online:8181/get_keys")
         .then((response) => {
@@ -83,7 +83,7 @@ const Scene = ({ viewType }) => {
             })
           );
           setServerInit(true);
-          setLoadingMessage("Подключился");
+          setLoadingMessage({ message: "Подключился", type: "full" });
         });
     }
   }, [serverInit]);
@@ -99,7 +99,10 @@ const Scene = ({ viewType }) => {
   useEffect(() => {
     if (serverInit) {
       if (loadingFileIndex < JSONlinks.length) {
-        setLoadingMessage(`Загружается файл - ${loadingFileIndex}`);
+        setLoadingMessage({
+          message: `Файл ${loadingFileIndex}`,
+          type: "mini",
+        });
       } else {
         setLoadingMessage(null);
       }

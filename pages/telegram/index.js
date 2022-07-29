@@ -46,7 +46,7 @@ const Space3D = styled.div`
 
   /* background: #f2f2f2; */
 
-  background: #4d4242;
+  background: #474141;
 `;
 
 const App = () => {
