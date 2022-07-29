@@ -108,7 +108,7 @@ const App = () => {
         mainbutton.setText("Открыть в новом окне");
 
         mainbutton.onClick(() => {
-          window.open("https://cxmapp.vercel.app/telegram", "_blank");
+          window.open("https://cxm-reapp.vercel.app/telegram", "_blank");
           /*setTools((state) => !state)*/
         });
       }
