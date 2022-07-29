@@ -131,6 +131,8 @@ const App = () => {
   useEffect(() => {
     if (window.Telegram) {
       const webapp = window.Telegram.WebApp;
+
+      console.log("webapp", webapp);
       const mainbutton = webapp.MainButton;
 
       if (mainbutton) {
@@ -160,7 +162,7 @@ const App = () => {
     <CoreLayout>
       <Script
         src="https://telegram.org/js/telegram-web-app.js"
-        onLoad={() => setTgConnected(true)}
+        onLoad={() => true}
       ></Script>
 
       <Script
