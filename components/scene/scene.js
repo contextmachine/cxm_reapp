@@ -100,7 +100,7 @@ const Scene = ({ viewType }) => {
     if (serverInit) {
       if (loadingFileIndex < JSONlinks.length) {
         setLoadingMessage({
-          message: `Файл ${loadingFileIndex}`,
+          message: <>Файл&nbsp;{loadingFileIndex}</>,
           type: "mini",
         });
       } else {
