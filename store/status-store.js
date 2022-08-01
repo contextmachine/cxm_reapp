@@ -10,6 +10,14 @@ const useStatusStore = create((set) => ({
   loadingMessage: null,
   setLoadingMessage: (e) => set({ loadingMessage: e }),
   /* */
+  layersData: {},
+  setLayersData: (e) => set({ layersData: e }),
+  /* */
+  layerCurrentChange: null,
+  setLayerCurrentChange: (e) => set({ layerCurrentChange: e }),
+  /* */
+  layersUpdated: false,
+  setLayersUpdated: (e) => set({ layersUpdated: e }),
 }));
 
 export default useStatusStore;

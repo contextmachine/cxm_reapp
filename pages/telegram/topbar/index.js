@@ -1,9 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import useClickedOutside from "./outside-hook";
 import ChartBar from "./chart";
+import useStatusStore from "../../../store/status-store";
+
+import { Tabs, Typography } from "antd";
+import { uuid } from "uuidv4";
+
+import stc from "string-to-color";
+
+const { TabPane } = Tabs;
+const { Text } = Typography;
 
 const Bar = styled.div`
   position: absolute;
@@ -168,8 +177,8 @@ const LayersPanel = styled.div`
   flex-direction: column;
   position: absolute;
   width: 200px;
-  height: 200px;
-  background: #262628;
+  height: 400px;
+  background: white;
   overflow: scroll;
 
   top: 70px;
@@ -201,10 +210,16 @@ const Layer = styled.div`
   &&,
   && * {
     font-weight: 400;
-    font-size: 13px;
+    font-size: 11px;
     line-height: 22px;
     letter-spacing: -0.4px;
-    color: white;
+    color: black;
+
+    @media (max-width: 480px) {
+      & {
+        font-size: 9px;
+      }
+    }
   }
 `;
 
@@ -225,11 +240,23 @@ const LabelLayer = styled.div`
     height: 15px;
     margin-right: 10px;
     border-radius: 8px;
-    background: lightgrey;
+    background: ${({ fill }) => (fill ? fill : "lightgrey")};
   }
 
   && > * + * {
     margin-left: 10px;
+  }
+`;
+
+const TabLine = styled(Tabs)`
+  && {
+    .ant-tabs-tab-btn {
+      font-size: 10px;
+    }
+
+    .ant-tabs-tab + .ant-tabs-tab {
+      margin: 0 0 0 18px;
+    }
   }
 `;
 
@@ -257,40 +284,108 @@ const TopBar = ({ fullsize, layers, setLayers }) => {
   useClickedOutside(graphicsRef, showGraphicsPanel);
   useClickedOutside(layersRef, setLayersPanel);
 
+  const layersData = useStatusStore(({ layersData }) => layersData);
+  const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
+  const setLayerCurrentChange = useStatusStore(
+    ({ setLayerCurrentChange }) => setLayerCurrentChange
+  );
+
+  const layersUpdated = useStatusStore(({ layersUpdated }) => layersUpdated);
+  const setLayersUpdated = useStatusStore(
+    ({ setLayersUpdated }) => setLayersUpdated
+  );
+
+  const layersCopyData = useMemo(() => {
+    return layersData;
+  }, [layersData, layersUpdated]);
+
+  const [layersKey, setLayersKey] = useState(uuid());
+
+  useEffect(() => {
+    if (layersUpdated) {
+      setLayersUpdated(false);
+    }
+  }, [layersUpdated]);
+
+  const handleLayerVisibility = ({ section, layerName }) => {
+    let updLayersData = layersData;
+    const sectionLayers = updLayersData[section];
+
+    let foundLayer = sectionLayers.find((item = {}) => {
+      const { name } = item;
+      return name === layerName;
+    });
+
+    if (foundLayer) foundLayer.visible = !foundLayer.visible;
+
+    setLayersData(updLayersData);
+    setLayerCurrentChange({ section, layerName, visible: foundLayer.visible });
+    setLayersUpdated(true);
+  };
+
   return (
     <>
       <Bar>
         {layersPanel && (
           <LayersPanel ref={layersRef}>
-            <LayersWrapper>
-              {layers.map((item = {}, i) => {
-                const { name, visible } = item;
-
+            <TabLine defaultActiveKey="1" onChange={() => {}}>
+              {Object.keys(layersData).map((name, i) => {
                 return (
-                  <Layer
-                    key={`layer${i}`}
-                    data-mode={visible ? "default" : "hidden"}
-                  >
-                    <LabelLayer>
-                      <div>{name}</div>
-                    </LabelLayer>
-                    <VisIcon
-                      onClick={() =>
-                        setLayers((state) =>
-                          state.map((item, _i) => {
-                            if (i !== _i) return item;
-                            const { visible: _visible, ...otherItemProps } =
-                              item;
+                  <TabPane tab={name} key={`layerTab:${i}`}>
+                    <LayersWrapper>
+                      {layersCopyData[name].map((item = {}, i) => {
+                        const { name: layerName, visible } = item;
 
-                            return { visible: !_visible, ...otherItemProps };
-                          })
-                        )
-                      }
-                    />
-                  </Layer>
+                        let colorArr;
+                        if (name === "По цветам") {
+                          colorArr = layerName ? layerName.split("^") : [];
+                        }
+
+                        return (
+                          <Layer
+                            key={`layer${i}`}
+                            data-mode={visible ? "default" : "hidden"}
+                          >
+                            <LabelLayer
+                              fill={
+                                name === "По цветам"
+                                  ? `rgba(${Math.round(
+                                      parseFloat(colorArr[0]) * 255
+                                    )}, ${Math.round(
+                                      parseFloat(colorArr[1]) * 255
+                                    )}, ${Math.round(
+                                      parseFloat(colorArr[2]) * 255
+                                    )}, ${Math.round(
+                                      parseFloat(colorArr[3]) * 255
+                                    )})`
+                                  : stc(layerName)
+                              }
+                            >
+                              <Text
+                                ellipsis={{ rows: 1 }}
+                                style={{ maxWidth: "120px" }}
+                              >
+                                {name === "По цветам"
+                                  ? `Цвет #${i}`
+                                  : layerName}
+                              </Text>
+                            </LabelLayer>
+                            <VisIcon
+                              onClick={() => {
+                                handleLayerVisibility({
+                                  section: name,
+                                  layerName,
+                                });
+                              }}
+                            />
+                          </Layer>
+                        );
+                      })}
+                    </LayersWrapper>
+                  </TabPane>
                 );
               })}
-            </LayersWrapper>
+            </TabLine>
           </LayersPanel>
         )}
 

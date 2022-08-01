@@ -10,6 +10,7 @@ import Scene from "../../components/scene/scene";
 import Export from "./export";
 import CursorProvider from "../../components/scene/providers/cursor-providers";
 import Loading from "./loading";
+import useStatusStore from "../../store/status-store";
 
 const CoreLayout = styled.div`
   width: 100vw;

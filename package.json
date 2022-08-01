@@ -20,10 +20,12 @@
     "next": "12.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "string-to-color": "^2.2.2",
     "styled-components": "^5.3.5",
     "three": "^0.142.0",
     "three-mesh-bvh": "^0.5.15",
     "url-file-size": "^1.0.2",
+    "uuidv4": "^6.2.13",
     "zustand": "^4.0.0"
   },
   "devDependencies": {

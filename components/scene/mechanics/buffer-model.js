@@ -8,7 +8,7 @@ import {
 } from "three-mesh-bvh";
 import useStatusStore from "../../../store/status-store";
 
-const BufferModel = ({ path, way, index }) => {
+const BufferModel = ({ path, way, index, layerName }) => {
   const [loaded, setLoaded] = useState(false);
   const [fetched, SetFetched] = useState(false);
 
@@ -18,6 +18,16 @@ const BufferModel = ({ path, way, index }) => {
   const setLoadingFileIndex = useStatusStore(
     ({ setLoadingFileIndex }) => setLoadingFileIndex
   );
+
+  const layersData = useStatusStore(({ layersData }) => layersData);
+  const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
+
+  const setLayersUpdated = useStatusStore(
+    ({ setLayersUpdated }) => setLayersUpdated
+  );
+
+  const filesTab = "По файлам";
+  const materialsTab = "По цветам";
 
   const [dataGeometry, setDataGeometry] = useState(null);
 
@@ -35,12 +45,56 @@ const BufferModel = ({ path, way, index }) => {
           SetFetched(true);
         })
         .catch((error) => {
-          console.log("error", error);
           setLoadingFileIndex(loadingFileIndex + 1);
           SetFetched(true);
         });
     }
   }, [path, way, index, loadingFileIndex, fetched]);
+
+  const handleFilesLayers = () => {
+    let layersData_copy = layersData;
+    if (!layersData_copy[filesTab]) {
+      layersData_copy[filesTab] = [];
+    }
+
+    layersData_copy[filesTab].push({ name: layerName, visible: true });
+
+    setLayersData(layersData_copy);
+    setLayersUpdated(true);
+  };
+
+  const handleColorsLayer = (colors = {}) => {
+    let layersData_copy = layersData;
+
+    if (!layersData_copy[materialsTab]) {
+      layersData_copy[materialsTab] = [];
+    }
+
+    Object.keys(colors).map((color) => {
+      const findColor = layersData_copy[materialsTab].find((item = {}) => {
+        const { name } = item;
+
+        if (name === color) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (!findColor) {
+        layersData_copy[materialsTab].push({ name: color, visible: true });
+      }
+    });
+
+    setLayersData(layersData_copy);
+    setLayersUpdated(true);
+  };
+
+  useEffect(() => {
+    if (fetched) {
+      handleFilesLayers();
+    }
+  }, [fetched]);
 
   useEffect(() => {
     if (!loaded) {
@@ -68,6 +122,7 @@ const BufferModel = ({ path, way, index }) => {
           });
 
           let material;
+          let colorString;
 
           if (matData && Array.isArray(matData) && matData.length > 0) {
             let rgba = matData[0];
@@ -76,7 +131,7 @@ const BufferModel = ({ path, way, index }) => {
               rgba = [1, 1, 1, 1];
             }
 
-            let colorString = `${rgba[0]}${rgba[1]}${rgba[2]}${rgba[3]}`;
+            colorString = `${rgba[0]}^${rgba[1]}^${rgba[2]}^${rgba[3]}`;
             if (!materialsData[colorString])
               materialsData[colorString] = new THREE.MeshStandardMaterial({
                 color: new THREE.Color(
@@ -92,15 +147,19 @@ const BufferModel = ({ path, way, index }) => {
             material = new THREE.MeshNormalMaterial();
           }
           const mesh = new THREE.Mesh(geometry, material);
+          mesh.x_file = layerName;
+          mesh.x_material = colorString;
 
           scene.add(mesh);
         });
+
+        handleColorsLayer(materialsData);
 
         setLoaded(true);
         setLoadingFileIndex(loadingFileIndex + 1);
       }
     }
-  }, [loaded, dataGeometry, index, loadingFileIndex]);
+  }, [loaded, dataGeometry, index, loadingFileIndex, layerName]);
 
   return <></>;
 };

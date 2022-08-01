@@ -74,6 +74,27 @@ const Arrow = styled.div`
   }
 `;
 
+const NoData = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &&::before {
+    content: "Данных пока нет";
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    height: 100px;
+    width: 400px;
+    /*background: rgba(0, 0, 0, 0.1);*/
+    border: 10px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
+`;
+
 const ChartBar = () => {
   const commonLineCfgs = {
     isStack: true,
@@ -152,11 +173,15 @@ const ChartBar = () => {
 
   return (
     <Wrapper>
-      <Arrow data-pos="left"/>
-      
+      <NoData />
 
-      <Column {...lineConfigAccess} />
-      {null && <Pie {...pieConfigAccess} />}
+      {/* */}
+      {/* <>
+        <Arrow data-pos="left" />
+
+        <Column {...lineConfigAccess} />
+        {null && <Pie {...pieConfigAccess} />}
+  </>*/}
     </Wrapper>
   );
 };

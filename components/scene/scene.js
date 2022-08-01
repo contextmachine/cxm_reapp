@@ -13,6 +13,9 @@ import CursorProvider from "./providers/cursor-providers";
 import useStatusStore from "../../store/status-store";
 
 import file_size_url from "file_size_url";
+import Buffer3dm from "./mechanics/buffer-3dm";
+
+import UpdateLayers from "./mechanics/update-layers";
 
 const MeasurerCanvas = styled.div`
   width: 100vw;
@@ -42,7 +45,7 @@ const LayersWrapper = styled.div`
   }
 `;
 
-const Scene = ({ viewType }) => {
+const Scene = ({ viewType, children }) => {
   const [percents, setPercents] = useState(0);
 
   const way = "s2"; // l - local, s - server
@@ -51,6 +54,7 @@ const Scene = ({ viewType }) => {
 
   /* Approach 1 */
   const [JSONlinks, setJSONllinks] = useState();
+  const [JSON_names, setJSON_names] = useState();
   const [serverInit, setServerInit] = useState(false);
   const [serverFinish, setServerFinish] = useState(false);
   const setLoadingMessage = useStatusStore(
@@ -65,12 +69,8 @@ const Scene = ({ viewType }) => {
   );
 
   useEffect(() => {
-    console.log("updating Scene.js");
-  });
-
-  useEffect(() => {
     if (!serverInit) {
-      setLoadingMessage({ message: "Подлкючаемся к серверу", type: "full" });
+      setLoadingMessage({ message: "Подключаемся к серверу", type: "full" });
 
       fetch("https://mmodel.contextmachine.online:8181/get_keys")
         .then((response) => {
@@ -78,10 +78,13 @@ const Scene = ({ viewType }) => {
         })
         .then((keys) => {
           setJSONllinks(
-            keys.map((item) => {
-              return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
-            })
+            keys
+              .filter((_, i) => i <= 14)
+              .map((item) => {
+                return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
+              })
           );
+          setJSON_names(keys);
           setServerInit(true);
           setLoadingMessage({ message: "Подключился", type: "full" });
         });
@@ -143,7 +146,11 @@ const Scene = ({ viewType }) => {
 
       <CursorProvider>
         <Canvas ref={meshRef}>
+          {children}
+
           <Camera {...{ viewType }} />
+
+          <UpdateLayers />
 
           <ambientLight />
           <pointLight position={[50, 50, 60]} intensity={8} />
@@ -159,6 +166,7 @@ const Scene = ({ viewType }) => {
                   way={way}
                   key={`b:${i}`}
                   path={path}
+                  layerName={JSON_names[i]}
                 />
               );
             })}
