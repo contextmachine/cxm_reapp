@@ -109,7 +109,7 @@ const App = () => {
         mainbutton.setText("Открыть в новом окне");
 
         mainbutton.onClick(() => {
-          window.open("https://cxm-reapp.vercel.app/telegram", "_blank");
+          window.open("https://cxm-reapp.vercel.app/scene", "_blank");
           /*setTools((state) => !state)*/
         });
       }

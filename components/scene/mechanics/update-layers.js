@@ -29,8 +29,6 @@ const UpdateLayers = () => {
             item.visible = visible;
           });
         }
-
-        console.log("foundObject", foundObjects);
       } else {
         const foundObjects = scene.children.filter((item = {}) => {
           const { x_material } = item;
@@ -38,8 +36,6 @@ const UpdateLayers = () => {
           if (x_material === layerName) return true;
           return false;
         });
-
-        console.log("foundObject", foundObjects);
 
         if (foundObjects.length > 0) {
           foundObjects.map((item = {}) => {
@@ -51,8 +47,6 @@ const UpdateLayers = () => {
       setLayerCurrentChange(null);
     }
   }, [layerCurrentChange, scene]);
-
-  console.log("scene", scene);
 
   return <></>;
 };

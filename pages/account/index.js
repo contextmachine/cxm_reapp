@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Router from "next/router";
 import { Skeleton } from "antd";
 
+import axios from "axios";
+
 const Wrapper = styled.div`
   padding: 30px 15px;
 
@@ -20,21 +22,43 @@ const HeadTitle = styled.div`
 `;
 
 const ProjectList = styled.div`
-  display: flex;
-  flex-direction: column;
+  @media (max-width: 480px) {
+    display: grid;
 
-  && > * + * {
-    margin-top: 16px;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    row-gap: 16px;
+  }
+
+  @media (min-width: 480px) {
+    display: flex;
+    flex-wrap: wrap;
   }
 `;
 
 const Project = styled.div`
+  @media (min-width: 480px) {
+    max-width: 200px;
+
+    margin-right: 16px;
+    margin-bottom: 16px;
+  }
+
   width: 100%;
-  padding-bottom: 60%;
+  max-height: 200px;
+  min-height: 200px;
+  height: 200px;
+
+  cursor: pointer;
+
   overflow: hidden;
-  box-shadow: 0 4px 20px -5px rgb(0 0 0 / 40%);
+  box-shadow: 0 4px 20px -5px rgb(0 0 0 / 30%);
   border-radius: 10px;
   position: relative;
+
+  &&:hover {
+    box-shadow: 0 4px 20px -5px rgb(0 0 0 / 70%);
+  }
 
   ${({ skeleton }) =>
     skeleton === true
@@ -76,12 +100,13 @@ Project.Title = styled.div`
 `;
 
 const Account = () => {
-  const handleProjectRedirect = () => {
-    Router.push("/telegram");
-  };
-
   const [loadingProjects, setLoadingProjects] = useState(true);
 
+  const handleProjectRedirect = ({ name }) => {
+    Router.push(`/scene/${name}`);
+  };
+
+  /* Шаг 1: Загрузка */
   useEffect(() => {
     const loadProjects = setTimeout(() => {
       setLoadingProjects(false);
@@ -92,13 +117,58 @@ const Account = () => {
     };
   }, []);
 
+  /* Axios */
+  let config = {
+    onUploadProgress: function (progressEvent) {
+      let percentCompleted = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total
+      );
+
+      console.log("percentCompleted", percentCompleted);
+    },
+  };
+
+  const [scenes, setScenes] = useState(null);
+
+  const getScenes = () => {
+    const url = "https://mmodel.contextmachine.online:8181/scenes";
+
+    return axios.get(url, { ...config }).then((response) => {
+      const { data } = response;
+
+      setScenes(data);
+    });
+  };
+
+  useEffect(() => {
+    getScenes();
+  }, []);
+
   return (
     <>
       <Wrapper>
         <HeadTitle>Проекты</HeadTitle>
 
         <ProjectList>
-          {loadingProjects ? (
+          {scenes && !loadingProjects ? (
+            ["all", ...scenes].map((name, i) => {
+              return (
+                <Project
+                  key={`project:${i}`}
+                  onClick={() => handleProjectRedirect({ name })}
+                >
+                  <Project.Wrapper>
+                    <Project.Preview></Project.Preview>
+                    <Project.Header>
+                      <Project.Title>
+                        {name === "all" ? <>Вся сцена *</> : <>{name}</>}
+                      </Project.Title>
+                    </Project.Header>
+                  </Project.Wrapper>
+                </Project>
+              );
+            })
+          ) : (
             <>
               {Array(4)
                 .fill(1)
@@ -108,7 +178,7 @@ const Account = () => {
                       <Skeleton.Input
                         style={{
                           width: "100%",
-                          height: "180px",
+                          height: "200px",
                           borderRadius: "10px",
                         }}
                         active
@@ -117,15 +187,6 @@ const Account = () => {
                   </Project>
                 ))}
             </>
-          ) : (
-            <Project onClick={() => handleProjectRedirect()}>
-              <Project.Wrapper>
-                <Project.Preview></Project.Preview>
-                <Project.Header>
-                  <Project.Title>Сцена #1</Project.Title>
-                </Project.Header>
-              </Project.Wrapper>
-            </Project>
           )}
         </ProjectList>
       </Wrapper>

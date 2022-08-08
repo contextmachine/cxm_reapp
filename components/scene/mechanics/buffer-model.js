@@ -8,7 +8,7 @@ import {
 } from "three-mesh-bvh";
 import useStatusStore from "../../../store/status-store";
 
-const BufferModel = ({ path, way, index, layerName }) => {
+const BufferModel = ({ path, index, layerName }) => {
   const [loaded, setLoaded] = useState(false);
   const [fetched, SetFetched] = useState(false);
 
@@ -49,7 +49,7 @@ const BufferModel = ({ path, way, index, layerName }) => {
           SetFetched(true);
         });
     }
-  }, [path, way, index, loadingFileIndex, fetched]);
+  }, [path, index, loadingFileIndex, fetched]);
 
   const handleFilesLayers = () => {
     let layersData_copy = layersData;

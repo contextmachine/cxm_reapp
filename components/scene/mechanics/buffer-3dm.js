@@ -1,97 +1,77 @@
-import React, { Suspense, useEffect, useState } from "react";
-import { useLoader, useThree } from "@react-three/fiber";
-import { Rhino3dmLoader } from "three/examples/jsm/loaders/3DMLoader";
-
-import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
+import { useThree } from "@react-three/fiber";
+import * as THREE from "three";
 
 //import rhino3dm from "https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js";
 
-const Buffer3dm = () => {
-  /*const url = "http://localhost:3000/models/ff.3dm";
-  const url1 =
-    "https://mmodel.contextmachine.online:8181/rh/get_part/Arc_main_panels";
-
-  const model = useLoader(Rhino3dmLoader, url, (loader) => {
-    console.log("loader", loader);
-    loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/");
-  });
-  useEffect(() => {
-    console.log("model", model);
-  }, [model]);
-  const { scene } = useThree();*/
+const Buffer3dm = ({
+  path = "https://mmodel.contextmachine.online:8181/rh/get_part/Arc_main_panels",
+  group,
+}) => {
+  const { scene } = useThree();
 
   useEffect(() => {
-    const rhino3dm = window.rhino3dm;
-
-    const loader = new Rhino3dmLoader();
-    loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/");
-
-    rhino3dm().then(async (m) => {
-      console.log("Loaded rhino3dm.");
-      const rhino = m; // global
-
-      console.log("rhino", rhino);
-
-      const rhinoObject = new rhino.GeometryBase();
-
-      console.log("rhinoObject", rhinoObject);
-
-      // create Rhino Document and add a point to it
-      /*
-      const doc = new rhino.File3dm();
-      const ptA = [0, 0, 0];
-      const point = new rhino.Point(ptA);
-      doc.objects().add(point, null);
-
-      console.log("doc", doc.encode());
-      console.log("doc.toByteArray()", doc.toByteArray());
-      console.log(
-        "new Uint8Array(doc.toByteArray())",
-        new Uint8Array(doc.toByteArray())
-      );
-
-      // create a copy of the doc.toByteArray data to get an ArrayBuffer
-      const buffer = new Uint8Array(doc.toByteArray()).buffer;
-
-      console.log("buffer", buffer);
-
-      loader.parse(buffer, function (object) {
-        scene.add(object);
-      });*/
-    });
-  }, []);
-
-  /*useEffect(() => {
-    const loader = new Rhino3dmLoader();
-
-    const path =
-      "https://mmodel.contextmachine.online:8181/rh/get_part/Arc_main_panels";
-
     fetch(path)
       .then((response) => {
         return response.json();
       })
       .then((responseJSON) => {
-        const { rhino = {} } = responseJSON[0];
-        const { data } = rhino;
+        const { rhino: am = {} } = responseJSON[0];
 
-        const stroke = window.atob(data);
+        //const stroke = window.atob(data);
 
         const rhino3dm = window.rhino3dm;
+        rhino3dm().then(async (rh) => {
+          const doc = new rh.File3dm();
 
-        rhino3dm().then(async (m) => {
-          const rhino = m;
+          doc.objects().add(rh.CommonObject.decode(am), null);
 
-          const doc = new rhino.File3dm();
+          const geom1 = doc.objects().get(0);
 
-          console.log("doc", doc.Read);
-          console.log(stroke);
+          const local_faces = geom1.geometry().faces();
+
+          let faces = local_faces;
+          for (let faceIndex = 0; faceIndex < faces.count; faceIndex++) {
+            let face = faces.get(faceIndex);
+            let mesh = face.getMesh(rh.MeshType.Any);
+            if (mesh) {
+              const formattedMesh = mesh.toThreejsJSON();
+              const { data = {} } = formattedMesh;
+              const { attributes = {} } = data;
+
+              const geometry = new THREE.BufferGeometry();
+              const material = new THREE.MeshNormalMaterial({
+                side: THREE.DoubleSide,
+              });
+
+              if (Object.keys(attributes).length > 0) {
+                Object.keys(attributes).map((item) => {
+                  const attribute = attributes[item];
+
+                  const { array = [], type, itemSize = 3 } = attribute;
+
+                  geometry.setAttribute(
+                    item,
+                    new THREE.BufferAttribute(new Float32Array(array), itemSize)
+                  );
+                });
+              }
+
+              const mesh_ = new THREE.Mesh(geometry, material);
+              console.log("mesh_", mesh_);
+              group.add(mesh_);
+
+              if (mesh) mesh.delete();
+            }
+            face.delete();
+          }
+          faces.delete();
         });
       })
       .catch((error) => {
         console.log("error", error);
       });
-  }, []);*/
+  }, [path]);
 
   return <></>;
 };

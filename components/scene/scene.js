@@ -16,6 +16,8 @@ import file_size_url from "file_size_url";
 import Buffer3dm from "./mechanics/buffer-3dm";
 
 import UpdateLayers from "./mechanics/update-layers";
+import BufferIfcGroup from "./mechanics/buffer-ifc-group";
+import BufferRhinoGroup from "./mechanics/buffer-rhino-group";
 
 const MeasurerCanvas = styled.div`
   width: 100vw;
@@ -45,72 +47,10 @@ const LayersWrapper = styled.div`
   }
 `;
 
-const Scene = ({ viewType, children }) => {
-  const [percents, setPercents] = useState(0);
-
-  const way = "s2"; // l - local, s - server
-
+const Scene = ({ viewType, children, includedKeys, pid }) => {
   /* ***** */
 
   /* Approach 1 */
-  const [JSONlinks, setJSONllinks] = useState();
-  const [JSON_names, setJSON_names] = useState();
-  const [serverInit, setServerInit] = useState(false);
-  const [serverFinish, setServerFinish] = useState(false);
-  const setLoadingMessage = useStatusStore(
-    ({ setLoadingMessage }) => setLoadingMessage
-  );
-
-  const setLoadingFileIndex = useStatusStore(
-    ({ setLoadingFileIndex }) => setLoadingFileIndex
-  );
-  const loadingFileIndex = useStatusStore(
-    ({ loadingFileIndex }) => loadingFileIndex
-  );
-
-  useEffect(() => {
-    if (!serverInit) {
-      setLoadingMessage({ message: "Подключаемся к серверу", type: "full" });
-
-      fetch("https://mmodel.contextmachine.online:8181/get_keys")
-        .then((response) => {
-          return response.json();
-        })
-        .then((keys) => {
-          setJSONllinks(
-            keys
-              .filter((_, i) => i <= 14)
-              .map((item) => {
-                return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
-              })
-          );
-          setJSON_names(keys);
-          setServerInit(true);
-          setLoadingMessage({ message: "Подключился", type: "full" });
-        });
-    }
-  }, [serverInit]);
-
-  useEffect(() => {
-    if (serverInit) {
-      if (JSONlinks && JSONlinks.length > 0) {
-        setLoadingFileIndex(0);
-      }
-    }
-  }, [JSONlinks, serverInit]);
-
-  useEffect(() => {
-    if (serverInit) {
-      if (loadingFileIndex < JSONlinks.length) {
-        setLoadingMessage({
-          message: <>Файл&nbsp;{loadingFileIndex}</>,
-          type: "mini",
-        });
-      } else {
-        setLoadingMessage(null);
-      }
-    }
-  }, [serverInit, loadingFileIndex, JSONlinks]);
 
   const meshRef = useRef();
 
@@ -156,20 +96,11 @@ const Scene = ({ viewType, children }) => {
           <pointLight position={[50, 50, 60]} intensity={8} />
 
           {/*<Mouse {...{ measurer2d, setMeasurer2d }} />*/}
+          {/* <Buffer3dm /> */}
 
-          {JSONlinks &&
-            JSONlinks.length > 0 &&
-            JSONlinks.map((path, i) => {
-              return (
-                <BufferModel
-                  {...{ index: i }}
-                  way={way}
-                  key={`b:${i}`}
-                  path={path}
-                  layerName={JSON_names[i]}
-                />
-              );
-            })}
+          <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
+
+          {/*<BufferRhinoGroup />*/}
         </Canvas>
       </CursorProvider>
     </>

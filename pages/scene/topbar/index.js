@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import Router from "next/router";
+
 import styled from "styled-components";
 
 import { EyeInvisibleOutlined } from "@ant-design/icons";
@@ -6,8 +9,9 @@ import useClickedOutside from "./outside-hook";
 import ChartBar from "./chart";
 import useStatusStore from "../../../store/status-store";
 
-import { Tabs, Typography } from "antd";
+import { Space, Tabs, Typography } from "antd";
 import { uuid } from "uuidv4";
+import { LeftOutlined } from "@ant-design/icons";
 
 import stc from "string-to-color";
 
@@ -36,18 +40,60 @@ const Bar = styled.div`
   }
 `;
 
-const LeftSide = styled.div`
-  width: max-content;
-  height: 50px;
+const LogoHome = styled.div`
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  display: flex;
+  && > * + * {
+    margin-left: 5px;
+    align-items: center;
+  }
+
+  && svg {
+    margin-top: 2px;
+    transform: scale(0.8, 0.8);
+  }
+
+  cursor: pointer;
+`;
+
+const PaperWrapper = styled.div`
+  &&[data-type="bar"] {
+    height: 50px;
+
+    @media (max-width: 480px) {
+      & {
+        height: 40px;
+      }
+    }
+  }
+
   background: white;
   border-radius: 10px;
   overflow: hidden;
 
-  @media (max-width: 480px) {
-    & {
-      height: 40px;
-    }
-  }
+  display: flex;
+  align-items: center;
+  padding: 5px;
+
+  cursor: pointer;
+`;
+
+const Paper = (props) => {
+  const { type, children, ...otherProps } = props;
+
+  return (
+    <PaperWrapper data-type={type} {...otherProps}>
+      {children}
+    </PaperWrapper>
+  );
+};
+
+const LeftSide = styled.div`
+  width: max-content;
 
   position: absolute;
   left: 10px;
@@ -323,6 +369,10 @@ const TopBar = ({ fullsize, layers, setLayers }) => {
     setLayersUpdated(true);
   };
 
+  const goHome = () => {
+    Router.push(`/account`);
+  };
+
   return (
     <>
       <Bar>
@@ -390,14 +440,25 @@ const TopBar = ({ fullsize, layers, setLayers }) => {
         )}
 
         <LeftSide>
-          <LeftSide.Btn
-            section="layers"
-            onClick={(e) => {
-              e.stopPropagation();
-              return setLayersPanel((state) => !state);
-            }}
-          />
-          <LeftSide.Btn section="history" />
+          <Space>
+            <Paper type="bar" onClick={goHome}>
+              <LogoHome>
+                <LeftOutlined />
+                <div>CXM</div>
+              </LogoHome>
+            </Paper>
+
+            <Paper type="bar">
+              <LeftSide.Btn
+                section="layers"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  return setLayersPanel((state) => !state);
+                }}
+              />
+              <LeftSide.Btn section="history" />
+            </Paper>
+          </Space>
         </LeftSide>
 
         <RightSide
