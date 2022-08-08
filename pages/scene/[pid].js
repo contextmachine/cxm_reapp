@@ -113,7 +113,7 @@ const App = () => {
     }
   }, [isExportScreen]);
 
-  const handleStatus = () => {
+  const handleStatus = (pid) => {
     if (window.Telegram) {
       const webapp = window.Telegram.WebApp;
       const mainbutton = webapp.MainButton;
@@ -135,7 +135,7 @@ const App = () => {
         mainbutton.setText("Открыть в новом окне");
 
         mainbutton.onClick(() => {
-          window.open("https://cxm-reapp.vercel.app/scene", "_blank");
+          window.open("https://cxm-reapp.vercel.app/scene/" + pid, "_blank");
           /*setTools((state) => !state)*/
         });
       }
@@ -143,8 +143,8 @@ const App = () => {
   };
 
   useEffect(() => {
-    handleStatus();
-  }, [tgConnected]);
+    handleStatus(pid);
+  }, [tgConnected, pid]);
 
   useEffect(() => {
     if (window.Telegram) {
