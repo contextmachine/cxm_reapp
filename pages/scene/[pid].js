@@ -11,6 +11,7 @@ import Export from "./export";
 import CursorProvider from "../../components/scene/providers/cursor-providers";
 import Loading from "./loading";
 import axios from "axios";
+import useStatusStore from "../../store/status-store";
 
 const CoreLayout = styled.div`
   width: 100vw;
@@ -51,11 +52,8 @@ const Space3D = styled.div`
 `;
 
 const App = () => {
-  const [layers, setLayers] = useState(null);
-
   const [needsData, setNeedsData] = useState(false);
 
-  const [tgConnected, setTgConnected] = useState(false);
   const [rhinoConnected, setRhinoConnected] = useState(false);
   const [tools, setTools] = useState(true);
 
@@ -65,14 +63,19 @@ const App = () => {
 
   const [viewType, setViewType] = useState("ortho");
 
+  /* Подчищаем данные */
+  const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
+
+  useEffect(() => {
+    setLayersData({});
+  }, []);
+
   /* router */
   const router = useRouter();
   const { query = {} } = router ? router : {};
   const { dev, full, pid } = query;
 
   const [includedKeys, setIncludedKeys] = useState(null);
-
-  console.log("includedKeys", includedKeys);
 
   const getIncludedKeys = (pid) => {
     if (pid === "all") return setIncludedKeys(null);
@@ -86,8 +89,6 @@ const App = () => {
       setIncludedKeys(includes);
     });
   };
-
-  console.log("includedKeys", includedKeys);
 
   useEffect(() => {
     getIncludedKeys(pid);
@@ -144,7 +145,7 @@ const App = () => {
 
   useEffect(() => {
     handleStatus(pid);
-  }, [tgConnected, pid]);
+  }, [pid]);
 
   useEffect(() => {
     if (window.Telegram) {
@@ -176,7 +177,7 @@ const App = () => {
       ></Script>
 
       <Screen>
-        <TopBar {...{ fullsize, layers, setLayers }} />
+        <TopBar />
 
         <Export
           enabled={isExportScreen}
@@ -195,7 +196,6 @@ const App = () => {
                   rhinoConnected,
                   needsData,
                   setNeedsData,
-                  layers,
                   viewType,
                   setViewType,
                   includedKeys,

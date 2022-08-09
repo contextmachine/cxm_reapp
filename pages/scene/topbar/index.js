@@ -306,7 +306,7 @@ const TabLine = styled(Tabs)`
   }
 `;
 
-const TopBar = ({ fullsize, layers, setLayers }) => {
+const TopBar = () => {
   const [graphicsPanel, showGraphicsPanel] = useState(false);
   const [graphicsAreReady, setGraphicsReady] = useState(false);
 

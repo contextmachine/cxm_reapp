@@ -19,6 +19,7 @@ const BufferModel = ({ path, index, layerName }) => {
     ({ setLoadingFileIndex }) => setLoadingFileIndex
   );
 
+  /* Глоб хук: Слои */
   const layersData = useStatusStore(({ layersData }) => layersData);
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
 
@@ -31,9 +32,9 @@ const BufferModel = ({ path, index, layerName }) => {
 
   const [dataGeometry, setDataGeometry] = useState(null);
 
-  /*const { get, set } = useThree(({ get, set }) => ({ get, set }));*/
   const { scene } = useThree();
 
+  /* Шаг 1: Загрузить данные ключа */
   useEffect(() => {
     if (!fetched && index === loadingFileIndex) {
       fetch(path)
@@ -51,6 +52,7 @@ const BufferModel = ({ path, index, layerName }) => {
     }
   }, [path, index, loadingFileIndex, fetched]);
 
+  /* Управление вкладкой "По файлам */
   const handleFilesLayers = () => {
     let layersData_copy = layersData;
     if (!layersData_copy[filesTab]) {
@@ -63,6 +65,7 @@ const BufferModel = ({ path, index, layerName }) => {
     setLayersUpdated(true);
   };
 
+  /* Управление вкладкой "По цветам" */
   const handleColorsLayer = (colors = {}) => {
     let layersData_copy = layersData;
 
@@ -90,6 +93,7 @@ const BufferModel = ({ path, index, layerName }) => {
     setLayersUpdated(true);
   };
 
+  /* Шаг 2: Распределить метаданные по слоям */
   useEffect(() => {
     if (fetched) {
       handleFilesLayers();
@@ -112,8 +116,7 @@ const BufferModel = ({ path, index, layerName }) => {
           Object.keys(attributes).map((item) => {
             const attribute = attributes[item];
 
-            const { array = [], type, itemSize = 3 } = attribute;
-            const length = array.length / itemSize;
+            const { array = [], itemSize = 3 } = attribute;
 
             geometry.setAttribute(
               item,

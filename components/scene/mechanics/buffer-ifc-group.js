@@ -10,6 +10,8 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
   const [JSONlinks, setJSONllinks] = useState();
   const [JSON_names, setJSON_names] = useState();
   const [serverInit, setServerInit] = useState(false);
+
+  /* Хук: статус сообщение */
   const setLoadingMessage = useStatusStore(
     ({ setLoadingMessage }) => setLoadingMessage
   );
@@ -21,9 +23,8 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
     ({ loadingFileIndex }) => loadingFileIndex
   );
 
+  /* Шаг 1: Получаем ключи и отфильтировываем нужные для отображения */
   useEffect(() => {
-    console.log("pid", pid);
-
     if (!serverInit && (includedKeys || (!includedKeys && pid === "all"))) {
       setLoadingMessage({ message: "Подключаемся к серверу", type: "full" });
 
@@ -48,13 +49,16 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
               return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
             })
         );
+
         setJSON_names(keys);
         setServerInit(true);
+
         setLoadingMessage({ message: "Подключился", type: "full" });
       });
     }
   }, [serverInit, includedKeys, pid]);
 
+  /* Шаг 2: Запускаем загрузку первого ключа по индексу */
   useEffect(() => {
     if (serverInit) {
       if (JSONlinks && JSONlinks.length > 0) {
@@ -63,6 +67,7 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
     }
   }, [JSONlinks, serverInit]);
 
+  /* Шаг 2.1: Закидываем в Статус номер загружаемого ключа */
   useEffect(() => {
     if (serverInit) {
       if (loadingFileIndex < JSONlinks.length) {
