@@ -65,9 +65,11 @@ const App = () => {
 
   /* Подчищаем данные */
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
+  const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
 
   useEffect(() => {
     setLayersData({});
+    setMetaData({});
   }, []);
 
   /* router */
@@ -91,7 +93,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    getIncludedKeys(pid);
+    if (pid) {
+      getIncludedKeys(pid);
+    }
   }, [pid]);
 
   const devMainbutton = useMemo(() => {

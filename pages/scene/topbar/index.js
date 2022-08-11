@@ -10,7 +10,7 @@ import ChartBar from "./chart";
 import useStatusStore from "../../../store/status-store";
 
 import { Space, Tabs, Typography } from "antd";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 import { LeftOutlined } from "@ant-design/icons";
 
 import stc from "string-to-color";
@@ -165,9 +165,14 @@ const RightSide = styled.div`
   top: 10px;
 
   &[data-type="fullsize"] {
-    width: 100%;
-    right: -0px;
+    width: 500px;
+    right: 10px;
     height: 230px;
+
+    @media (max-width: 480px) {
+      right: -0px;
+      width: 100%;
+    }
   }
 `;
 
@@ -345,7 +350,7 @@ const TopBar = () => {
     return layersData;
   }, [layersData, layersUpdated]);
 
-  const [layersKey, setLayersKey] = useState(uuid());
+  const [layersKey, setLayersKey] = useState(uuidv4());
 
   useEffect(() => {
     if (layersUpdated) {

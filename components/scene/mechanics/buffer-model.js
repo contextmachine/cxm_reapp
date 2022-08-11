@@ -23,6 +23,10 @@ const BufferModel = ({ path, index, layerName }) => {
   const layersData = useStatusStore(({ layersData }) => layersData);
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
 
+  /* Глоб хук */
+  const metaData = useStatusStore(({ metaData }) => metaData);
+  const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
+
   const setLayersUpdated = useStatusStore(
     ({ setLayersUpdated }) => setLayersUpdated
   );
@@ -63,6 +67,76 @@ const BufferModel = ({ path, index, layerName }) => {
 
     setLayersData(layersData_copy);
     setLayersUpdated(true);
+  };
+
+  const handleMetaData = (metadata = {}) => {
+    let metaData_copy = metaData;
+
+    /* Добавляем версионность, чтобы отслеживать обновления */
+    const version_tag = "__v";
+
+    if (!metaData_copy[version_tag]) {
+      metaData_copy[version_tag] = 0;
+    } else {
+      metaData_copy[version_tag] += 1;
+    }
+
+    Object.keys(metadata).map((name) => {
+      const item = metadata[name];
+
+      if (typeof item === "number" || typeof item === "string") {
+        if (!metaData_copy[name]) {
+          metaData_copy[name] = [];
+        }
+
+        const foundSameType = metaData_copy[name].find(
+          ({ type }) => type === `${item}`
+        );
+
+        if (!foundSameType) {
+          metaData_copy[name].push({ type: `${item}`, value: 1 });
+        } else {
+          metaData_copy[name] = metaData_copy[name].map((item = {}) => {
+            const { value, type } = item;
+
+            if (type === `${item}`) {
+              return { type, value: value + 1 };
+            } else {
+              return item;
+            }
+          });
+        }
+      } else if (name === "material" && Array.isArray(item)) {
+        if (!metaData_copy[name]) {
+          metaData_copy[name] = [];
+        }
+
+        const [color] = item ? item : [];
+        const [r, g, b, opacity] = Array.isArray(color) ? color : [];
+        const colorString = `${r}^${g}^${b}^${opacity}`;
+
+        const foundSameType = metaData_copy[name].find(
+          ({ type }) => type === `${colorString}`
+        );
+
+        if (!foundSameType) {
+          metaData_copy[name].push({ type: `${colorString}`, value: 1 });
+        } else {
+          metaData_copy[name] = metaData_copy[name].map((item = {}) => {
+            const { value, type } = item;
+
+            if (type === `${colorString}`) {
+              return { type, value: value + 1 };
+            } else {
+              return item;
+            }
+          });
+        }
+      }
+      //else
+    });
+
+    setMetaData(metaData_copy);
   };
 
   /* Управление вкладкой "По цветам" */
@@ -154,6 +228,8 @@ const BufferModel = ({ path, index, layerName }) => {
           mesh.x_material = colorString;
 
           scene.add(mesh);
+
+          handleMetaData(metadata);
         });
 
         handleColorsLayer(materialsData);

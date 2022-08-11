@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Column, Pie } from "@ant-design/plots";
+import useStatusStore from "../../../store/status-store";
 
 const handleColor = (label_type) => {
   let radius;
@@ -95,9 +96,69 @@ const NoData = styled.div`
   }
 `;
 
+const CatWrapper = styled.div`
+  width: 100%;
+  height: 20px;
+  margin-bottom: 16px;
+  overflow: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const CatList = styled.div`
+  display: flex;
+  width: max-content;
+  height: 20px;
+
+  && > * + * {
+    margin-left: 5px;
+  }
+`;
+
+const Cat = styled.div`
+  width: min-content;
+  background: grey;
+  border-radius: 10px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  padding-right: 6px;
+
+  cursor: pointer;
+
+  font-size: 9px;
+  color: white;
+
+  &&[data-type="active"] {
+    background: lightgrey;
+  }
+`;
+
 const ChartBar = () => {
+  const metaData = useStatusStore(({ metaData }) => metaData);
+  const { __v } = metaData;
+  const metaAmount = metaData && Object.keys(metaData).length;
+
+  const [selMeta, setSelMeta] = useState(null);
+
+  useEffect(() => {
+    if (metaAmount >= 1) {
+      setSelMeta(0);
+    } else {
+      setSelMeta(null);
+    }
+  }, [metaAmount]);
+
   const commonLineCfgs = {
     isStack: true,
+
     legend: {
       layout: "horizontal",
       position: "bottom",
@@ -118,7 +179,95 @@ const ChartBar = () => {
     },
   };
 
-  const commonPieCfgs = {
+  const labels = [];
+
+  const data1 = labels.map(({ type, count }) => {
+    return {
+      value: count,
+      type: `${type}`,
+    };
+  });
+
+  const lineConfigAccess = useMemo(() => {
+    let selData = [];
+    let selMetaName;
+
+    if (selMeta || selMeta === 0) {
+      const allMeta = Object.keys(metaData).filter((name) => name !== "__v");
+      const selMetaName_ = allMeta[selMeta];
+      selMetaName = selMetaName_;
+
+      selData = metaData[selMetaName_];
+    }
+
+    return {
+      ...commonLineCfgs,
+      data: selData,
+      xAxis: {
+        label: {
+          formatter: (e) => {
+            if (selMetaName === "material") {
+              return "";
+
+              return (
+                <div
+                  style={{ width: "15px", height: "20px", background: rgba }}
+                ></div>
+              );
+            } else {
+              return e;
+            }
+          },
+        },
+      },
+      xField: "type",
+      yField: "value",
+      colorField: "type",
+      color: ({ value, type }) => {
+        if (selMetaName === "material") {
+          const colorSplit = type ? type.split("^") : [];
+          const [r, g, b, a] = colorSplit;
+          const round = (e) => Math.round(e * 255);
+
+          const rgba = `rgb(${round(r)}, ${round(g)}, ${round(b)})`;
+
+          return rgba;
+        }
+
+        return "grey";
+      },
+    };
+  }, [__v, metaData, selMeta]);
+
+  return (
+    <Wrapper>
+      {/* <NoData /> */}
+      <CatWrapper>
+        <CatList>
+          {Object.keys(metaData)
+            .filter((name) => name !== "__v")
+            .map((name, i) => {
+              return (
+                <Cat
+                  data-type={selMeta === i ? "active" : "default"}
+                  key={`cat:${i}`}
+                  onClick={() => setSelMeta(i)}
+                >
+                  {name}
+                </Cat>
+              );
+            })}
+        </CatList>
+      </CatWrapper>
+
+      <Column {...lineConfigAccess} />
+    </Wrapper>
+  );
+};
+
+export default ChartBar;
+
+/*const commonPieCfgs = {
     appendPadding: 10,
     radius: 0.9,
     label: {
@@ -135,55 +284,11 @@ const ChartBar = () => {
         type: "element-active",
       },
     ],
-  };
+  };*/
 
-  const labels = Array(5)
-    .fill(1)
-    .map((_, i) => {
-      return { type: i, count: 100 + Math.floor(250 * Math.random()) };
-    });
-
-  const data1 = labels.map(({ type, count }) => {
-    return {
-      value: count,
-      type: `${type}`,
-    };
-  });
-
-  const lineConfigAccess = {
-    ...commonLineCfgs,
-    data: data1,
-    xField: "type",
-    yField: "value",
-    colorField: "type",
-    color: ({ type }) => {
-      return handleColor(parseInt(type))[1];
-    },
-  };
-
-  const pieConfigAccess = {
-    ...commonPieCfgs,
-    data: data1,
-    angleField: "value",
-    colorField: "type",
-    color: ({ type }) => {
-      return handleColor(parseInt(type))[1];
-    },
-  };
-
-  return (
-    <Wrapper>
-      <NoData />
-
-      {/* */}
-      {/* <>
+/* <>
         <Arrow data-pos="left" />
 
         <Column {...lineConfigAccess} />
         {null && <Pie {...pieConfigAccess} />}
-  </>*/}
-    </Wrapper>
-  );
-};
-
-export default ChartBar;
+  </>*/
