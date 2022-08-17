@@ -63,6 +63,8 @@ const BufferModel = ({ path, index, layerName }) => {
       layersData_copy[filesTab] = [];
     }
 
+    console.log("layerName", layerName);
+
     layersData_copy[filesTab].push({ name: layerName, visible: true });
 
     setLayersData(layersData_copy);
@@ -178,6 +180,12 @@ const BufferModel = ({ path, index, layerName }) => {
     if (!loaded) {
       if (dataGeometry && index === loadingFileIndex) {
         let materialsData = {};
+
+        //console.log("dataGeometry", dataGeometry);
+        const { metadata = {} } = dataGeometry;
+        const { type } = metadata;
+        console.log("layerName", layerName);
+        console.log("type", dataGeometry);
 
         dataGeometry.map((element = {}) => {
           const geometry = new THREE.BufferGeometry();

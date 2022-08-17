@@ -86,7 +86,15 @@ const App = () => {
 
     return axios.get(url).then((response) => {
       const { data } = response;
-      const { includes = [] } = data;
+      const { includes = [], metadata = {} } = data;
+      const { default_view } = metadata;
+
+      if (
+        default_view === "top" ||
+        (default_view === "perspective" && default_view === "ortho")
+      ) {
+        setViewType(default_view);
+      }
 
       setIncludedKeys(includes);
     });

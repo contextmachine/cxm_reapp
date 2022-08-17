@@ -95,7 +95,7 @@ const Scene = ({ viewType, children, includedKeys, pid }) => {
           <ambientLight />
           <pointLight position={[50, 50, 60]} intensity={8} />
 
-          {/*<Mouse {...{ measurer2d, setMeasurer2d }} />*/}
+          {<Mouse {...{ measurer2d, setMeasurer2d }} />}
           {/* <Buffer3dm /> */}
 
           <BufferIfcGroup includedKeys={includedKeys} pid={pid} />

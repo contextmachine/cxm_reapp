@@ -5,12 +5,56 @@ import * as THREE from "three";
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
-import { Box, Line } from "@react-three/drei";
+import { Box, Line, Html } from "@react-three/drei";
 
-const Mouse = ({ context, measurer2d, setMeasurer2d = () => {} }) => {
+const MeasureLength = ({ data = [] }) => {
+  let lengthValues = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const currItem = data[i];
+    const nextItem = data[i + 1];
+
+    if (currItem && nextItem) {
+      const vector3d = [
+        nextItem.x - currItem.x,
+        nextItem.y - currItem.y,
+        nextItem.z - currItem.z,
+      ];
+
+      const pos = [
+        currItem.x + vector3d[0] / 2,
+        currItem.y + vector3d[1] / 2,
+        currItem.z + vector3d[2] / 2,
+      ];
+
+      const length = Math.sqrt(
+        Math.pow(vector3d[0], 2) + Math.pow(vector3d[1], 2),
+        Math.pow(vector3d[2], 2)
+      );
+
+      lengthValues.push(
+        <Html as="div" center position={pos}>
+          <div
+            style={{
+              background: "black",
+              color: "white",
+              paddingLeft: "7px",
+              paddingRight: "7px",
+              borderRadius: "10px",
+            }}
+          >
+            {Math.round(length * 10) / 10}
+          </div>
+        </Html>
+      );
+    }
+  }
+
+  return <>{lengthValues}</>;
+};
+
+const Mouse = ({ measurer2d, setMeasurer2d = () => {} }) => {
   const { scene, gl, camera } = useThree();
-
-  console.log("context", context);
 
   const [mousePosition, setMousePosition] = useState([0, 0, 0]);
 
@@ -36,22 +80,17 @@ const Mouse = ({ context, measurer2d, setMeasurer2d = () => {} }) => {
 
   const lineRef = useRef();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (lineRef && lineRef.current) {
       console.log("lineRef", lineRef);
     }
-  }, [lineRef]);
+  }, [lineRef]);*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (scene) {
       const measurer_line = scene.getObjectByName("measurer-line");
-      /*if (measurer_line) {
-        measurer_line.renderOrder = 2;
-      }*/
-
-      console.log("measurer_line", measurer_line);
     }
-  }, [scene, lineRef]);
+  }, [scene, lineRef]);*/
 
   useEffect(() => {
     const handleRaycasting = (e) => {
@@ -65,7 +104,17 @@ const Mouse = ({ context, measurer2d, setMeasurer2d = () => {} }) => {
       raycaster.setFromCamera(pointer, camera);
       /*raycaster.linePrecision = 100;*/
 
-      const intersects = raycaster.intersectObjects(scene.children);
+      const foundLine = scene.getObjectByName("measurer-line");
+      if (foundLine) {
+        const { geometry } = foundLine;
+        geometry.boundingBox = null;
+
+        console.log("geometry", geometry);
+      }
+
+      let intersects = raycaster.intersectObjects(
+        scene.children.filter(({ isMesh, isLine2, isGroup }) => isMesh)
+      );
 
       if (Array.isArray(intersects)) {
         let points = [];
@@ -192,20 +241,40 @@ const Mouse = ({ context, measurer2d, setMeasurer2d = () => {} }) => {
   return (
     <>
       {measurer.length > 0 && (
-        <Line
-          points={measurer}
-          ref={lineRef}
-          color="black"
-          lineWidth={1}
-          dashed={false}
-          renderOrder={1}
-          name={"measurer-line"}
-          depthTest={false}
-          depthWrite={false}
-          vertexColors={measurer.map((_) => [0, 0, 0])}
-        >
-          <lineBasicMaterial color={"red"} />
-        </Line>
+        <>
+          {measurer.map((item = {}) => {
+            return (
+              <Html as="div" center position={[item.x, item.y, item.z]}>
+                <div
+                  style={{
+                    background: "black",
+                    color: "white",
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+              </Html>
+            );
+          })}
+
+          <MeasureLength data={measurer} />
+
+          <Line
+            points={measurer}
+            ref={lineRef}
+            color="black"
+            lineWidth={1}
+            dashed={false}
+            renderOrder={1}
+            name={"measurer-line"}
+            depthTest={false}
+            depthWrite={false}
+            vertexColors={measurer.map((_) => [0, 0, 0])}
+          >
+            <lineBasicMaterial color={"red"} />
+          </Line>
+        </>
       )}
     </>
   );
