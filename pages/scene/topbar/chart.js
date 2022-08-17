@@ -141,7 +141,9 @@ const Cat = styled.div`
   }
 `;
 
-const ChartBar = () => {
+const ChartBar = ({ headers = [] }) => {
+  headers = headers ? headers : [];
+
   const metaData = useStatusStore(({ metaData }) => metaData);
   const { __v } = metaData;
   const metaAmount = metaData && Object.keys(metaData).length;
@@ -245,7 +247,7 @@ const ChartBar = () => {
       <CatWrapper>
         <CatList>
           {Object.keys(metaData)
-            .filter((name) => name !== "__v")
+            .filter((name) => name !== "__v" && headers.includes(name))
             .map((name, i) => {
               return (
                 <Cat

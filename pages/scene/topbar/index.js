@@ -311,7 +311,7 @@ const TabLine = styled(Tabs)`
   }
 `;
 
-const TopBar = () => {
+const TopBar = ({ headers = [] }) => {
   const [graphicsPanel, showGraphicsPanel] = useState(false);
   const [graphicsAreReady, setGraphicsReady] = useState(false);
 
@@ -480,7 +480,7 @@ const TopBar = () => {
             <div>Инфографика</div>
           </ChartHeader>
 
-          {graphicsAreReady && <ChartBar />}
+          {graphicsAreReady && <ChartBar headers={headers} />}
         </RightSide>
       </Bar>
     </>

@@ -60,6 +60,7 @@ const App = () => {
   const [version, setVersion] = useState(null);
 
   const [isExportScreen, setExportScreen] = useState(false);
+  const [headers, setHeaders] = useState(null);
 
   const [viewType, setViewType] = useState("ortho");
 
@@ -86,8 +87,11 @@ const App = () => {
 
     return axios.get(url).then((response) => {
       const { data } = response;
-      const { includes = [], metadata = {} } = data;
+      const { includes = [], metadata = {}, chart = {} } = data;
+      const { headers = [] } = chart;
       const { default_view } = metadata;
+
+      setHeaders(headers);
 
       if (
         default_view === "top" ||
@@ -189,7 +193,7 @@ const App = () => {
       ></Script>
 
       <Screen>
-        <TopBar />
+        <TopBar headers={headers} />
 
         <Export
           enabled={isExportScreen}
