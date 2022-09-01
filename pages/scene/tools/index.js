@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
+import useToolsStore from "../../../store/tools-store";
 import useClickedOutside from "../topbar/outside-hook";
 
 const Panel = styled.div`
@@ -60,7 +61,18 @@ const Item = styled.div`
   width: 100%;
   align-items: center;
 
+  padding: 5px;
+
   cursor: pointer;
+  border-radius: 10px;
+
+  &&:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &&[data-active="active"] {
+    background: rgba(0, 0, 0, 0.12);
+  }
 `;
 
 const Label = styled.div`
@@ -102,6 +114,9 @@ const ToolsPanel = ({
 
   useClickedOutside(toolsRef, setTools);
 
+  const mouse = useToolsStore(({ mouse }) => mouse);
+  const setMouse = useToolsStore(({ setMouse }) => setMouse);
+
   return (
     <Panel
       data-mode={fullsize ? "full" : "mini"}
@@ -109,7 +124,10 @@ const ToolsPanel = ({
       data-type={enabled ? "opened" : "closed"}
     >
       <Grid>
-        <Item>
+        <Item
+          data-active={mouse ? "active" : "default"}
+          onClick={() => setMouse(!mouse)}
+        >
           <Icon int={2}></Icon>
           <Label>Измерения</Label>
         </Item>

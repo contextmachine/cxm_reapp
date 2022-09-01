@@ -12,6 +12,9 @@ import CursorProvider from "../../components/scene/providers/cursor-providers";
 import Loading from "./loading";
 import axios from "axios";
 import useStatusStore from "../../store/status-store";
+import useToolsStore from "../../store/tools-store";
+
+import { globalUrl } from "../../store/server";
 
 const CoreLayout = styled.div`
   width: 100vw;
@@ -83,7 +86,7 @@ const App = () => {
   const getIncludedKeys = (pid) => {
     if (pid === "all") return setIncludedKeys(null);
 
-    const url = `https://mmodel.contextmachine.online:8181/scenes/${pid}`;
+    const url = `${globalUrl}scenes/${pid}`;
 
     return axios.get(url).then((response) => {
       const { data } = response;
@@ -158,6 +161,11 @@ const App = () => {
       }
     }
   };
+
+  const setMouse = useToolsStore(({ setMouse }) => setMouse);
+  useEffect(() => {
+    setMouse(false);
+  }, []);
 
   useEffect(() => {
     handleStatus(pid);

@@ -18,6 +18,7 @@ import Buffer3dm from "./mechanics/buffer-3dm";
 import UpdateLayers from "./mechanics/update-layers";
 import BufferIfcGroup from "./mechanics/buffer-ifc-group";
 import BufferRhinoGroup from "./mechanics/buffer-rhino-group";
+import useToolsStore from "../../store/tools-store";
 
 const MeasurerCanvas = styled.div`
   width: 100vw;
@@ -57,6 +58,14 @@ const Scene = ({ viewType, children, includedKeys, pid }) => {
   const [windowSize, setWindowSize] = useState([1920, 1080]);
 
   const [measurer2d, setMeasurer2d] = useState(`M0 0`);
+  useEffect(() => {
+    if (mouse) {
+      setMeasurer2d(`M0 0`);
+    }
+  }, [mouse]);
+
+  const mouse = useToolsStore(({ mouse }) => mouse);
+  const setMouse = useToolsStore(({ setMouse }) => setMouse);
 
   const measurerRef = useRef();
   useEffect(() => {
@@ -95,7 +104,7 @@ const Scene = ({ viewType, children, includedKeys, pid }) => {
           <ambientLight />
           <pointLight position={[50, 50, 60]} intensity={8} />
 
-          {<Mouse {...{ measurer2d, setMeasurer2d }} />}
+          {mouse && <Mouse {...{ measurer2d, setMeasurer2d }} />}
           {/* <Buffer3dm /> */}
 
           <BufferIfcGroup includedKeys={includedKeys} pid={pid} />

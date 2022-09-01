@@ -8,6 +8,8 @@ import {
 } from "three-mesh-bvh";
 import useStatusStore from "../../../store/status-store";
 
+import pako from "pako";
+
 const BufferModel = ({ path, index, layerName }) => {
   const [loaded, setLoaded] = useState(false);
   const [fetched, SetFetched] = useState(false);
@@ -41,18 +43,51 @@ const BufferModel = ({ path, index, layerName }) => {
   /* Шаг 1: Загрузить данные ключа */
   useEffect(() => {
     if (!fetched && index === loadingFileIndex) {
-      fetch(path)
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseJSON) => {
-          setDataGeometry(responseJSON);
-          SetFetched(true);
-        })
-        .catch((error) => {
-          setLoadingFileIndex(loadingFileIndex + 1);
-          SetFetched(true);
-        });
+      const fetchMethod = "zip"; // zip | json
+
+      if (fetchMethod === "json") {
+        /* JSON method */
+        fetch(path)
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseJSON) => {
+            console.log("responseJSON", responseJSON);
+
+            setDataGeometry(responseJSON);
+            SetFetched(true);
+          })
+          .catch((error) => {
+            setLoadingFileIndex(loadingFileIndex + 1);
+            SetFetched(true);
+          });
+      } else if (fetchMethod === "zip") {
+        const fetchData = async () => {
+          const url = `${path}?f=gzip`;
+
+          let ss = await fetch(url);
+          const sdata = await ss.arrayBuffer();
+          const byteArray = new Uint8Array(sdata);
+
+          try {
+            const inflated = JSON.parse(
+              pako.inflate(byteArray, { to: "string" })
+            );
+
+            console.log("inflated", inflated);
+
+            setDataGeometry(inflated);
+            SetFetched(true);
+          } catch (error) {
+            setLoadingFileIndex(loadingFileIndex + 1);
+            SetFetched(true);
+          }
+
+          //let data = await get(url);
+        };
+
+        fetchData();
+      }
     }
   }, [path, index, loadingFileIndex, fetched]);
 

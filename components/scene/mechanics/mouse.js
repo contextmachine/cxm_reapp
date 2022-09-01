@@ -6,6 +6,33 @@ import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
 import { Box, Line, Html } from "@react-three/drei";
+import styled from "styled-components";
+
+const BlackPoint = styled.div`
+  background: black;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  &&:hover {
+    transform: scale(1.4, 1.4);
+    border: 2px solid rgba(255, 255, 255, 1);
+    cursor: pointer;
+
+    &::before {
+      content: "";
+    }
+  }
+`;
+
+const ToolTip = styled.div`
+  position: absolute;
+  top: -40px;
+  background: black;
+  color: white;
+  padding: 5px;
+`;
 
 const MeasureLength = ({ data = [] }) => {
   let lengthValues = [];
@@ -32,6 +59,11 @@ const MeasureLength = ({ data = [] }) => {
         Math.pow(vector3d[2], 2)
       );
 
+      let numberString = Math.round(length * 1000 * 10) / 10;
+      numberString = numberString
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
       lengthValues.push(
         <Html as="div" center position={pos}>
           <div
@@ -41,9 +73,10 @@ const MeasureLength = ({ data = [] }) => {
               paddingLeft: "7px",
               paddingRight: "7px",
               borderRadius: "10px",
+              width: "max-content",
             }}
           >
-            {Math.round(length * 10) / 10}
+            {numberString}
           </div>
         </Html>
       );
@@ -112,35 +145,44 @@ const Mouse = ({ measurer2d, setMeasurer2d = () => {} }) => {
         console.log("geometry", geometry);
       }
 
-      let intersects = raycaster.intersectObjects(
-        scene.children.filter(({ isMesh, isLine2, isGroup }) => isMesh)
+      console.log("scene", scene);
+      console.log("raycaster", raycaster);
+
+      const children = scene.children.filter(
+        ({ isMesh, isLine2, isGroup }) => isMesh && !isLine2
       );
 
-      if (Array.isArray(intersects)) {
-        let points = [];
+      console.log("children", children);
 
-        const handleUUID = (intersect = {}) => {
-          const { object = {} } = intersect;
-          const { uuid } = object;
+      try {
+        let intersects = raycaster.intersectObjects(children);
 
-          return uuid;
-        };
+        if (Array.isArray(intersects)) {
+          let points = [];
 
-        const intersect = intersects.filter(handleUUID).filter((_, i) => {
-          return i === 0;
-        });
+          const handleUUID = (intersect = {}) => {
+            const { object = {} } = intersect;
+            const { uuid } = object;
 
-        console.log("intersect", intersect);
+            return uuid;
+          };
 
-        setCaughtPoints(
-          intersect.map((item = {}) => {
-            const { point = {} } = item;
+          const intersect = intersects.filter(handleUUID).filter((_, i) => {
+            return i === 0;
+          });
 
-            return point;
-          })
-        );
+          setCaughtPoints(
+            intersect.map((item = {}) => {
+              const { point = {} } = item;
 
-        setCaughtMeshes(intersect.map(handleUUID));
+              return point;
+            })
+          );
+
+          setCaughtMeshes(intersect.map(handleUUID));
+        }
+      } catch (err) {
+        console.log("errpr", err);
       }
     };
 
@@ -242,18 +284,23 @@ const Mouse = ({ measurer2d, setMeasurer2d = () => {} }) => {
     <>
       {measurer.length > 0 && (
         <>
-          {measurer.map((item = {}) => {
+          {measurer.map((item = {}, i) => {
             return (
-              <Html as="div" center position={[item.x, item.y, item.z]}>
-                <div
-                  style={{
-                    background: "black",
-                    color: "white",
-                    width: "28px",
-                    height: "28px",
-                    borderRadius: "50%",
+              <Html
+                as="div"
+                key={`html::${i}`}
+                center
+                position={[item.x, item.y, item.z]}
+              >
+                <BlackPoint
+                  onDoubleClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert("sdfsdfs");
+
+                    setMeasurer((state) => state.filter((_, b) => b !== i));
                   }}
-                ></div>
+                />
               </Html>
             );
           })}

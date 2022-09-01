@@ -26,7 +26,7 @@ const BufferRhinoGroup = () => {
     if (!serverInit) {
       setLoadingMessage({ message: "Подключаемся к серверу", type: "full" });
 
-      fetch("https://mmodel.contextmachine.online:8181/rh/get_keys")
+      fetch(`${globalUrl}rh/get_keys`)
         .then((response) => {
           return response.json();
         })
@@ -35,7 +35,7 @@ const BufferRhinoGroup = () => {
             keys
               .filter((_, i) => i <= 14)
               .map((item) => {
-                return `https://mmodel.contextmachine.online:8181/rh/get_part/${item}`;
+                return `${globalUrl}rh/get_part/${item}`;
               })
           );
           setJSON_names(keys);

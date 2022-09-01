@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
+import { globalUrl } from "../../../store/server";
+
 //import rhino3dm from "https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js";
 
 const Buffer3dm = ({
-  path = "https://mmodel.contextmachine.online:8181/rh/get_part/Arc_main_panels",
+  path = globalUrl + "rh/get_part/Arc_main_panels",
   group,
 }) => {
   const { scene } = useThree();

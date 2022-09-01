@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import { Skeleton } from "antd";
+import pako from "pako";
 
 import axios from "axios";
 
@@ -143,6 +144,46 @@ const Account = () => {
   useEffect(() => {
     getScenes();
   }, []);
+
+  /*useEffect(() => {
+    function get(url) {
+      return new Promise((accept, reject) => {
+        var req = new XMLHttpRequest();
+        req.open("GET", url, true);
+        req.responseType = "arraybuffer";
+
+        req.onload = function () {
+          let resp = req.response;
+
+          if (resp) {
+            const byteArray = new Uint8Array(resp);
+
+            try {
+              const data = JSON.parse(
+                pako.inflate(byteArray, { to: "string" })
+              );
+
+              console.log("data", data);
+            } catch {
+              console.log("not work");
+            }
+          }
+        };
+
+        req.send(null);
+      });
+    }
+
+    const fetchData = async () => {
+      const url =
+        "https://mmodel.contextmachine.online:8181/get_part/workspace_pridex_%D0%90%D0%A3%D0%92%D0%9F%D0%A2_%20-1%20%D1%8D%D1%82%D0%B0%D0%B6_ifc?f=gzip";
+
+      let data = await get(url);
+    };
+
+    fetchData();
+    
+  }, []);*/
 
   return (
     <>

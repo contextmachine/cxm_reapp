@@ -44,7 +44,7 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
                 return true;
               }
             })
-            .filter((_, i) => i <= 14)
+            /* .filter((_, i) => i <= 14) */
             .map((item) => {
               return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
             })
