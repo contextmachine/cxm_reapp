@@ -86,7 +86,7 @@ const MeasureLength = ({ data = [] }) => {
   return <>{lengthValues}</>;
 };
 
-const Mouse = ({ measurer2d, setMeasurer2d = () => {} }) => {
+const Mouse = () => {
   const { scene, gl, camera } = useThree();
 
   const [mousePosition, setMousePosition] = useState([0, 0, 0]);
@@ -141,18 +141,11 @@ const Mouse = ({ measurer2d, setMeasurer2d = () => {} }) => {
       if (foundLine) {
         const { geometry } = foundLine;
         geometry.boundingBox = null;
-
-        console.log("geometry", geometry);
       }
-
-      console.log("scene", scene);
-      console.log("raycaster", raycaster);
 
       const children = scene.children.filter(
         ({ isMesh, isLine2, isGroup }) => isMesh && !isLine2
       );
-
-      console.log("children", children);
 
       try {
         let intersects = raycaster.intersectObjects(children);

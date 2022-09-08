@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -72,7 +73,15 @@ const Btn = styled.div`
       : ``}
 `;
 
-const View = ({ fullsize, viewType, setViewType }) => {
+const View = ({ viewType, setViewType }) => {
+  const router = useRouter();
+  const { query = {} } = router ? router : {};
+  const { full } = query;
+
+  const fullsize = useMemo(() => {
+    if (full) return true;
+  });
+
   return (
     <Wrapper data-mode={fullsize ? "full" : "mini"}>
       <Panel>

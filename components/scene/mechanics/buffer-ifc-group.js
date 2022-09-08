@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import useStatusStore from "../../../store/status-store";
 import BufferModel from "./buffer-model";
-
-import { useRouter } from "next/router";
+import { globalUrl } from "../../../store/server";
 
 import axios from "axios";
 
 const BufferIfcGroup = ({ includedKeys, pid }) => {
+  const [serverInit, setServerInit] = useState(false);
+
   const [JSONlinks, setJSONllinks] = useState();
   const [JSON_names, setJSON_names] = useState();
-  const [serverInit, setServerInit] = useState(false);
 
   /* Хук: статус сообщение */
   const setLoadingMessage = useStatusStore(
@@ -28,29 +28,22 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
     if (!serverInit && (includedKeys || (!includedKeys && pid === "all"))) {
       setLoadingMessage({ message: "Подключаемся к серверу", type: "full" });
 
-      const url = "https://mmodel.contextmachine.online:8181/get_keys";
+      const url = `${globalUrl}get_keys`;
 
       axios.get(url).then((response) => {
-        const { data: keys } = response;
+        const { data: keys = [] } = response;
 
-        setJSONllinks(
-          keys
-            .filter((name) => {
-              if (includedKeys) {
-                if (includedKeys.includes(name)) return true;
+        /* Шаг 1.1 отфильтровать ключи, которые не относятся к данной сцене */
+        const usedKeys = includedKeys
+          ? keys.filter((name) => includedKeys.includes(name))
+          : [...keys];
 
-                return false;
-              } else {
-                return true;
-              }
-            })
-            /* .filter((_, i) => i <= 14) */
-            .map((item) => {
-              return `https://mmodel.contextmachine.online:8181/get_part/${item}`;
-            })
+        const keyLinks = [...usedKeys].map(
+          (item) => `${globalUrl}get_part/${item}`
         );
 
-        setJSON_names(keys);
+        setJSONllinks(keyLinks);
+        setJSON_names(usedKeys);
         setServerInit(true);
 
         setLoadingMessage({ message: "Подключился", type: "full" });
@@ -72,7 +65,7 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
     if (serverInit) {
       if (loadingFileIndex < JSONlinks.length) {
         setLoadingMessage({
-          message: <>Файл&nbsp;{loadingFileIndex}</>,
+          message: `Файл ${loadingFileIndex}`,
           type: "mini",
         });
       } else {

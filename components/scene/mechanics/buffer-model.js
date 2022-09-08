@@ -7,8 +7,7 @@ import {
   acceleratedRaycast,
 } from "three-mesh-bvh";
 import useStatusStore from "../../../store/status-store";
-
-import pako from "pako";
+import unpackZipScene from "./hooks/unpack-zip-scene";
 
 const BufferModel = ({ path, index, layerName }) => {
   const [loaded, setLoaded] = useState(false);
@@ -45,65 +44,14 @@ const BufferModel = ({ path, index, layerName }) => {
     if (!fetched && index === loadingFileIndex) {
       const fetchMethod = "zip"; // zip | json
 
-      if (fetchMethod === "json") {
-        /* JSON method */
-        fetch(path)
-          .then((response) => {
-            return response.json();
-          })
-          .then((responseJSON) => {
-            console.log("responseJSON", responseJSON);
-
-            setDataGeometry(responseJSON);
-            SetFetched(true);
-          })
-          .catch((error) => {
-            setLoadingFileIndex(loadingFileIndex + 1);
-            SetFetched(true);
-          });
-      } else if (fetchMethod === "zip") {
-        const fetchData = async () => {
-          const url = `${path}?f=gzip`;
-
-          console.log("url", url);
-
-          let ss = await fetch(url);
-          const sdata = await ss.arrayBuffer();
-          const byteArray = new Uint8Array(sdata);
-
-          try {
-            let inflated = JSON.parse(
-              pako.inflate(byteArray, { to: "string" })
-            );
-
-            console.log("inflated", inflated);
-
-            if (typeof inflated === "object" && inflated?.geometries) {
-              const loader = new THREE.ObjectLoader();
-              loader.parse(
-                inflated,
-                function (obj) {
-                  setDataGeometry(obj);
-                  SetFetched(true);
-                },
-
-                function (err) {
-                  console.error("An error happened");
-                }
-              );
-            } else {
-              setDataGeometry(inflated);
-              SetFetched(true);
-            }
-          } catch (error) {
-            setLoadingFileIndex(loadingFileIndex + 1);
-            SetFetched(true);
-          }
-
-          //let data = await get(url);
+      if (fetchMethod === "zip") {
+        /* в случае ошибки переходим к следующему ключу */
+        const onFailing = () => {
+          setLoadingFileIndex(loadingFileIndex + 1);
+          SetFetched(true);
         };
 
-        fetchData();
+        unpackZipScene({ path, setDataGeometry, SetFetched, onFailing });
       }
     }
   }, [path, index, loadingFileIndex, fetched]);
@@ -114,8 +62,6 @@ const BufferModel = ({ path, index, layerName }) => {
     if (!layersData_copy[filesTab]) {
       layersData_copy[filesTab] = [];
     }
-
-    console.log("layerName", layerName);
 
     layersData_copy[filesTab].push({ name: layerName, visible: true });
 
@@ -309,8 +255,29 @@ const BufferModel = ({ path, index, layerName }) => {
 
 export default BufferModel;
 
+/* F1 */
 //THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 //THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
 //THREE.Mesh.prototype.raycast = acceleratedRaycast;
 
 //geometry.computeBoundsTree();
+
+/* F2 */
+/*if (fetchMethod === "json") {
+        
+        fetch(path)
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseJSON) => {
+            console.log("responseJSON", responseJSON);
+
+            setDataGeometry(responseJSON);
+            SetFetched(true);
+          })
+          .catch((error) => {
+            setLoadingFileIndex(loadingFileIndex + 1);
+            SetFetched(true);
+          });
+      } else 
+      */

@@ -1,7 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import styled from "styled-components";
 import useToolsStore from "../../../store/tools-store";
 import useClickedOutside from "../topbar/outside-hook";
+import { useRouter } from "next/router";
 
 const Panel = styled.div`
   width: 100%;
@@ -108,8 +109,15 @@ const ToolsPanel = ({
   enabled = false,
   setTools = () => {},
   setExportScreen,
-  fullsize,
 }) => {
+  const router = useRouter();
+  const { query = {} } = router ? router : {};
+  const { full } = query;
+
+  const fullsize = useMemo(() => {
+    if (full) return true;
+  });
+
   const toolsRef = useRef();
 
   useClickedOutside(toolsRef, setTools);
