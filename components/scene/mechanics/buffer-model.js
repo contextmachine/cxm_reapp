@@ -65,19 +65,36 @@ const BufferModel = ({ path, index, layerName }) => {
         const fetchData = async () => {
           const url = `${path}?f=gzip`;
 
+          console.log("url", url);
+
           let ss = await fetch(url);
           const sdata = await ss.arrayBuffer();
           const byteArray = new Uint8Array(sdata);
 
           try {
-            const inflated = JSON.parse(
+            let inflated = JSON.parse(
               pako.inflate(byteArray, { to: "string" })
             );
 
             console.log("inflated", inflated);
 
-            setDataGeometry(inflated);
-            SetFetched(true);
+            if (typeof inflated === "object" && inflated?.geometries) {
+              const loader = new THREE.ObjectLoader();
+              loader.parse(
+                inflated,
+                function (obj) {
+                  setDataGeometry(obj);
+                  SetFetched(true);
+                },
+
+                function (err) {
+                  console.error("An error happened");
+                }
+              );
+            } else {
+              setDataGeometry(inflated);
+              SetFetched(true);
+            }
           } catch (error) {
             setLoadingFileIndex(loadingFileIndex + 1);
             SetFetched(true);
@@ -216,66 +233,70 @@ const BufferModel = ({ path, index, layerName }) => {
       if (dataGeometry && index === loadingFileIndex) {
         let materialsData = {};
 
-        //console.log("dataGeometry", dataGeometry);
-        const { metadata = {} } = dataGeometry;
-        const { type } = metadata;
-        console.log("layerName", layerName);
-        console.log("type", dataGeometry);
+        /*  */
+        if (!dataGeometry?.isGroup) {
+          dataGeometry.map((element = {}) => {
+            const geometry = new THREE.BufferGeometry();
 
-        dataGeometry.map((element = {}) => {
-          const geometry = new THREE.BufferGeometry();
+            const { data = {}, metadata = {} } = element;
+            const { attributes = {} } = data;
 
-          const { data = {}, metadata = {} } = element;
-          const { attributes = {} } = data;
+            const { material: matData } = metadata;
 
-          const { material: matData } = metadata;
+            Object.keys(attributes).map((item) => {
+              const attribute = attributes[item];
 
-          Object.keys(attributes).map((item) => {
-            const attribute = attributes[item];
+              const { array = [], itemSize = 3 } = attribute;
 
-            const { array = [], itemSize = 3 } = attribute;
+              geometry.setAttribute(
+                item,
+                new THREE.BufferAttribute(new Float32Array(array), itemSize)
+              );
+            });
 
-            geometry.setAttribute(
-              item,
-              new THREE.BufferAttribute(new Float32Array(array), itemSize)
-            );
+            let material;
+            let colorString;
+
+            if (matData && Array.isArray(matData) && matData.length > 0) {
+              let rgba = matData[0];
+
+              if (!(Array.isArray(rgba) && rgba.length === 4)) {
+                rgba = [1, 1, 1, 1];
+              }
+
+              colorString = `${rgba[0]}^${rgba[1]}^${rgba[2]}^${rgba[3]}`;
+              if (!materialsData[colorString])
+                materialsData[colorString] = new THREE.MeshStandardMaterial({
+                  color: new THREE.Color(
+                    `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
+                      rgba[1] * 255
+                    )}, ${Math.round(rgba[2] * 255)})`
+                  ),
+                  side: THREE.DoubleSide,
+                });
+
+              material = materialsData[colorString];
+            } else {
+              material = new THREE.MeshNormalMaterial();
+            }
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.x_file = layerName;
+            mesh.x_material = colorString;
+
+            scene.add(mesh);
+
+            handleMetaData(metadata);
           });
 
-          let material;
-          let colorString;
+          handleColorsLayer(materialsData);
+        } else if (dataGeometry?.isGroup) {
+          const box3 = new THREE.Box3();
+          box3.setFromObject(dataGeometry);
 
-          if (matData && Array.isArray(matData) && matData.length > 0) {
-            let rgba = matData[0];
+          console.log("box3", box3);
 
-            if (!(Array.isArray(rgba) && rgba.length === 4)) {
-              rgba = [1, 1, 1, 1];
-            }
-
-            colorString = `${rgba[0]}^${rgba[1]}^${rgba[2]}^${rgba[3]}`;
-            if (!materialsData[colorString])
-              materialsData[colorString] = new THREE.MeshStandardMaterial({
-                color: new THREE.Color(
-                  `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
-                    rgba[1] * 255
-                  )}, ${Math.round(rgba[2] * 255)})`
-                ),
-                side: THREE.DoubleSide,
-              });
-
-            material = materialsData[colorString];
-          } else {
-            material = new THREE.MeshNormalMaterial();
-          }
-          const mesh = new THREE.Mesh(geometry, material);
-          mesh.x_file = layerName;
-          mesh.x_material = colorString;
-
-          scene.add(mesh);
-
-          handleMetaData(metadata);
-        });
-
-        handleColorsLayer(materialsData);
+          scene.add(dataGeometry);
+        }
 
         setLoaded(true);
         setLoadingFileIndex(loadingFileIndex + 1);

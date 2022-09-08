@@ -22,6 +22,7 @@ const useStatusStore = create((set) => ({
   layersUpdated: false,
   setLayersUpdated: (e) => set({ layersUpdated: e }),
   /* */
+  
 }));
 
 export default useStatusStore;

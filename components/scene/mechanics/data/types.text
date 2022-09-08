@@ -1,0 +1,19 @@
+mesh type:
+
+{
+    type: "BufferGeometry",
+    uuid: "...",
+    data: {
+        attributes: {
+            normal: {
+                itemSize: 3, type: "Float32Array"
+            },
+            position: {
+
+            }
+        }
+    },
+    metadata: {
+        .....
+    }
+}
