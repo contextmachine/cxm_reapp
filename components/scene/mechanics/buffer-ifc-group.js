@@ -65,7 +65,7 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
     if (serverInit) {
       if (loadingFileIndex < JSONlinks.length) {
         setLoadingMessage({
-          message: `Файл ${loadingFileIndex}`,
+          message: `Файл ${loadingFileIndex + 1} из ${JSONlinks?.length}`,
           type: "mini",
         });
       } else {

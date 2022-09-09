@@ -7,6 +7,7 @@ import {
 import { useThree } from "@react-three/fiber";
 
 import { Vector3 } from "three";
+import useStatusStore from "../../store/status-store";
 
 /* Настраиваем камеру */
 const Camera = (props = {}) => {
@@ -17,6 +18,15 @@ const Camera = (props = {}) => {
   const perspectiveCam = useRef();
   const orthoCam = useRef();
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
+
+  const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
+  useEffect(() => {
+    console.log("333", boundingBox);
+
+    if (boundingBox) {
+      console.log("boundingBox", boundingBox);
+    }
+  }, [boundingBox]);
 
   useEffect(() => {
     const changeView = () => {
@@ -71,7 +81,7 @@ const Camera = (props = {}) => {
         enableZoom
         enablePan
         rev
-        panSpeed={2}
+        panSpeed={viewType === "perspective" ? 0.06 : 2}
         rotateSpeed={2}
         target={target0}
         makeDefault

@@ -22,7 +22,8 @@ const useStatusStore = create((set) => ({
   layersUpdated: false,
   setLayersUpdated: (e) => set({ layersUpdated: e }),
   /* */
-  
+  boundingBox: null /* {min: {x,y,z}, max: {x,y,z}, isBox3} */,
+  setBoundingBox: (e) => set({ boundingBox: e }),
 }));
 
 export default useStatusStore;

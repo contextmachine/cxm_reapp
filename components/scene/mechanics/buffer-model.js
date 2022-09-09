@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
-import {
+/* import {
   computeBoundsTree,
   disposeBoundsTree,
   acceleratedRaycast,
-} from "three-mesh-bvh";
+} from "three-mesh-bvh";*/
 import useStatusStore from "../../../store/status-store";
 import unpackZipScene from "./hooks/unpack-zip-scene";
+import handleAddingScene from "./hooks/handle-adding-scene";
+import { v4 as uuidv4 } from "uuid";
 
 const BufferModel = ({ path, index, layerName }) => {
   const [loaded, setLoaded] = useState(false);
@@ -27,6 +29,10 @@ const BufferModel = ({ path, index, layerName }) => {
   /* Глоб хук */
   const metaData = useStatusStore(({ metaData }) => metaData);
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
+
+  /* Глоб хук: boudning box */
+  const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
+  const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
 
   const setLayersUpdated = useStatusStore(
     ({ setLayersUpdated }) => setLayersUpdated
@@ -67,6 +73,32 @@ const BufferModel = ({ path, index, layerName }) => {
 
     setLayersData(layersData_copy);
     setLayersUpdated(true);
+  };
+
+  const handleBoundingBox = (bbox) => {
+    console.log("sdfsdf", bbox);
+
+    if (bbox) {
+      if (!boundingBox) {
+        setBoundingBox({ ...bbox, id: uuidv4() });
+      } else {
+        let { min: _min = {}, max: _max = {} } = boundingBox;
+        let min = { ..._min };
+        let max = { ..._max };
+
+        /* min */
+        if (bbox.min.x < min.x) min.x = bbox.min.x;
+        if (bbox.min.y < min.y) min.y = bbox.min.y;
+        if (bbox.min.z < min.z) min.z = bbox.min.z;
+
+        /* max */
+        if (bbox.max.x < max.x) max.x = bbox.max.x;
+        if (bbox.max.y < max.y) max.y = bbox.max.y;
+        if (bbox.max.z < max.z) max.z = bbox.max.z;
+
+        setBoundingBox({ min, max, id: uuidv4() });
+      }
+    }
   };
 
   const handleMetaData = (metadata = {}) => {
@@ -177,72 +209,15 @@ const BufferModel = ({ path, index, layerName }) => {
   useEffect(() => {
     if (!loaded) {
       if (dataGeometry && index === loadingFileIndex) {
-        let materialsData = {};
-
-        /*  */
-        if (!dataGeometry?.isGroup) {
-          dataGeometry.map((element = {}) => {
-            const geometry = new THREE.BufferGeometry();
-
-            const { data = {}, metadata = {} } = element;
-            const { attributes = {} } = data;
-
-            const { material: matData } = metadata;
-
-            Object.keys(attributes).map((item) => {
-              const attribute = attributes[item];
-
-              const { array = [], itemSize = 3 } = attribute;
-
-              geometry.setAttribute(
-                item,
-                new THREE.BufferAttribute(new Float32Array(array), itemSize)
-              );
-            });
-
-            let material;
-            let colorString;
-
-            if (matData && Array.isArray(matData) && matData.length > 0) {
-              let rgba = matData[0];
-
-              if (!(Array.isArray(rgba) && rgba.length === 4)) {
-                rgba = [1, 1, 1, 1];
-              }
-
-              colorString = `${rgba[0]}^${rgba[1]}^${rgba[2]}^${rgba[3]}`;
-              if (!materialsData[colorString])
-                materialsData[colorString] = new THREE.MeshStandardMaterial({
-                  color: new THREE.Color(
-                    `rgb(${Math.round(rgba[0] * 255)}, ${Math.round(
-                      rgba[1] * 255
-                    )}, ${Math.round(rgba[2] * 255)})`
-                  ),
-                  side: THREE.DoubleSide,
-                });
-
-              material = materialsData[colorString];
-            } else {
-              material = new THREE.MeshNormalMaterial();
-            }
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.x_file = layerName;
-            mesh.x_material = colorString;
-
-            scene.add(mesh);
-
-            handleMetaData(metadata);
-          });
-
-          handleColorsLayer(materialsData);
-        } else if (dataGeometry?.isGroup) {
-          const box3 = new THREE.Box3();
-          box3.setFromObject(dataGeometry);
-
-          console.log("box3", box3);
-
-          scene.add(dataGeometry);
-        }
+        /* Шаг 3: Если нужно превратить данные в mesh и для всех случаев добавить в сцену */
+        handleAddingScene({
+          dataGeometry,
+          handleMetaData,
+          handleColorsLayer,
+          handleBoundingBox,
+          layerName,
+          scene,
+        });
 
         setLoaded(true);
         setLoadingFileIndex(loadingFileIndex + 1);

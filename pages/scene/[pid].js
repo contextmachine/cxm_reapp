@@ -30,11 +30,13 @@ const App = () => {
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
   const setMouse = useToolsStore(({ setMouse }) => setMouse);
+  const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
 
   useEffect(() => {
     setLayersData({});
     setMetaData({});
     setMouse(false);
+    setBoundingBox(null);
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */

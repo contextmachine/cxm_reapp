@@ -5,8 +5,6 @@ import Camera from "./camera";
 
 import Mouse from "./mechanics/mouse";
 
-import CursorProvider from "./providers/cursor-providers";
-
 import UpdateLayers from "./mechanics/update-layers";
 import BufferIfcGroup from "./mechanics/buffer-ifc-group";
 import useToolsStore from "../../store/tools-store";
@@ -16,23 +14,21 @@ const Scene = ({ viewType, includedKeys, pid }) => {
 
   return (
     <>
-      <CursorProvider>
-        <Canvas>
-          <Camera {...{ viewType }} />
+      <Canvas>
+        <Camera {...{ viewType }} />
 
-          <UpdateLayers />
+        <UpdateLayers />
 
-          <ambientLight />
-          <pointLight position={[50, 50, 60]} intensity={8} />
+        <ambientLight />
+        <pointLight position={[50, 50, 60]} intensity={8} />
 
-          {mouse && <Mouse />}
+        {mouse && <Mouse />}
 
-          <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
+        <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
 
-          {/* <Buffer3dm /> */}
-          {/*<BufferRhinoGroup />*/}
-        </Canvas>
-      </CursorProvider>
+        {/* <Buffer3dm /> */}
+        {/*<BufferRhinoGroup />*/}
+      </Canvas>
     </>
   );
 };
