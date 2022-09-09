@@ -8,6 +8,7 @@ import Mouse from "./mechanics/mouse";
 import UpdateLayers from "./mechanics/update-layers";
 import BufferIfcGroup from "./mechanics/buffer-ifc-group";
 import useToolsStore from "../../store/tools-store";
+import BoundingBox from "./mechanics/bounding-box";
 
 const Scene = ({ viewType, includedKeys, pid }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
@@ -25,6 +26,8 @@ const Scene = ({ viewType, includedKeys, pid }) => {
         {mouse && <Mouse />}
 
         <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
+
+        <BoundingBox />
 
         {/* <Buffer3dm /> */}
         {/*<BufferRhinoGroup />*/}

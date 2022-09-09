@@ -76,7 +76,7 @@ const BufferModel = ({ path, index, layerName }) => {
   };
 
   const handleBoundingBox = (bbox) => {
-    console.log("sdfsdf", bbox);
+    console.log("this m, ", boundingBox);
 
     if (bbox) {
       if (!boundingBox) {
@@ -92,9 +92,9 @@ const BufferModel = ({ path, index, layerName }) => {
         if (bbox.min.z < min.z) min.z = bbox.min.z;
 
         /* max */
-        if (bbox.max.x < max.x) max.x = bbox.max.x;
-        if (bbox.max.y < max.y) max.y = bbox.max.y;
-        if (bbox.max.z < max.z) max.z = bbox.max.z;
+        if (bbox.max.x > max.x) max.x = bbox.max.x;
+        if (bbox.max.y > max.y) max.y = bbox.max.y;
+        if (bbox.max.z > max.z) max.z = bbox.max.z;
 
         setBoundingBox({ min, max, id: uuidv4() });
       }

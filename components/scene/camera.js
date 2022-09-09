@@ -20,13 +20,11 @@ const Camera = (props = {}) => {
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
 
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
-  useEffect(() => {
-    console.log("333", boundingBox);
-
+  /* useEffect(() => {
     if (boundingBox) {
       console.log("boundingBox", boundingBox);
     }
-  }, [boundingBox]);
+  }, [boundingBox]); */
 
   useEffect(() => {
     const changeView = () => {
