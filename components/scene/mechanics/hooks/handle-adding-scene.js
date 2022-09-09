@@ -120,6 +120,8 @@ const handleAddingScene = ({
     const box3 = new THREE.Box3();
     box3.setFromObject(dataGeometry);
 
+    console.log("dataGeometry", dataGeometry);
+
     const { min = {}, max = {}, isBox3 } = box3;
     if (isBox3) {
       if (!bbox.min) bbox.min = { x: min.x, y: min.y, z: min.z };
@@ -135,6 +137,8 @@ const handleAddingScene = ({
       if (max.y > bbox.max.y) bbox.max.y = max.y;
       if (max.z > bbox.max.z) bbox.max.z = max.z;
     }
+
+    dataGeometry.x_file = layerName;
 
     scene.add(dataGeometry);
   }

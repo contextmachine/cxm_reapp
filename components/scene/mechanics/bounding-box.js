@@ -54,7 +54,7 @@ const BoundingBox = () => {
   return (
     <>
       {edges.flat().map((point = [], i) => {
-        return <Box color="orange" args={[1, 1, 1]} position={point} />;
+        return <Box color="orange" args={[0.4, 0.4, 0.4]} position={point} />;
       })}
 
       {edges.map((side = [], i) => {
@@ -63,6 +63,8 @@ const BoundingBox = () => {
             key={`side:${i}`}
             points={side}
             lineWidth={0.1}
+            opacity={0.4}
+            transparent
             dashed={false}
             color={"white"}
             name={"bounding-box"}

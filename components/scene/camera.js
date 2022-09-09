@@ -17,6 +17,10 @@ const Camera = (props = {}) => {
 
   const perspectiveCam = useRef();
   const orthoCam = useRef();
+
+  const { scene } = useThree();
+  console.log("scene", scene);
+
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
 
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
