@@ -60,7 +60,6 @@ const Buffer3dm = ({
               }
 
               const mesh_ = new THREE.Mesh(geometry, material);
-              console.log("mesh_", mesh_);
               group.add(mesh_);
 
               if (mesh) mesh.delete();

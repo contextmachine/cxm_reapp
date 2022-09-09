@@ -19,7 +19,6 @@ const Camera = (props = {}) => {
   const orthoCam = useRef();
 
   const { scene } = useThree();
-  console.log("scene", scene);
 
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
 

@@ -76,7 +76,6 @@ const BufferModel = ({ path, index, layerName }) => {
   };
 
   const handleBoundingBox = (bbox) => {
-    console.log("this m, ", boundingBox);
 
     if (bbox) {
       if (!boundingBox) {
