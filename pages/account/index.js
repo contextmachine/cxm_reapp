@@ -6,6 +6,7 @@ import { Skeleton, Space, Row, Col, Typography } from "antd";
 import axios from "axios";
 import useAuthProvider from "../../components/main/use-auth-provider";
 import AuthWrapper from "../../components/main/auth-wrapper";
+import LocalScripts from "../../components/ui/main/hooks/local-scripts";
 
 const { Text } = Typography;
 
@@ -138,6 +139,25 @@ const Account = (props = {}) => {
     Router.push(`/scene/${name}`);
   };
 
+  /* Взаимодействие с telegram API */
+  useEffect(() => {
+    if (window.Telegram) {
+      const webapp = window.Telegram.WebApp;
+      const mainbutton = webapp.MainButton;
+
+      webapp.expand();
+      if (mainbutton) {
+        mainbutton.enable();
+        mainbutton.show();
+        mainbutton.setText("Открыть в новом окне");
+
+        mainbutton.onClick(() => {
+          window.open("https://cxm-reapp.vercel.app/account/", "_blank");
+        });
+      }
+    }
+  }, []);
+
   /* Шаг 1: Загрузка */
   useEffect(() => {
     const loadProjects = setTimeout(() => {
@@ -178,6 +198,8 @@ const Account = (props = {}) => {
 
   return (
     <>
+      <LocalScripts />
+
       <AuthWrapper user={user}>
         <Row>
           <Col flex="300px">
