@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Router from "next/router";
-import { Skeleton } from "antd";
-import pako from "pako";
+import { Skeleton, Space, Row, Col, Typography } from "antd";
 
 import axios from "axios";
+import useAuthProvider from "../../components/main/use-auth-provider";
+import AuthWrapper from "../../components/main/auth-wrapper";
+
+const { Text } = Typography;
+
+const Layout = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+`;
 
 const Wrapper = styled.div`
   padding: 30px 15px;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -17,9 +27,9 @@ const Wrapper = styled.div`
   }
 `;
 
-const HeadTitle = styled.div`
-  font-size: 20px;
-  font-weight: 900;
+const HeadTitle = styled(Text)`
+  font-size: 18px;
+  font-weight: 700;
 `;
 
 const ProjectList = styled.div`
@@ -39,7 +49,7 @@ const ProjectList = styled.div`
 
 const Project = styled.div`
   @media (min-width: 480px) {
-    max-width: 200px;
+    max-width: 250px;
 
     margin-right: 16px;
     margin-bottom: 16px;
@@ -76,6 +86,8 @@ const Project = styled.div`
 Project.Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -100,7 +112,26 @@ Project.Title = styled.div`
   font-weight: 700;
 `;
 
-const Account = () => {
+const UserDrop = styled.div`
+  display: flex;
+  align-items: center;
+
+  && > * + * {
+    margin-left: 10px;
+  }
+`;
+
+const Photo = styled.div`
+  width: 30px;
+  height: 30px;
+  background: #ff9351;
+  border-radius: 10px;
+`;
+
+const Account = (props = {}) => {
+  const { user = {} } = props;
+  const { first_name = "", last_name = "" } = user ? user : {};
+
   const [loadingProjects, setLoadingProjects] = useState(true);
 
   const handleProjectRedirect = ({ name }) => {
@@ -145,94 +176,75 @@ const Account = () => {
     getScenes();
   }, []);
 
-  /*useEffect(() => {
-    function get(url) {
-      return new Promise((accept, reject) => {
-        var req = new XMLHttpRequest();
-        req.open("GET", url, true);
-        req.responseType = "arraybuffer";
-
-        req.onload = function () {
-          let resp = req.response;
-
-          if (resp) {
-            const byteArray = new Uint8Array(resp);
-
-            try {
-              const data = JSON.parse(
-                pako.inflate(byteArray, { to: "string" })
-              );
-
-              console.log("data", data);
-            } catch {
-              console.log("not work");
-            }
-          }
-        };
-
-        req.send(null);
-      });
-    }
-
-    const fetchData = async () => {
-      const url =
-        "https://mmodel.contextmachine.online:8181/get_part/workspace_pridex_%D0%90%D0%A3%D0%92%D0%9F%D0%A2_%20-1%20%D1%8D%D1%82%D0%B0%D0%B6_ifc?f=gzip";
-
-      let data = await get(url);
-    };
-
-    fetchData();
-    
-  }, []);*/
-
   return (
     <>
-      <Wrapper>
-        <HeadTitle>Проекты</HeadTitle>
+      <AuthWrapper>
+        <Row>
+          <Col flex="300px">
+            <Wrapper>
+              <Space>
+                <Photo />
+                <HeadTitle ellipsis={{ rows: 1 }} style={{ maxWidth: "200px" }}>
+                  {`${first_name} ${last_name}`}
+                </HeadTitle>
+              </Space>
+            </Wrapper>
+          </Col>
 
-        <ProjectList>
-          {scenes && !loadingProjects ? (
-            ["all", ...scenes].map((name, i) => {
-              return (
-                <Project
-                  key={`project:${i}`}
-                  onClick={() => handleProjectRedirect({ name })}
-                >
-                  <Project.Wrapper>
-                    <Project.Preview></Project.Preview>
-                    <Project.Header>
-                      <Project.Title>
-                        {name === "all" ? <>Вся сцена *</> : <>{name}</>}
-                      </Project.Title>
-                    </Project.Header>
-                  </Project.Wrapper>
-                </Project>
-              );
-            })
-          ) : (
-            <>
-              {Array(4)
-                .fill(1)
-                .map((_, i) => (
-                  <Project skeleton key={`project:${i}`}>
-                    <Project.Wrapper>
-                      <Skeleton.Input
-                        style={{
-                          width: "100%",
-                          height: "200px",
-                          borderRadius: "10px",
-                        }}
-                        active
-                      />
-                    </Project.Wrapper>
-                  </Project>
-                ))}
-            </>
-          )}
-        </ProjectList>
-      </Wrapper>
+          <Col flex="auto">
+            <Wrapper>
+              <Row justify="space-between">
+                <HeadTitle>Проекты</HeadTitle>
+              </Row>
+
+              <ProjectList>
+                {scenes && !loadingProjects ? (
+                  ["all", ...scenes].map((name, i) => {
+                    return (
+                      <Project
+                        key={`project:${i}`}
+                        onClick={() => handleProjectRedirect({ name })}
+                      >
+                        <Project.Wrapper>
+                          <Project.Preview></Project.Preview>
+                          <Project.Header>
+                            <Project.Title>
+                              {name === "all" ? <>Вся сцена *</> : <>{name}</>}
+                            </Project.Title>
+                          </Project.Header>
+                        </Project.Wrapper>
+                      </Project>
+                    );
+                  })
+                ) : (
+                  <>
+                    {Array(4)
+                      .fill(1)
+                      .map((_, i) => (
+                        <Project skeleton key={`project:${i}`}>
+                          <Project.Wrapper>
+                            <Skeleton.Input
+                              style={{
+                                width: "100%",
+                                height: "200px",
+                                borderRadius: "10px",
+                              }}
+                              active
+                            />
+                          </Project.Wrapper>
+                        </Project>
+                      ))}
+                  </>
+                )}
+              </ProjectList>
+            </Wrapper>
+          </Col>
+        </Row>
+      </AuthWrapper>
     </>
   );
 };
 
 export default Account;
+
+export const getServerSideProps = useAuthProvider;

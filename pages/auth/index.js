@@ -5,7 +5,7 @@ import Router from "next/router";
 import { Skeleton, Spin, Row } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
-const HeadTitle = styled.div`
+export const HeadTitle = styled.div`
   font-size: 30px;
 
   && span {
@@ -13,7 +13,7 @@ const HeadTitle = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   padding: 15px;
   padding-top: 80px;
 `;
@@ -122,8 +122,7 @@ const LogAuth = () => {
   useEffect(() => {
     if (isDone && tgLoaded) {
       const accountRedirect = setTimeout(() => {
-        //Router.push("/account");
-        window.open("/account", "_blank");
+        Router.push("/account");
       }, 1500);
 
       return () => {

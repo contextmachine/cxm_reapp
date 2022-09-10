@@ -1,25 +1,6 @@
-import React from "react";
-import "../styles/globals.css";
-import "antd/dist/antd.css";
-
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
-}
-
-export default MyApp;
-
-/*import React from "react";
 import { withIronSessionSsr } from "iron-session/next";
 
-export default function Profile(props = {}) {
-  console.log("props", props);
-
-  console.log("process.env.NODE_ENV ", process.env.NODE_ENV);
-
-  return <>sdffssdf</>;
-}
-
-const getServerSideProps = withIronSessionSsr(
+const useAuthProvider = withIronSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
 
@@ -45,4 +26,6 @@ const getServerSideProps = withIronSessionSsr(
       secure: process.env.NODE_ENV === "production",
     },
   }
-);*/
+);
+
+export default useAuthProvider;
