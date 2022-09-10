@@ -10,11 +10,11 @@ import Loading from "./loading";
 import useStatusStore from "../../store/status-store";
 import useToolsStore from "../../store/tools-store";
 
-import useHandleStatus from "./hooks/use-handle-status";
-import LocalScripts from "./hooks/local-scripts";
-import useKeysAndHeaders from "./hooks/use-keys-and-headers";
+import useHandleStatus from "../../components/ui/main/hooks/use-handle-status";
+import LocalScripts from "../../components/ui/main/hooks/local-scripts";
+import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-headers";
 
-import { CoreLayout, Screen, Space3D } from "./__styles";
+import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);

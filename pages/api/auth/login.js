@@ -1,14 +1,23 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 
 export default withIronSessionApiRoute(
-  async function loginRoute(req, res) {
+  async (req, res) => {
+    const body = await req.body;
+    const { id, first_name, last_name } = body;
+
     // get user from database then:
-    req.session.user = {
-      id: 23023482493284,
-      admin: true,
+    const user = {
+      id,
+      first_name,
+      last_name,
     };
+
+    req.session.user = user;
+
     await req.session.save();
-    res.send({ ok: true });
+
+    res.status(200).json(user);
+    //res.send({ ok: true, somethin: "dfsf" });
   },
   {
     cookieName: "myapp_cookiename",

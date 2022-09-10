@@ -49,53 +49,88 @@ const LogAuth = () => {
   const [user_id, setUser_id] = useState(null);
   const [first_name, setFirst_name] = useState(null);
   const [last_name, setLast_name] = useState(null);
-  const [photo_url, setPhoto_url] = useState(null);
 
   const [loadingMeta, setLoadingMeta] = useState(true);
 
-  const useFishMeta = false;
+  const [isDone, setDone] = useState(null);
+  const [isError, setError] = useState(null);
 
+  /* шаг 1. Подключением к telegram API и сохранение учетной */
   useEffect(() => {
     if (tgLoaded) {
       const webapp = window.Telegram.WebApp;
 
+      /* Шаг 1.1: Берем данные о юзере из тг */
       const initDataUnsafe = webapp.initDataUnsafe;
 
       const { user = {} } = initDataUnsafe;
-      const { id, first_name, last_name } = user;
+      const { id = "111", first_name = "Василий", last_name = "Куприн" } = user;
 
+      setUser_id(id);
+      setFirst_name(first_name);
+      setLast_name(last_name);
+
+      /* Шаг 1.2: Разворачиваем окно */
       webapp.expand();
 
-      if (!useFishMeta) {
-        setUser_id(id);
-        setFirst_name(first_name);
-        setLast_name(last_name);
-      } else {
-        setUser_id("310889849");
-        setFirst_name("Ilya");
-        setLast_name("Kuzmin");
-      }
-    }
-  }, [tgLoaded, useFishMeta]);
+      /* Шаг 1.3: отправляем данные для сохранения учетной в куки */
+      const body = JSON.stringify({
+        id: id,
+        first_name: first_name,
+        last_name: last_name,
+      });
 
+      fetch("/api/auth/login", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body,
+      })
+        .then((res) => {
+          console.log("res", res);
+
+          const body = res.json().then((a) => console.log("a", a));
+          console.log("body", body);
+
+          if (id) {
+            setDone(true);
+          } else {
+            setError(true);
+          }
+        })
+        .catch(() => {
+          setError(true);
+        });
+    }
+  }, [tgLoaded]);
+
+  /* Шаг 2: визуальная подгрузка имени */
   useEffect(() => {
     if (tgLoaded) {
-      /* визуальная подгрузка имени */
       const loadMeta = setTimeout(() => {
         setLoadingMeta(false);
       }, 500);
 
-      /* редирект на страницу аккаунта */
-      const accountRedirect = setTimeout(() => {
-        Router.push("/account");
-      }, 2000);
-
       return () => {
         clearTimeout(loadMeta);
-        clearTimeout(accountRedirect);
       };
     }
   }, [tgLoaded, user_id]);
+
+  /* Шаг 3: Редирект на страницу аккаунта */
+  useEffect(() => {
+    if (isDone && tgLoaded) {
+      const accountRedirect = setTimeout(() => {
+        //Router.push("/account");
+        window.open("/account", "_blank");
+      }, 1500);
+
+      return () => {
+        clearTimeout(accountRedirect);
+      };
+    }
+  }, [tgLoaded, isDone]);
 
   return (
     <>
@@ -113,19 +148,31 @@ const LogAuth = () => {
 
       <Wrapper>
         <div>
-          <HeadTitle>
-            Вы авторизированы как{" "}
-            {loadingMeta ? (
-              <Skeleton.Input
-                active
-                style={{ height: "40px", width: "200px", borderRadius: "20px" }}
-              />
-            ) : (
-              <span>
-                {first_name} {last_name}
-              </span>
-            )}
-          </HeadTitle>
+          {!isError && (
+            <HeadTitle>
+              Вы авторизированы как{" "}
+              {loadingMeta ? (
+                <Skeleton.Input
+                  active
+                  style={{
+                    height: "40px",
+                    width: "200px",
+                    borderRadius: "20px",
+                  }}
+                />
+              ) : (
+                <span>
+                  {first_name} {last_name}
+                </span>
+              )}
+            </HeadTitle>
+          )}
+
+          {isError && (
+            <HeadTitle>
+              Произошел сбой при авторизации. Пожалуйста, попробуйте позже
+            </HeadTitle>
+          )}
         </div>
       </Wrapper>
     </>

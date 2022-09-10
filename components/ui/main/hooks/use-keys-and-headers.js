@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { globalUrl } from "../../../store/server";
+import { globalUrl } from "../../../../store/server";
 import { useRouter } from "next/router";
 import axios from "axios";
-import useStatusStore from "../../../store/status-store";
+import useStatusStore from "../../../../store/status-store";
 
 const useKeysAndHeaders = ({
   pid,
