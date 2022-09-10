@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { appProdUrl } from "../../../../store/server";
 
 const useHandleStatus = ({ pid, isExportScreen, tools, user }) => {
   const [version, setVersion] = useState(null);
@@ -34,7 +35,7 @@ const useHandleStatus = ({ pid, isExportScreen, tools, user }) => {
 
         mainbutton.onClick(() => {
           window.open(
-            `https://cxm-reapp.vercel.app/scene/${pid}?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
+            `${appProdUrl}scene/${pid}?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
             "_blank"
           );
         });
