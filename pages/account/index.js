@@ -61,7 +61,7 @@ const Account = () => {
 
   /* Взаимодействие с telegram API */
   useEffect(() => {
-    if (window.Telegram && tgLoaded) {
+    if (tgLoaded) {
       const webapp = window.Telegram.WebApp;
       const mainbutton = webapp.MainButton;
 
@@ -148,6 +148,9 @@ const Account = () => {
             <Wrapper>
               <Row justify="space-between">
                 <HeadTitle>Проекты</HeadTitle>
+
+                {`tgLoaded: ${tgLoaded}`}
+                {`user: ${user && JSON.stringify(user)}`}
               </Row>
 
               <ProjectList>
