@@ -129,7 +129,7 @@ const Photo = styled.div`
 `;
 
 const Account = (props = {}) => {
-  const { user = {} } = props;
+  const { user } = props;
   const { first_name = "", last_name = "" } = user ? user : {};
 
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -178,7 +178,7 @@ const Account = (props = {}) => {
 
   return (
     <>
-      <AuthWrapper>
+      <AuthWrapper user={user}>
         <Row>
           <Col flex="300px">
             <Wrapper>

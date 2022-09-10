@@ -1,65 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { TLoginButton, TLoginButtonSize } from "react-telegram-auth";
-import { Wrapper, HeadTitle } from "../../pages/auth";
-import { useRouter } from "next/router";
+import React from "react";
+import AuthTg from "./auth-tg";
 
 const AuthWrapper = (props = {}) => {
-  const router = useRouter();
-
   const { user, children } = props;
 
-  const [isDone, setDone] = useState(null);
-  const [isError, setError] = useState(null);
+  console.log("user", user);
 
-  const onAuthCallback = (user) => {
-    const body = JSON.stringify({
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-    });
-
-    fetch("/api/auth/login", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body,
-    })
-      .then((res) => {
-        console.log("res", res);
-
-        const body = res.json().then((a) => console.log("a", a));
-        console.log("body", body);
-
-        setDone(true);
-      })
-      .catch(() => {
-        setError(true);
-      });
-  };
-
-  useEffect(() => {
-    if (isDone) {
-      router.reload();
-    }
-  }, [isDone]);
-
-  if (!user)
-    return (
-      <Wrapper>
-        <HeadTitle>Пожалуйста, авторизируйтесь через Telegram</HeadTitle>
-
-        <TLoginButton
-          botName="cxmAppBot"
-          buttonSize={TLoginButtonSize.Large}
-          lang="en"
-          usePic={false}
-          cornerRadius={20}
-          onAuthCallback={onAuthCallback}
-          requestAccess={"write"}
-        />
-      </Wrapper>
-    );
+  if (!user) return <AuthTg />;
 
   return <>{children}</>;
 };
