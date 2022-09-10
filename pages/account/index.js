@@ -14,6 +14,7 @@ import {
   Photo,
 } from "../../components/ui/account/__styles";
 import useSWR from "swr";
+import { globalUrl } from "../../store/server";
 
 const { useBreakpoint } = Grid;
 
@@ -30,7 +31,9 @@ const Account = () => {
       return data;
     }
   });*/
+  const [tgLoaded, setTgLoaded] = useState(false);
 
+  const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
   useEffect(() => {
     if (!user) {
@@ -39,6 +42,7 @@ const Account = () => {
         .then((res) => {
           if (res.user) {
             setUser(res.user);
+            setUserFetched(true);
           }
         });
     }
@@ -56,22 +60,25 @@ const Account = () => {
 
   /* Взаимодействие с telegram API */
   useEffect(() => {
-    if (window.Telegram) {
+    if (window.Telegram && tgLoaded) {
       const webapp = window.Telegram.WebApp;
       const mainbutton = webapp.MainButton;
 
       webapp.expand();
-      if (mainbutton) {
+      if (mainbutton && user) {
         mainbutton.enable();
         mainbutton.show();
         mainbutton.setText("Открыть в новом окне");
 
         mainbutton.onClick(() => {
-          window.open("https://cxm-reapp.vercel.app/account/", "_blank");
+          window.open(
+            `${APP_PRODUCTION}account/?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
+            "_blank"
+          );
         });
       }
     }
-  }, []);
+  }, [tgLoaded, user]);
 
   /* Шаг 1: Загрузка */
   useEffect(() => {
@@ -98,7 +105,7 @@ const Account = () => {
   const [scenes, setScenes] = useState(null);
 
   const getScenes = () => {
-    const url = "https://mmodel.contextmachine.online:8181/scenes";
+    const url = `${globalUrl}scenes`;
 
     return axios.get(url, { ...config }).then((response) => {
       const { data } = response;
@@ -115,7 +122,7 @@ const Account = () => {
     <>
       <LocalScripts />
 
-      <AuthWrapper user={user}>
+      <AuthWrapper user={user} userFetched={userFetched}>
         <Row>
           {md && (
             <Col flex="300px">

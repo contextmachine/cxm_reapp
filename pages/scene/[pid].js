@@ -15,6 +15,7 @@ import LocalScripts from "../../components/ui/main/hooks/local-scripts";
 import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-headers";
 
 import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
+import AuthWrapper from "../../components/main/auth-wrapper";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -25,6 +26,26 @@ const App = () => {
   const [headers, setHeaders] = useState(null);
 
   const [viewType, setViewType] = useState("ortho");
+
+  /* Шаг 0: данные пользователя */
+  const [userFetched, setUserFetched] = useState(false);
+  const [user, setUser] = useState(null);
+
+  console.log("user", user);
+
+  useEffect(() => {
+    if (!user) {
+      fetch("/api/auth/user")
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.user) {
+            setUser(res.user);
+          }
+
+          setUserFetched(true);
+        });
+    }
+  }, [user]);
 
   /* Шаг 1: Подчищаем данные */
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
@@ -50,39 +71,41 @@ const App = () => {
   useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders });
 
   /* Настроить взаимодействие с telegram API */
-  useHandleStatus({ pid, isExportScreen, tools });
+  useHandleStatus({ pid, isExportScreen, tools, user });
 
   return (
-    <CoreLayout>
-      <LocalScripts />
+    <AuthWrapper user={user} userFetched={userFetched}>
+      <CoreLayout>
+        <LocalScripts />
 
-      <Screen>
-        <TopBar headers={headers} />
+        <Screen>
+          <TopBar headers={headers} />
 
-        <Export
-          enabled={isExportScreen}
-          {...{ setExportScreen, setNeedsData }}
-        />
+          <Export
+            enabled={isExportScreen}
+            {...{ setExportScreen, setNeedsData }}
+          />
 
-        <View {...{ viewType, setViewType }} />
+          <View {...{ viewType, setViewType }} />
 
-        <Loading />
+          <Loading />
 
-        <Space3D>
-          {(includedKeys || (!includedKeys && pid === "all")) && (
-            <Scene
-              {...{
-                viewType,
-                includedKeys,
-                pid,
-              }}
-            />
-          )}
-        </Space3D>
+          <Space3D>
+            {(includedKeys || (!includedKeys && pid === "all")) && (
+              <Scene
+                {...{
+                  viewType,
+                  includedKeys,
+                  pid,
+                }}
+              />
+            )}
+          </Space3D>
 
-        <ToolsPanel enabled={tools} {...{ setTools, setExportScreen }} />
-      </Screen>
-    </CoreLayout>
+          <ToolsPanel enabled={tools} {...{ setTools, setExportScreen }} />
+        </Screen>
+      </CoreLayout>
+    </AuthWrapper>
   );
 };
 

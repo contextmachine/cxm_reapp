@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-const useHandleStatus = ({ pid, isExportScreen, tools }) => {
+const useHandleStatus = ({ pid, isExportScreen, tools, user }) => {
   const [version, setVersion] = useState(null);
 
   useEffect(() => {
@@ -16,8 +16,8 @@ const useHandleStatus = ({ pid, isExportScreen, tools }) => {
     }
   }, [isExportScreen]);
 
-  const handleStatus = (pid) => {
-    if (window.Telegram) {
+  const handleStatus = (pid, user) => {
+    if (window.Telegram && user) {
       const webapp = window.Telegram.WebApp;
       const mainbutton = webapp.MainButton;
 
@@ -33,15 +33,18 @@ const useHandleStatus = ({ pid, isExportScreen, tools }) => {
         mainbutton.setText("Открыть в новом окне");
 
         mainbutton.onClick(() => {
-          window.open("https://cxm-reapp.vercel.app/scene/" + pid, "_blank");
+          window.open(
+            `https://cxm-reapp.vercel.app/scene/${pid}?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
+            "_blank"
+          );
         });
       }
     }
   };
 
   useEffect(() => {
-    handleStatus(pid);
-  }, [pid]);
+    handleStatus(pid, user);
+  }, [pid, user]);
 
   useEffect(() => {
     if (window.Telegram) {
