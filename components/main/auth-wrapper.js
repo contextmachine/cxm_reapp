@@ -1,6 +1,7 @@
 import React from "react";
 import AuthTg from "./auth-tg";
 import { useRouter } from "next/router";
+import LocalScripts from "../ui/main/hooks/local-scripts";
 
 const AuthWrapper = (props = {}) => {
   const { user, userFetched, children } = props;
@@ -36,8 +37,19 @@ const AuthWrapper = (props = {}) => {
       });
   }
 
-  if (!userFetched) return <></>;
-  if (!user) return <AuthTg />;
+  if (!userFetched)
+    return (
+      <>
+        <LocalScripts />
+      </>
+    );
+  if (!user)
+    return (
+      <>
+        <LocalScripts />
+        <AuthTg />
+      </>
+    );
 
   return <>{children}</>;
 };
