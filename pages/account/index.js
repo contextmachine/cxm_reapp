@@ -1,137 +1,52 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import Router from "next/router";
-import { Skeleton, Space, Row, Col, Typography } from "antd";
+import { Skeleton, Space, Row, Col, Grid } from "antd";
 
 import axios from "axios";
-import useAuthProvider from "../../components/main/use-auth-provider";
 import AuthWrapper from "../../components/main/auth-wrapper";
 import LocalScripts from "../../components/ui/main/hooks/local-scripts";
 
-const { Text } = Typography;
+import {
+  Wrapper,
+  HeadTitle,
+  ProjectList,
+  Project,
+  Photo,
+} from "../../components/ui/account/__styles";
+import useSWR from "swr";
 
-const Layout = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-`;
+const { useBreakpoint } = Grid;
 
-const Wrapper = styled.div`
-  padding: 30px 15px;
-  width: 100%;
+const Account = () => {
+  /*const user = useSWR("/api/auth/user", async (input, init) => {
+    const response = await fetch(input, init);
 
-  display: flex;
-  flex-direction: column;
+    const data = await response.json();
 
-  && > * + * {
-    margin-top: 24px;
-  }
-`;
+    console.log("sdfsdf", data);
 
-const HeadTitle = styled(Text)`
-  font-size: 18px;
-  font-weight: 700;
-`;
-
-const ProjectList = styled.div`
-  @media (max-width: 480px) {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-    column-gap: 16px;
-    row-gap: 16px;
-  }
-
-  @media (min-width: 480px) {
-    display: flex;
-    flex-wrap: wrap;
-  }
-`;
-
-const Project = styled.div`
-  @media (min-width: 480px) {
-    max-width: 250px;
-
-    margin-right: 16px;
-    margin-bottom: 16px;
-  }
-
-  width: 100%;
-  max-height: 200px;
-  min-height: 200px;
-  height: 200px;
-
-  cursor: pointer;
-
-  overflow: hidden;
-  box-shadow: 0 4px 20px -5px rgb(0 0 0 / 30%);
-  border-radius: 10px;
-  position: relative;
-
-  &&:hover {
-    box-shadow: 0 4px 20px -5px rgb(0 0 0 / 70%);
-  }
-
-  ${({ skeleton }) =>
-    skeleton === true
-      ? `
-    & {
-        height: 180px !important;
-        padding-bottom: 0;
-        box-shadow: 0 4px 20px -5px rgb(0 0 0 / 10%);
+    if (data.user) {
+      console.log("sd333");
+      return data;
     }
-  `
-      : ``}
-`;
+  });*/
 
-Project.Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    if (!user) {
+      fetch("/api/auth/user")
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.user) {
+            setUser(res.user);
+          }
+        });
+    }
+  }, [user]);
 
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-`;
-
-Project.Preview = styled.div`
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(155deg, #1a56f554, #ec6baca6);
-`;
-
-Project.Header = styled.div`
-  width: 100%;
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 15px;
-`;
-
-Project.Title = styled.div`
-  font-size: 14px;
-  font-weight: 700;
-`;
-
-const UserDrop = styled.div`
-  display: flex;
-  align-items: center;
-
-  && > * + * {
-    margin-left: 10px;
-  }
-`;
-
-const Photo = styled.div`
-  width: 30px;
-  height: 30px;
-  background: #ff9351;
-  border-radius: 10px;
-`;
-
-const Account = (props = {}) => {
-  const { user } = props;
   const { first_name = "", last_name = "" } = user ? user : {};
+
+  const { md } = useBreakpoint();
 
   const [loadingProjects, setLoadingProjects] = useState(true);
 
@@ -202,16 +117,21 @@ const Account = (props = {}) => {
 
       <AuthWrapper user={user}>
         <Row>
-          <Col flex="300px">
-            <Wrapper>
-              <Space>
-                <Photo />
-                <HeadTitle ellipsis={{ rows: 1 }} style={{ maxWidth: "200px" }}>
-                  {`${first_name} ${last_name}`}
-                </HeadTitle>
-              </Space>
-            </Wrapper>
-          </Col>
+          {md && (
+            <Col flex="300px">
+              <Wrapper>
+                <Space>
+                  <Photo />
+                  <HeadTitle
+                    ellipsis={{ rows: 1 }}
+                    style={{ maxWidth: "200px" }}
+                  >
+                    {`${first_name} ${last_name}`}
+                  </HeadTitle>
+                </Space>
+              </Wrapper>
+            </Col>
+          )}
 
           <Col flex="auto">
             <Wrapper>
@@ -269,4 +189,4 @@ const Account = (props = {}) => {
 
 export default Account;
 
-const getServerSideProps = useAuthProvider;
+//export const getServerSideProps = useAuthProvider;

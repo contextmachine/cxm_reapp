@@ -4,6 +4,8 @@ import styled from "styled-components";
 import Router from "next/router";
 import { Skeleton, Spin, Row } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import cookie from "react-cookies";
+import moment from "moment";
 
 export const HeadTitle = styled.div`
   font-size: 30px;
@@ -74,6 +76,7 @@ const LogAuth = () => {
       webapp.expand();
 
       /* Шаг 1.3: отправляем данные для сохранения учетной в куки */
+
       const body = JSON.stringify({
         id: id,
         first_name: first_name,
