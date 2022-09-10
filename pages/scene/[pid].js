@@ -31,8 +31,6 @@ const App = () => {
   const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
 
-  console.log("user", user);
-
   useEffect(() => {
     if (!user) {
       fetch("/api/auth/user")

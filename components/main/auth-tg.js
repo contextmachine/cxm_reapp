@@ -24,10 +24,7 @@ const AuthTg = () => {
       body,
     })
       .then((res) => {
-        console.log("res", res);
-
-        const body = res.json().then((a) => console.log("a", a));
-        console.log("body", body);
+        
 
         setDone(true);
       })

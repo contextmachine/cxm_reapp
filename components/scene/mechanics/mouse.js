@@ -144,7 +144,7 @@ const Mouse = () => {
       }
 
       const children = scene.children.filter(
-        ({ isMesh, isLine2, isGroup }) => isMesh && !isLine2
+        ({ isMesh, isLine2, isGroup }) => (isMesh && !isLine2) || isGroup
       );
 
       try {
@@ -289,7 +289,6 @@ const Mouse = () => {
                   onDoubleClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    alert("sdfsdfs");
 
                     setMeasurer((state) => state.filter((_, b) => b !== i));
                   }}
