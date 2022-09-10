@@ -42,8 +42,9 @@ const Account = () => {
         .then((res) => {
           if (res.user) {
             setUser(res.user);
-            setUserFetched(true);
           }
+
+          setUserFetched(true);
         });
     }
   }, [user]);
@@ -63,6 +64,9 @@ const Account = () => {
     if (window.Telegram && tgLoaded) {
       const webapp = window.Telegram.WebApp;
       const mainbutton = webapp.MainButton;
+
+      console.log("mainbutton", mainbutton);
+      console.log("user", user);
 
       webapp.expand();
       if (mainbutton && user) {
@@ -120,7 +124,7 @@ const Account = () => {
 
   return (
     <>
-      <LocalScripts />
+      <LocalScripts {...{ setTgLoaded }} />
 
       <AuthWrapper user={user} userFetched={userFetched}>
         <Row>

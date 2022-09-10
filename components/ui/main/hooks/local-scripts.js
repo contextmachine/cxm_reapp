@@ -1,11 +1,17 @@
 import Script from "next/script";
 
-const LocalScripts = ({ setRhinoConnected = () => {} }) => {
+const LocalScripts = ({
+  setRhinoConnected = () => {},
+  setTgLoaded = () => {},
+}) => {
   return (
     <>
       <Script
         src="https://telegram.org/js/telegram-web-app.js"
-        onLoad={() => true}
+        onLoad={() => {
+          setTgLoaded(true);
+          return true;
+        }}
       ></Script>
 
       <Script
