@@ -64,9 +64,6 @@ const Account = () => {
     const webapp = window.Telegram.WebApp;
     const mainbutton = webapp.MainButton;
 
-    console.log("mainbutton", mainbutton);
-    console.log("user", user);
-
     webapp.expand();
     if (mainbutton && user) {
       mainbutton.enable();
@@ -146,9 +143,6 @@ const Account = () => {
             <Wrapper>
               <Row justify="space-between">
                 <HeadTitle>Проекты</HeadTitle>
-
-                {`tgLoaded: ${tgLoaded}`}
-                {`user: ${user && JSON.stringify(user)}`}
               </Row>
 
               <ProjectList>
