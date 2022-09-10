@@ -61,21 +61,23 @@ const Account = () => {
 
   /* Взаимодействие с telegram API */
   useEffect(() => {
-    const webapp = window.Telegram.WebApp;
-    const mainbutton = webapp.MainButton;
+    if (user) {
+      const webapp = window.Telegram.WebApp;
+      const mainbutton = webapp.MainButton;
 
-    webapp.expand();
-    if (mainbutton && user) {
-      mainbutton.enable();
-      mainbutton.show();
-      mainbutton.setText("Открыть в новом окне");
+      webapp.expand();
+      if (mainbutton && user) {
+        mainbutton.enable();
+        mainbutton.show();
+        mainbutton.setText("Открыть в новом окне");
 
-      mainbutton.onClick(() => {
-        window.open(
-          `${appProdUrl}account/?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
-          "_blank"
-        );
-      });
+        mainbutton.onClick(() => {
+          window.open(
+            `${appProdUrl}account/?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
+            "_blank"
+          );
+        });
+      }
     }
   }, [tgLoaded, user]);
 
