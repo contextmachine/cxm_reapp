@@ -14,7 +14,7 @@ import {
   Photo,
 } from "../../components/ui/account/__styles";
 import useSWR from "swr";
-import { globalUrl } from "../../store/server";
+import { appProdUrl, globalUrl } from "../../store/server";
 
 const { useBreakpoint } = Grid;
 
@@ -72,7 +72,7 @@ const Account = () => {
 
       mainbutton.onClick(() => {
         window.open(
-          `${APP_PRODUCTION}account/?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
+          `${appProdUrl}account/?needsLogin=true&id=${user.id}&first_name=${user.first_name}&last_name=${user.last_name}`,
           "_blank"
         );
       });
