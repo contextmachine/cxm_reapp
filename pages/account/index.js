@@ -124,9 +124,9 @@ const Account = () => {
 
   return (
     <>
-      <LocalScripts {...{ setTgLoaded }} />
-
       <AuthWrapper user={user} userFetched={userFetched}>
+        <LocalScripts {...{ setTgLoaded }} />
+
         <Row>
           {md && (
             <Col flex="300px">
