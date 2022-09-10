@@ -247,4 +247,4 @@ const Account = (props = {}) => {
 
 export default Account;
 
-export const getServerSideProps = useAuthProvider;
+const getServerSideProps = useAuthProvider;
