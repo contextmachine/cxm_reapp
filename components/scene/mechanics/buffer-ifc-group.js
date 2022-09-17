@@ -30,8 +30,12 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
 
       const url = `${globalUrl}get_keys`;
 
+      console.log("url", url);
+
       axios.get(url).then((response) => {
         const { data: keys = [] } = response;
+
+        console.log("keys", keys);
 
         /* Шаг 1.1 отфильтровать ключи, которые не относятся к данной сцене */
         const usedKeys = includedKeys
@@ -41,6 +45,9 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
         const keyLinks = [...usedKeys].map(
           (item) => `${globalUrl}get_part/${item}`
         );
+
+        console.log("keyLinks", keyLinks);
+        console.log("usedKeys", usedKeys);
 
         setJSONllinks(keyLinks);
         setJSON_names(usedKeys);

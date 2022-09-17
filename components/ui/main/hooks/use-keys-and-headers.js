@@ -27,6 +27,8 @@ const useKeysAndHeaders = ({
       const { headers = [] } = chart;
       const { default_view } = metadata;
 
+      console.log("data dd", data);
+
       /* Шаг 2. Устанавливаем headers */
       setHeaders(headers);
 

@@ -53,7 +53,7 @@ const BoundingBox = () => {
 
   return (
     <>
-      {edges.flat().map((point = [], i) => {
+      {/* edges.flat().map((point = [], i) => {
         return (
           <Box
             key={`p:${i}`}
@@ -62,9 +62,9 @@ const BoundingBox = () => {
             position={point}
           />
         );
-      })}
+      }) */}
 
-      {edges.map((side = [], i) => {
+      {/* edges.map((side = [], i) => {
         return (
           <Line
             key={`side:${i}`}
@@ -82,7 +82,7 @@ const BoundingBox = () => {
             <lineBasicMaterial color="white" />
           </Line>
         );
-      })}
+      }) */}
     </>
   );
 };
