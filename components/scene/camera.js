@@ -17,8 +17,14 @@ const Camera = (props = {}) => {
 
   const perspectiveCam = useRef();
   const orthoCam = useRef();
+  const controls = useRef();
 
   const { scene } = useThree();
+
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+  const setControlsInProcess = useStatusStore(
+    ({ setControlsInProcess }) => setControlsInProcess
+  );
 
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
 
@@ -52,7 +58,29 @@ const Camera = (props = {}) => {
     };
 
     changeView();
+    setNeedsRender(true);
   }, [get, set, viewType]);
+
+  /* useEffect(() => {
+    console.log("controls 1");
+
+    const activeRender = () => {
+      console.log("movig");
+      setNeedsRender(true);
+    };
+
+    const activeNorender = () => {
+      console.log("end ");
+      setNeedsRender(false);
+    };
+
+    controls.current.addEventListener("start", activeRender);
+    controls.current.addEventListener("end", activeNorender);
+    return () => {
+      controls.current.removeEventListener("start", activeRender);
+      controls.current.removeEventListener("end", activeNorender);
+    };
+  }, [controls]); */
 
   const [zoom, setZoom] = useState(0);
   const [position, setPosition] = useState([0, 0, 50]);
@@ -82,9 +110,16 @@ const Camera = (props = {}) => {
         enableZoom
         enablePan
         rev
+        ref={controls}
         panSpeed={viewType === "perspective" ? 0.06 : 2}
         rotateSpeed={2}
         target={target0}
+        enableDamping
+        onStart={() => {
+          setNeedsRender(true);
+          setControlsInProcess(true);
+        }}
+        onEnd={() => setControlsInProcess(false)}
         makeDefault
         up={new Vector3(0, 0, 1)}
       />

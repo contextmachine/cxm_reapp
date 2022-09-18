@@ -9,13 +9,16 @@ import UpdateLayers from "./mechanics/update-layers";
 import BufferIfcGroup from "./mechanics/buffer-ifc-group";
 import useToolsStore from "../../store/tools-store";
 import BoundingBox from "./mechanics/bounding-box";
+import LayersProvider from "./mechanics/layers-provider";
+
+import Invalidate from "./mechanics/invalidate";
 
 const Scene = ({ viewType, includedKeys, pid }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
 
   return (
     <>
-      <Canvas>
+      <Canvas frameloop="demand">
         <Camera {...{ viewType }} />
 
         <UpdateLayers />
@@ -28,6 +31,10 @@ const Scene = ({ viewType, includedKeys, pid }) => {
         <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
 
         <BoundingBox />
+
+        <LayersProvider />
+
+        <Invalidate />
 
         {/* <Buffer3dm /> */}
         {/*<BufferRhinoGroup />*/}

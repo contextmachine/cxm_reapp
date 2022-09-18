@@ -22,6 +22,8 @@ const BufferModel = ({ path, index, layerName }) => {
     ({ setLoadingFileIndex }) => setLoadingFileIndex
   );
 
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
   /* Глоб хук: Слои */
   const layersData = useStatusStore(({ layersData }) => layersData);
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
@@ -33,6 +35,12 @@ const BufferModel = ({ path, index, layerName }) => {
   /* Глоб хук: boudning box */
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
+
+  /* Глоб хук: link structure */
+  const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
+  const setLinksStructure = useStatusStore(
+    ({ setLinksStructure }) => setLinksStructure
+  );
 
   const setLayersUpdated = useStatusStore(
     ({ setLayersUpdated }) => setLayersUpdated
@@ -76,7 +84,6 @@ const BufferModel = ({ path, index, layerName }) => {
   };
 
   const handleBoundingBox = (bbox) => {
-
     if (bbox) {
       if (!boundingBox) {
         setBoundingBox({ ...bbox, id: uuidv4() });
@@ -213,10 +220,12 @@ const BufferModel = ({ path, index, layerName }) => {
           dataGeometry,
           handleMetaData,
           handleColorsLayer,
-          handleBoundingBox,
           layerName,
           scene,
+          setLinksStructure,
         });
+
+        setNeedsRender(true);
 
         setLoaded(true);
         setLoadingFileIndex(loadingFileIndex + 1);

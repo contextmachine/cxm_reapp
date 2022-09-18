@@ -1,9 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Box, Line } from "@react-three/drei";
 import useStatusStore from "../../../store/status-store";
 
 const BoundingBox = () => {
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
+  useEffect(() => {
+    setNeedsRender(true);
+  }, [boundingBox]);
 
   const edges = useMemo(() => {
     if (boundingBox) {
@@ -64,13 +69,13 @@ const BoundingBox = () => {
         );
       }) */}
 
-      {/* edges.map((side = [], i) => {
+      {edges.map((side = [], i) => {
         return (
           <Line
             key={`side:${i}`}
             points={side}
-            lineWidth={0.1}
-            opacity={0.4}
+            lineWidth={0.5}
+            opacity={1}
             transparent
             dashed={false}
             color={"white"}
@@ -82,7 +87,7 @@ const BoundingBox = () => {
             <lineBasicMaterial color="white" />
           </Line>
         );
-      }) */}
+      })}
     </>
   );
 };

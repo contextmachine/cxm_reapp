@@ -12,6 +12,7 @@ import useStatusStore from "../../../store/status-store";
 import { Space, Tabs, Typography } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { LeftOutlined } from "@ant-design/icons";
+import LayerTreemap from "./blocks/layer-treemap";
 
 import stc from "string-to-color";
 
@@ -227,14 +228,14 @@ const LayersPanel = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  width: 200px;
-  height: 400px;
+  width: 240px;
+  height: calc(100vh - 100px);
+  max-height: 800px;
   background: white;
   overflow: scroll;
 
   top: 70px;
   border-radius: 10px;
-  padding-left: 10px;
 `;
 
 const LayersWrapper = styled.div`
@@ -308,6 +309,43 @@ const TabLine = styled(Tabs)`
     .ant-tabs-tab + .ant-tabs-tab {
       margin: 0 0 0 18px;
     }
+
+    position: relative;
+  }
+`;
+
+const Sections = styled.div`
+  width: 100%;
+  height: 35px;
+  background: lightgrey;
+  display: flex;
+  border-radius: 10px;
+  padding: 2px;
+`;
+
+Sections.Wrapper = styled.div`
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 24px;
+`;
+
+Sections.Tab = styled.div`
+  width: 100%;
+  height: 100%;
+  color: rgb(60, 60, 60);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  &&&[data-active="active"] {
+    background: rgb(60, 60, 60) !important;
+    color: white;
   }
 `;
 
@@ -378,16 +416,47 @@ const TopBar = ({ headers = [] }) => {
     Router.push(`/account`);
   };
 
+  const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
+
+  const [tab, setTab] = useState(1);
+
+  const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
+  useEffect(() => {
+    if (!(tab === 1) || !layersPanel) {
+      setBoundingBox(null);
+    }
+  }, [tab, layersPanel]);
+
   return (
     <>
       <Bar>
         {layersPanel && (
           <LayersPanel ref={layersRef}>
-            <TabLine defaultActiveKey="1" onChange={() => {}}>
-              {Object.keys(layersData).map((name, i) => {
-                return (
-                  <TabPane tab={name} key={`layerTab:${i}`}>
-                    <LayersWrapper>
+            <Sections.Wrapper>
+              <Sections>
+                <Sections.Tab
+                  data-active={tab === 1 ? "active" : "def"}
+                  onClick={() => setTab(1)}
+                >
+                  Слои
+                </Sections.Tab>
+                <Sections.Tab
+                  data-active={tab === 2 ? "active" : "def"}
+                  onClick={() => setTab(2)}
+                >
+                  Цвета
+                </Sections.Tab>
+              </Sections>
+            </Sections.Wrapper>
+
+            {tab === 1 && <LayerTreemap />}
+
+            {tab === 2 &&
+              Object.keys(layersData)
+                .filter((_, i) => i === 1)
+                .map((name, i) => {
+                  return (
+                    <LayersWrapper key={`layerTab:${i}`}>
                       {layersCopyData[name].map((item = {}, i) => {
                         const { name: layerName, visible } = item;
 
@@ -437,10 +506,8 @@ const TopBar = ({ headers = [] }) => {
                         );
                       })}
                     </LayersWrapper>
-                  </TabPane>
-                );
-              })}
-            </TabLine>
+                  );
+                })}
           </LayersPanel>
         )}
 

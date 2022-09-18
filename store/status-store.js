@@ -24,6 +24,20 @@ const useStatusStore = create((set) => ({
   /* */
   boundingBox: null /* {min: {x,y,z}, max: {x,y,z}, isBox3} */,
   setBoundingBox: (e) => set({ boundingBox: e }),
+  /* */
+  linksStructure: null,
+  setLinksStructure: (e) => set({ linksStructure: e }),
+  linksLogId: null,
+  setLinksLogId: (e) => set({ sceneLogId: e }),
+  /* */
+  hiddenLayers: null,
+  setHiddenLayers: (e) => set({ hiddenLayers: e }),
+  /* */
+  needsRender: false,
+  setNeedsRender: (e) => set({ needsRender: e }),
+  /* */
+  controlsInProccess: false,
+  setControlsInProcess: (e) => set({ controlsInProccess: e }),
 }));
 
 export default useStatusStore;
