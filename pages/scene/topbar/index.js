@@ -377,12 +377,13 @@ const TopBar = ({ headers = [] }) => {
   }, [graphicsPanel]);
 
   const [layersPanel, setLayersPanel] = useState(false);
+  const [colorPickerPanel, setColorPickerPanel] = useState(false);
 
   const graphicsRef = useRef();
   const layersRef = useRef();
 
   useClickedOutside(graphicsRef, showGraphicsPanel);
-  useClickedOutside(layersRef, setLayersPanel);
+  useClickedOutside(layersRef, setLayersPanel, true, colorPickerPanel);
 
   const layersData = useStatusStore(({ layersData }) => layersData);
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
@@ -462,7 +463,7 @@ const TopBar = ({ headers = [] }) => {
 
             {tab === 1 && <LayerTreemap />}
 
-            {tab === 2 && <LayerColormap />}
+            {tab === 2 && <LayerColormap {...{colorPickerPanel, setColorPickerPanel}} />}
 
             {tab === 3 &&
               Object.keys(layersData)

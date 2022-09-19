@@ -106,14 +106,12 @@ const LayerTreemap = () => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("select");
+
             if (linksStructure) {
               const object = linksStructure.getObjectByProperty("id", nodes.id);
 
               const box3 = new THREE.Box3();
               box3.setFromObject(object);
-
-              console.log("box3", box3);
 
               setBoundingBox({ ...box3, logId: uuidv4() });
             }
@@ -127,8 +125,6 @@ const LayerTreemap = () => {
         </TreeItem>
       );
   };
-
-
 
   return (
     <>

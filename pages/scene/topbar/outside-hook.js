@@ -1,17 +1,19 @@
 import { useEffect } from "react";
 
-const useClickedOutside = (ref, setState) => {
+const useClickedOutside = (ref, setState, exception, exceptionState) => {
   useEffect(() => {
-    const clickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setState(false);
-    };
+    if (!exception || (exception && !exceptionState)) {
+      const clickOutside = (e) => {
+        if (ref.current && !ref.current.contains(e.target)) setState(false);
+      };
 
-    window.addEventListener("click", clickOutside);
+      window.addEventListener("click", clickOutside);
 
-    return () => {
-      window.removeEventListener("click", clickOutside);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener("click", clickOutside);
+      };
+    }
+  }, [exception, exceptionState]);
 };
 
 export default useClickedOutside;
