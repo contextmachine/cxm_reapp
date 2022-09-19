@@ -111,7 +111,7 @@ Project.Title = styled.div`
 const Photo = styled.div`
   width: 30px;
   height: 30px;
-  background: #ff9351;
+  background: #e7afff;
   border-radius: 10px;
 
   transform: rotate(45deg);

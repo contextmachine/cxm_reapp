@@ -128,7 +128,7 @@ const Account = () => {
           {md && (
             <Col flex="300px">
               <Wrapper style={{ justifyContent: "space-between" }}>
-                <Space>
+                <Space style={{ marginTop: "16px" }}>
                   <Photo />
                   <HeadTitle
                     ellipsis={{ rows: 1 }}
