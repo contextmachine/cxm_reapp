@@ -14,8 +14,6 @@ const LayersProvider = () => {
   useEffect(() => {
     setLinksStructure(scene);
     setLinksLogId(uuidv4());
-
-    console.log("updated scene", uuidv4());
   }, [scene]);
 
   return <></>;

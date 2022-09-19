@@ -32,8 +32,8 @@ const Wrapper = styled.div`
   }
 
   && .MuiTreeItem-label {
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: 7.5px;
+    padding-bottom: 7.5px;
   }
 
   && .MuiTreeItem-content,
@@ -127,6 +127,8 @@ const LayerTreemap = () => {
         </TreeItem>
       );
   };
+
+
 
   return (
     <>

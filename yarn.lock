@@ -330,7 +330,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.7", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9":
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.7", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9", "@babel/runtime@~7.18.0":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
   integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
@@ -1222,6 +1222,56 @@
   dependencies:
     "@typescript-eslint/types" "5.31.0"
     eslint-visitor-keys "^3.3.0"
+
+"@uiw/color-convert@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/color-convert/-/color-convert-1.1.0.tgz#8027186e4f60c390c586954c8f2c7a2097c18f33"
+  integrity sha512-UelT6X9J1/fPj1aYrslHQC4UutxX93LCPo0o4CT2HD7YiXcfes1ICU7ZucKT1ewMkhPWbAInO2lUNhr4qYO0XQ==
+
+"@uiw/react-color-alpha@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-alpha/-/react-color-alpha-1.1.0.tgz#f4915b679f0f886d3160aac6aab7d48176ba926d"
+  integrity sha512-tnP4rUwJk1Fz+PGwGSm/YIQlkanu4CgVao/JUFCDx1QAHMjZz5hfrCZ5fDbpglPXUfIZ4Si3Xd1Zh9YWHOCjdg==
+  dependencies:
+    "@babel/runtime" "~7.18.0"
+    "@uiw/color-convert" "1.1.0"
+    "@uiw/react-drag-event-interactive" "1.1.0"
+
+"@uiw/react-color-colorful@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-colorful/-/react-color-colorful-1.1.0.tgz#fd8612cf0ea0306a2c014a96d26e76edcd14beaa"
+  integrity sha512-aMbhP2o3oXPpCZ2jIXpu1VvOhBl2RROZaeMdTQ07fTE5ncMQZulU57+JwtMf1c9ZGHIzLsjtTNHl6Uh0vKyi1A==
+  dependencies:
+    "@babel/runtime" "~7.18.0"
+    "@uiw/color-convert" "1.1.0"
+    "@uiw/react-color-alpha" "1.1.0"
+    "@uiw/react-color-hue" "1.1.0"
+    "@uiw/react-color-saturation" "1.1.0"
+
+"@uiw/react-color-hue@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-hue/-/react-color-hue-1.1.0.tgz#384e76c8950da0d10aa2512e70993f829d5ceb16"
+  integrity sha512-pDyecSxXtxBwvpD8LHGvyPr1EyzEGdWYK1Cxe89hcMkXlsKOTdUIgLFQ1qSduNzI/fjOzHbGWhJn60Z83LGngg==
+  dependencies:
+    "@babel/runtime" "~7.18.0"
+    "@uiw/color-convert" "1.1.0"
+    "@uiw/react-color-alpha" "1.1.0"
+
+"@uiw/react-color-saturation@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-saturation/-/react-color-saturation-1.1.0.tgz#033f807b6af4c59bb73f308674b9af7c9e5d1d29"
+  integrity sha512-5FEmxQbA5HlJmP9KZ2dT6rBR9fGVsvQ4PdZUq6Nj5UnrvlzIvuw85IaoNNM63YaXaf7pRn0mG7kWsa00qq1zVw==
+  dependencies:
+    "@babel/runtime" "~7.18.0"
+    "@uiw/color-convert" "1.1.0"
+    "@uiw/react-drag-event-interactive" "1.1.0"
+
+"@uiw/react-drag-event-interactive@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uiw/react-drag-event-interactive/-/react-drag-event-interactive-1.1.0.tgz#4248b7576ba633e06f9ddb460ae95ba0043c468b"
+  integrity sha512-rXSCKW9V6pd+zkJMVSDEG+con5m5e+D6zj78HcCf5e5nj5xK66NmiTfS3FY3g8md8/GM/RgawMTmdVBEPOsASg==
+  dependencies:
+    "@babel/runtime" "~7.18.0"
 
 "@use-gesture/core@10.2.17":
   version "10.2.17"

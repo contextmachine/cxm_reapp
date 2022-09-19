@@ -15,6 +15,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import LayerTreemap from "./blocks/layer-treemap";
 
 import stc from "string-to-color";
+import LayerColormap from "./blocks/layer-colormap";
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -238,16 +239,23 @@ const LayersPanel = styled.div`
   border-radius: 10px;
 `;
 
-const LayersWrapper = styled.div`
+export const LayersWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   height: max-content;
+  padding: 5px;
+
+  && > * + * {
+    margin-top: 4px;
+  }
 `;
 
-const Layer = styled.div`
+export const Layer = styled.div`
   width: 100%;
-  height: 45px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -256,8 +264,20 @@ const Layer = styled.div`
     opacity: 0.6;
   }
 
-  border-bottom: 1px solid #646468;
   padding-right: 10px;
+  padding-left: 10px;
+
+  && *[data-function="visibility"] {
+    opacity: 0;
+  }
+
+  &&:hover {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &&:hover *[data-function="visibility"] {
+    opacity: 1;
+  }
 
   &&,
   && * {
@@ -275,25 +295,16 @@ const Layer = styled.div`
   }
 `;
 
-const VisIcon = styled(EyeInvisibleOutlined)`
+export const VisIcon = styled(EyeInvisibleOutlined)`
   &&,
   && * {
     font-size: 16px;
   }
 `;
 
-const LabelLayer = styled.div`
+export const LabelLayer = styled.div`
   display: flex;
   align-items: center;
-
-  &&::before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    margin-right: 10px;
-    border-radius: 8px;
-    background: ${({ fill }) => (fill ? fill : "lightgrey")};
-  }
 
   && > * + * {
     margin-left: 10px;
@@ -451,7 +462,9 @@ const TopBar = ({ headers = [] }) => {
 
             {tab === 1 && <LayerTreemap />}
 
-            {tab === 2 &&
+            {tab === 2 && <LayerColormap />}
+
+            {tab === 3 &&
               Object.keys(layersData)
                 .filter((_, i) => i === 1)
                 .map((name, i) => {
