@@ -12,6 +12,7 @@ import BoundingBox from "./mechanics/bounding-box";
 import LayersProvider from "./mechanics/layers-provider";
 
 import Invalidate from "./mechanics/invalidate";
+import { Box } from "@react-three/drei";
 
 const Scene = ({ viewType, includedKeys, pid }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);

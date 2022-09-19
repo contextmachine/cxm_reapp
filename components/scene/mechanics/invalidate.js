@@ -17,7 +17,7 @@ const Invalidate = () => {
 
   useEffect(() => {
     if (needsRender && !controlsInProccess && !mouse) {
-      const timer = setTimeout(() => setNeedsRender(false), 500);
+      const timer = setTimeout(() => setNeedsRender(false), 100);
 
       return () => {
         clearTimeout(timer);
@@ -25,14 +25,14 @@ const Invalidate = () => {
     }
   }, [needsRender, controlsInProccess, mouse]);
 
-  console.log("needsRender", needsRender);
-
   useFrame(({ gl, scene, camera }) => {
     if (needsRender) {
       gl.render(scene, camera);
       invalidate();
     }
   }, 1);
+
+  console.log("needsRender", needsRender);
 
   useEffect(() => {
     if (needsRender) invalidate();

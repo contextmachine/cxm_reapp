@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import {
   OrthographicCamera,
   OrbitControls,
+  TrackballControls,
   PerspectiveCamera,
 } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 
 import { Vector3 } from "three";
 import useStatusStore from "../../store/status-store";
+import { v4 as uuidv4 } from "uuid";
 
 /* Настраиваем камеру */
 const Camera = (props = {}) => {
@@ -19,7 +21,7 @@ const Camera = (props = {}) => {
   const orthoCam = useRef();
   const controls = useRef();
 
-  const { scene } = useThree();
+  const { scene, invalidate } = useThree();
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
   const setControlsInProcess = useStatusStore(
@@ -86,6 +88,17 @@ const Camera = (props = {}) => {
   const [position, setPosition] = useState([0, 0, 50]);
   const [target0, setTarget0] = useState([0, 0, 0]);
 
+  const [changeLogId, setChangeLogId] = useState(uuidv4());
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setControlsInProcess(false);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [changeLogId]);
+
   return (
     <>
       <PerspectiveCamera
@@ -114,12 +127,19 @@ const Camera = (props = {}) => {
         panSpeed={viewType === "perspective" ? 0.06 : 2}
         rotateSpeed={2}
         target={target0}
-        enableDamping
-        onStart={() => {
+        /* onChange={(e) => console.log("eee", e)} */
+        /* onStart={() => {
           setNeedsRender(true);
           setControlsInProcess(true);
         }}
-        onEnd={() => setControlsInProcess(false)}
+        onEnd={() => setControlsInProcess(false)} */
+        onStart={(e) => {
+          setNeedsRender(true);
+          setControlsInProcess(true);
+        }}
+        onChange={(e) => {
+          setChangeLogId(uuidv4());
+        }}
         makeDefault
         up={new Vector3(0, 0, 1)}
       />
