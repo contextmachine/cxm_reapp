@@ -128,7 +128,7 @@ const ColorLayer = ({
 
         <Text ellipsis={{ rows: 1 }} style={{ maxWidth: "120px" }}>
           {`Цвет #${i}`}{" "}
-          <span style={{ opacity: 0.75 }}>{`(${count} ${num_word(count, [
+          <span style={{ opacity: 0.75 }}> — {`(${count} ${num_word(count, [
             "блок",
             "блока",
             "блоков",
