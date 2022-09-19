@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 
 const HeadTitle = styled(Text)`
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
 `;
 
 const ProjectList = styled.div`
@@ -37,26 +37,35 @@ const ProjectList = styled.div`
 
 const Project = styled.div`
   @media (min-width: 480px) {
-    max-width: 250px;
+    max-width: 350px;
 
     margin-right: 16px;
     margin-bottom: 16px;
+  }
+
+  @media (min-width: 1920px) {
+    max-width: 450px;
   }
 
   width: 100%;
   max-height: 200px;
   min-height: 200px;
   height: 200px;
+  background: white;
 
   cursor: pointer;
 
   overflow: hidden;
   box-shadow: 0 4px 20px -5px rgb(0 0 0 / 30%);
-  border-radius: 10px;
+  border-radius: 5px;
   position: relative;
 
   &&:hover {
     box-shadow: 0 4px 20px -5px rgb(0 0 0 / 70%);
+
+    & *[data-type="headTitle"] {
+      text-decoration: underline;
+    }
   }
 
   ${({ skeleton }) =>
@@ -95,8 +104,8 @@ Project.Header = styled.div`
 `;
 
 Project.Title = styled.div`
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 500;
 `;
 
 const Photo = styled.div`
@@ -104,6 +113,8 @@ const Photo = styled.div`
   height: 30px;
   background: #ff9351;
   border-radius: 10px;
+
+  transform: rotate(45deg);
 `;
 
 export { Wrapper, HeadTitle, ProjectList, Project, Photo };

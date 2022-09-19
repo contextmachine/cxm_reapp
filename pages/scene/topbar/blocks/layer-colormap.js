@@ -36,7 +36,27 @@ function rgbToHex(r, g, b) {
   return color;
 }
 
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 255, g: 255, b: 255 };
+}
+
 const { Text } = Typography;
+
+const num_word = (value, words) => {
+  value = Math.abs(value) % 100;
+  var num = value % 10;
+  if (value > 10 && value < 20) return words[2];
+  if (num > 1 && num < 5) return words[1];
+  if (num == 1) return words[0];
+  return words[2];
+};
 
 const ColorLayer = ({
   item = {},
@@ -48,11 +68,12 @@ const ColorLayer = ({
   count = 0,
   colorPickerPanel,
   setColorPickerPanel,
+  handleObjectVisibility,
 }) => {
   const [anchor, setAnchor] = useState(null);
 
   const handleClick = (event) => {
-    setColorPickerPanel(i);
+    setColorPickerPanel(`color${i}`);
     setAnchor(event.currentTarget);
   };
 
@@ -61,31 +82,49 @@ const ColorLayer = ({
     setColorPickerPanel(null);
   };
 
-  const open = colorPickerPanel === i;
+  const open = colorPickerPanel === `color${i}`;
   const id = open ? "simple-popover" : undefined;
 
-  const [currColor, setCurrColor] = useState("white");
+  const [currColor, setCurrColor] = useState("#ffffff");
+  const [resultColor, setResultColor] = useState("#ffffff");
+
+  const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
   useEffect(() => {
-    setCurrColor(rgbToHex(r * 255, g * 255, b * 255));
+    const hex = rgbToHex(r * 255, g * 255, b * 255);
+
+    setCurrColor(hex);
+    setResultColor(hex);
   }, [r, g, b]);
 
-  function num_word(value, words) {
-    value = Math.abs(value) % 100;
-    var num = value % 10;
-    if (value > 10 && value < 20) return words[2];
-    if (num > 1 && num < 5) return words[1];
-    if (num == 1) return words[0];
-    return words[2];
-  }
+  const saveColor = () => {
+    const colorToRGB = hexToRgb(currColor);
+
+    linksStructure.traverse(function (object) {
+      if (object.material) {
+        if (item.hasIds.includes(object.material.id)) {
+          if (object.material.color.isColor) {
+            object.material.color.r = Math.round(colorToRGB.r / 255);
+            object.material.color.g = Math.round(colorToRGB.g / 255);
+            object.material.color.b = Math.round(colorToRGB.b / 255);
+          }
+        }
+      }
+    });
+
+    setResultColor(currColor);
+    setNeedsRender(true);
+  };
 
   return (
     <Layer>
-      <LabelLayer fill={colorRgb}>
+      <LabelLayer>
         <ColorCircle
           onClick={handleClick}
           aria-describedby={`color:${i}`}
           variant="contained"
-          fill={colorRgb}
+          fill={resultColor}
         />
         <Popover
           key={`colorPicker:${i}`}
@@ -115,6 +154,7 @@ const ColorLayer = ({
             />
             <br />
             <Button
+              onClick={saveColor}
               style={{
                 border: "2px solid black",
                 borderRadius: "10px",
@@ -128,11 +168,10 @@ const ColorLayer = ({
 
         <Text ellipsis={{ rows: 1 }} style={{ maxWidth: "120px" }}>
           {`Цвет #${i}`}{" "}
-          <span style={{ opacity: 0.75 }}> — {`(${count} ${num_word(count, [
-            "блок",
-            "блока",
-            "блоков",
-          ])})`}</span>
+          <span style={{ opacity: 0.75 }}>
+            {" "}
+            — {`(${count} ${num_word(count, ["блок", "блока", "блоков"])})`}
+          </span>
         </Text>
       </LabelLayer>
 
@@ -260,6 +299,7 @@ const LayerColormap = ({
                 {...{ item, colorRgb, i, r, g, b, count }}
                 key={`colorLayer:${i}`}
                 {...{ colorPickerPanel, setColorPickerPanel }}
+                {...{ handleObjectVisibility }}
               />
             );
           })}

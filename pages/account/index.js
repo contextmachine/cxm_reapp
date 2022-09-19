@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
-import { Skeleton, Space, Row, Col, Grid } from "antd";
+import { Skeleton, Space, Row, Col, Grid, Tooltip } from "antd";
 
 import axios from "axios";
 import AuthWrapper from "../../components/main/auth-wrapper";
@@ -127,7 +127,7 @@ const Account = () => {
 
           {md && (
             <Col flex="300px">
-              <Wrapper>
+              <Wrapper style={{ justifyContent: "space-between" }}>
                 <Space>
                   <Photo />
                   <HeadTitle
@@ -137,14 +137,27 @@ const Account = () => {
                     {`${first_name} ${last_name}`}
                   </HeadTitle>
                 </Space>
+
+                <Space direction="vertical" size={0}>
+                  <HeadTitle style={{ fontSize: "28px" }}>Проекты</HeadTitle>
+                  <Tooltip title="Раздел в процессе разработки">
+                    <HeadTitle disabled style={{ fontSize: "28px" }}>
+                      Настройки
+                    </HeadTitle>
+                  </Tooltip>
+                </Space>
+
+                <HeadTitle>Покинуть аккаунт</HeadTitle>
               </Wrapper>
             </Col>
           )}
 
-          <Col flex="auto">
+          <Col flex="auto" style={{ background: "black" }}>
             <Wrapper>
               <Row justify="space-between">
-                <HeadTitle>Проекты</HeadTitle>
+                <HeadTitle style={{ color: "white", fontSize: "36px" }}>
+                  Проекты
+                </HeadTitle>
               </Row>
 
               <ProjectList>
@@ -158,7 +171,7 @@ const Account = () => {
                         <Project.Wrapper>
                           <Project.Preview></Project.Preview>
                           <Project.Header>
-                            <Project.Title>
+                            <Project.Title data-type="headTitle">
                               {name === "all" ? <>Вся сцена *</> : <>{name}</>}
                             </Project.Title>
                           </Project.Header>

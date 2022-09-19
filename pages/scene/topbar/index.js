@@ -379,6 +379,17 @@ const TopBar = ({ headers = [] }) => {
   const [layersPanel, setLayersPanel] = useState(false);
   const [colorPickerPanel, setColorPickerPanel] = useState(false);
 
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+  const setControlsInProcess = useStatusStore(
+    ({ setControlsInProcess }) => setControlsInProcess
+  );
+  useEffect(() => {
+    if (!layersPanel) {
+      setNeedsRender(false);
+      setControlsInProcess(false);
+    }
+  }, [layersPanel]);
+
   const graphicsRef = useRef();
   const layersRef = useRef();
 
@@ -463,7 +474,9 @@ const TopBar = ({ headers = [] }) => {
 
             {tab === 1 && <LayerTreemap />}
 
-            {tab === 2 && <LayerColormap {...{colorPickerPanel, setColorPickerPanel}} />}
+            {tab === 2 && (
+              <LayerColormap {...{ colorPickerPanel, setColorPickerPanel }} />
+            )}
 
             {tab === 3 &&
               Object.keys(layersData)
