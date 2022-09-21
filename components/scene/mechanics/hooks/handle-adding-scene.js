@@ -26,12 +26,15 @@ const handleAddingScene = ({
 
   /* Шаг 1: Если геометрия — это целостная группа из подготовленных three.js элементов */
   const isGroup = dataGeometry?.isGroup;
+  const isObject3D = dataGeometry?.isObject3D;
 
   /*  */
-  if (!isGroup) {
+  if (!(isGroup || isObject3D)) {
     /* Шаг 1.2 Если массив с необработанной датой */
     const fileGroup = new THREE.Group();
     fileGroup.name = layerName;
+
+    console.log("dataGeometry", dataGeometry);
 
     dataGeometry.map((element = {}) => {
       /* Шаг 1.2.1: Содаем buffer геометрию */
@@ -122,7 +125,7 @@ const handleAddingScene = ({
     box3.setFromObject(group);*/
 
     //console.log("box3 nonGroup", box3);
-  } else if (isGroup) {
+  } else if (isGroup || isObject3D) {
     /* const box3 = new THREE.Box3();
     box3.setFromObject(dataGeometry);
 
