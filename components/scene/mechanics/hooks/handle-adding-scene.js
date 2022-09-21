@@ -185,6 +185,10 @@ const handleAddingScene = ({
       setLinksStructure(fileSankey);
     }*/
 
+    if (dataGeometry.isPoints) {
+      dataGeometry.material.size = 1.4;
+    }
+
     scene.add(dataGeometry);
   }
 };

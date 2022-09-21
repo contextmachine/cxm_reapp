@@ -16,10 +16,6 @@ const Invalidate = () => {
   const { invalidate } = useThree();
 
   useEffect(() => {
-    console.log("needsRender", needsRender);
-    console.log("controlsInProccess", controlsInProccess);
-    console.log("mouse", mouse);
-
     if (needsRender && !controlsInProccess && !mouse) {
       const timer = setTimeout(() => setNeedsRender(false), 100);
 
