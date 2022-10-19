@@ -12,9 +12,6 @@ export default MyApp;
 import { withIronSessionSsr } from "iron-session/next";
 
 export default function Profile(props = {}) {
-  console.log("props", props);
-
-  console.log("process.env.NODE_ENV ", process.env.NODE_ENV);
 
   return <>sdffssdf</>;
 }

@@ -34,8 +34,6 @@ const handleAddingScene = ({
     const fileGroup = new THREE.Group();
     fileGroup.name = layerName;
 
-    console.log("dataGeometry", dataGeometry);
-
     dataGeometry.map((element = {}) => {
       /* Шаг 1.2.1: Содаем buffer геометрию */
       const geometry = new THREE.BufferGeometry();
@@ -123,8 +121,6 @@ const handleAddingScene = ({
 
     /*const box3 = new THREE.Box3();
     box3.setFromObject(group);*/
-
-    //console.log("box3 nonGroup", box3);
   } else if (isGroup || isObject3D) {
     /* const box3 = new THREE.Box3();
     box3.setFromObject(dataGeometry);
@@ -151,8 +147,6 @@ const handleAddingScene = ({
     /* let nodes = [];
     let links = []; */
 
-    //console.log("dataGeometry", dataGeometry);
-
     /* nodes.push({
       id: dataGeometry.uuid,
       type: dataGeometry.type,
@@ -166,16 +160,8 @@ const handleAddingScene = ({
       if (parent) {
         const { uuid: parent_uuid } = parent;
 
-        if (parent_uuid === "d048874d-e397-44f1-a08c-ed4c3310fc48") {
-          console.log("item");
-        }
-
         if (uuid && parent_uuid)
           links.push({ target: uuid, source: parent_uuid, value: 10 });
-      }
-
-      if (!parent) {
-        console.log("item with no parets", item);
       }
     });
 

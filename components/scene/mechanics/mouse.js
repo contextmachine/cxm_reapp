@@ -264,12 +264,8 @@ const Mouse = () => {
           }
         });
 
-        console.log("string", string);
-
         setMeasurer2d(string);
       }
-
-      console.log("measurer_to2d", measurer_to2d);
     }
   }, [measurer, camera]);*/
 

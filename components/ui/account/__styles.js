@@ -117,4 +117,33 @@ const Photo = styled.div`
   transform: rotate(45deg);
 `;
 
-export { Wrapper, HeadTitle, ProjectList, Project, Photo };
+const Tag = styled.div`
+  width: max-content;
+  padding: 2px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 100px;
+  margin-right: 5px;
+  cursor: pointer;
+
+  &&:hover {
+    border: 1px solid rgba(255, 255, 255, 1);
+  }
+
+  display: flex;
+  align-items: center;
+
+  height: 36px;
+
+  &&[data-active="active"] {
+    border: 1px solid white;
+    outline: 0.5px solid white;
+  }
+
+  &&,
+  && * {
+    color: white;
+    font-size: 12px;
+  }
+`;
+
+export { Wrapper, HeadTitle, ProjectList, Project, Photo, Tag };

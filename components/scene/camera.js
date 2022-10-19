@@ -57,15 +57,12 @@ const Camera = (props = {}) => {
   }, [get, set, viewType]);
 
   /* useEffect(() => {
-    console.log("controls 1");
 
     const activeRender = () => {
-      console.log("movig");
       setNeedsRender(true);
     };
 
     const activeNorender = () => {
-      console.log("end ");
       setNeedsRender(false);
     };
 
@@ -120,7 +117,6 @@ const Camera = (props = {}) => {
         panSpeed={viewType === "perspective" ? 0.06 : 2}
         rotateSpeed={2}
         target={target0}
-        /* onChange={(e) => console.log("eee", e)} */
         /* onStart={() => {
           setNeedsRender(true);
           setControlsInProcess(true);

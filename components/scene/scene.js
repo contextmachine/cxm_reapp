@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 
 import Camera from "./camera";
@@ -12,10 +12,43 @@ import BoundingBox from "./mechanics/bounding-box";
 import LayersProvider from "./mechanics/layers-provider";
 
 import Invalidate from "./mechanics/invalidate";
+import Selection from "./mechanics/selection";
 import { Box } from "@react-three/drei";
+import { useRouter } from "next/router";
+
+import ExperimentalList from "./mechanics/experimental/experimental-list";
+import useStatusStore from "../../store/status-store";
+import BufferExperimental from "./mechanics/buffer-experimental";
+import InfographicsProvider from "./mechanics/infographics-provider";
 
 const Scene = ({ viewType, includedKeys, pid }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
+
+  const router = useRouter();
+  const { query } = router;
+  const { experimental } = query;
+
+  let experimentalModule = useMemo(() => {
+    if (experimental) {
+      const foundModule = ExperimentalList.find(({ id }) => id === pid);
+      if (foundModule) {
+        const { module } = foundModule;
+
+        return module;
+      }
+    }
+  }, [experimental, pid]);
+
+  const setLoadingMessage = useStatusStore(
+    ({ setLoadingMessage }) => setLoadingMessage
+  );
+  useEffect(() => {
+    if (experimental) {
+      setLoadingMessage(null);
+    }
+  }, [experimental]);
+
+  console.log("experimentalModule", experimentalModule);
 
   return (
     <>
@@ -28,12 +61,18 @@ const Scene = ({ viewType, includedKeys, pid }) => {
         <pointLight position={[50, 50, 60]} intensity={8} />
 
         {mouse && <Mouse />}
+        <Selection />
 
-        <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
+        {!experimental && (
+          <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
+        )}
+
+        {experimental && <BufferExperimental pid={pid} />}
 
         <BoundingBox />
 
         <LayersProvider />
+        <InfographicsProvider />
 
         <Invalidate />
 

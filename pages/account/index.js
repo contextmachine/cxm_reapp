@@ -12,9 +12,12 @@ import {
   ProjectList,
   Project,
   Photo,
+  Tag,
 } from "../../components/ui/account/__styles";
 import useSWR from "swr";
 import { appProdUrl, globalUrl } from "../../store/server";
+
+import ExperimentalList from "../../components/scene/mechanics/experimental/experimental-list";
 
 const { useBreakpoint } = Grid;
 
@@ -24,10 +27,7 @@ const Account = () => {
 
     const data = await response.json();
 
-    console.log("sdfsdf", data);
-
     if (data.user) {
-      console.log("sd333");
       return data;
     }
   });*/
@@ -55,8 +55,8 @@ const Account = () => {
 
   const [loadingProjects, setLoadingProjects] = useState(true);
 
-  const handleProjectRedirect = ({ name }) => {
-    Router.push(`/scene/${name}`);
+  const handleProjectRedirect = ({ name, experimental }) => {
+    Router.push(`/scene/${name}${experimental ? `?experimental=true` : ``}`);
   };
 
   /* Взаимодействие с telegram API */
@@ -98,8 +98,6 @@ const Account = () => {
       let percentCompleted = Math.round(
         (progressEvent.loaded * 100) / progressEvent.total
       );
-
-      console.log("percentCompleted", percentCompleted);
     },
   };
 
@@ -118,6 +116,8 @@ const Account = () => {
   useEffect(() => {
     getScenes();
   }, []);
+
+  const [section, setSection] = useState("main");
 
   return (
     <>
@@ -160,45 +160,94 @@ const Account = () => {
                 </HeadTitle>
               </Row>
 
+              <Row>
+                <Tag
+                  data-active={section === "main" ? "active" : "def"}
+                  onClick={() => setSection("main")}
+                >
+                  Основные проекты
+                </Tag>
+                <Tag
+                  data-active={section === "experimental" ? "active" : "def"}
+                  onClick={() => setSection("experimental")}
+                >
+                  Эксперименты
+                </Tag>
+              </Row>
+
               <ProjectList>
-                {scenes && !loadingProjects ? (
-                  ["all", ...scenes].map((name, i) => {
+                {section === "main" && (
+                  <>
+                    {scenes && !loadingProjects ? (
+                      ["all", ...scenes].map((name, i) => {
+                        return (
+                          <Project
+                            key={`project:${i}`}
+                            onClick={() => handleProjectRedirect({ name })}
+                          >
+                            <Project.Wrapper>
+                              <Project.Preview></Project.Preview>
+                              <Project.Header>
+                                <Project.Title data-type="headTitle">
+                                  {name === "all" ? (
+                                    <>Вся сцена *</>
+                                  ) : (
+                                    <>{name}</>
+                                  )}
+                                </Project.Title>
+                              </Project.Header>
+                            </Project.Wrapper>
+                          </Project>
+                        );
+                      })
+                    ) : (
+                      <>
+                        {Array(4)
+                          .fill(1)
+                          .map((_, i) => (
+                            <Project skeleton key={`project:${i}`}>
+                              <Project.Wrapper>
+                                <Skeleton.Input
+                                  style={{
+                                    width: "100%",
+                                    height: "200px",
+                                    borderRadius: "10px",
+                                  }}
+                                  active
+                                />
+                              </Project.Wrapper>
+                            </Project>
+                          ))}
+                      </>
+                    )}
+                  </>
+                )}
+
+                {section === "experimental" &&
+                  ExperimentalList.map((item = {}, i) => {
+                    const { id, name } = item;
+
                     return (
                       <Project
                         key={`project:${i}`}
-                        onClick={() => handleProjectRedirect({ name })}
+                        onClick={() =>
+                          handleProjectRedirect({
+                            name: id,
+                            experimental: true,
+                          })
+                        }
                       >
                         <Project.Wrapper>
                           <Project.Preview></Project.Preview>
                           <Project.Header>
                             <Project.Title data-type="headTitle">
-                              {name === "all" ? <>Вся сцена *</> : <>{name}</>}
+                              {name}
                             </Project.Title>
                           </Project.Header>
                         </Project.Wrapper>
                       </Project>
                     );
-                  })
-                ) : (
-                  <>
-                    {Array(4)
-                      .fill(1)
-                      .map((_, i) => (
-                        <Project skeleton key={`project:${i}`}>
-                          <Project.Wrapper>
-                            <Skeleton.Input
-                              style={{
-                                width: "100%",
-                                height: "200px",
-                                borderRadius: "10px",
-                              }}
-                              active
-                            />
-                          </Project.Wrapper>
-                        </Project>
-                      ))}
-                  </>
-                )}
+                  })}
               </ProjectList>
             </Wrapper>
           </Col>

@@ -38,6 +38,16 @@ const useStatusStore = create((set) => ({
   /* */
   controlsInProccess: false,
   setControlsInProcess: (e) => set({ controlsInProccess: e }),
+  /* */
+  /* */
+  /* Инфографика */
+  userData: null,
+  setUserData: (e) => set({ userData: e }),
+  infographicsData: null,
+  setInfographicsData: (e) => set({ infographicsData: e }),
+  /* */
+  keyFilter: null,
+  setKeyFilter: (e) => set({ keyFilter: e }),
 }));
 
 export default useStatusStore;

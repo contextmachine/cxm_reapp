@@ -16,6 +16,7 @@ import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-heade
 
 import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 import AuthWrapper from "../../components/main/auth-wrapper";
+import Infographics from "../../components/ui/infographics/infographics";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -63,7 +64,7 @@ const App = () => {
 
   const router = useRouter();
   const { query = {} } = router ? router : {};
-  const { pid } = query;
+  const { pid, experimental } = query;
 
   /* Шаг 1.1: Хук */
   useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders });
@@ -79,6 +80,8 @@ const App = () => {
         <Screen>
           <TopBar headers={headers} />
 
+          <Infographics />
+
           <Export
             enabled={isExportScreen}
             {...{ setExportScreen, setNeedsData }}
@@ -89,7 +92,9 @@ const App = () => {
           <Loading />
 
           <Space3D>
-            {(includedKeys || (!includedKeys && pid === "all")) && (
+            {(includedKeys ||
+              (!includedKeys && pid === "all") ||
+              experimental) && (
               <Scene
                 {...{
                   viewType,

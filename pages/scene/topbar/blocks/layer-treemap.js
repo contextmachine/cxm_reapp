@@ -83,10 +83,12 @@ const FlexLabel = styled.div`
 `;
 
 const LayerTreemap = () => {
+  /* linksStructure = scene. Те же самые данные */
   let linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
   const sceneLogId = useStatusStore(({ sceneLogId }) => sceneLogId);
 
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
+  const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   const renderTree = (nodes) => {
     if (!(nodes.isCamera || nodes.isLight || nodes.name === "bounding-box"))
@@ -109,6 +111,9 @@ const LayerTreemap = () => {
 
             if (linksStructure) {
               const object = linksStructure.getObjectByProperty("id", nodes.id);
+
+              const { userData, name, id } = object;
+              setUserData({ ...userData, logId: uuidv4(), name, id });
 
               const box3 = new THREE.Box3();
               box3.setFromObject(object);
