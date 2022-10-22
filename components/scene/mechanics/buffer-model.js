@@ -83,30 +83,6 @@ const BufferModel = ({ path, index, layerName }) => {
     setLayersUpdated(true);
   };
 
-  const handleBoundingBox = (bbox) => {
-    if (bbox) {
-      if (!boundingBox) {
-        setBoundingBox({ ...bbox, id: uuidv4() });
-      } else {
-        let { min: _min = {}, max: _max = {} } = boundingBox;
-        let min = { ..._min };
-        let max = { ..._max };
-
-        /* min */
-        if (bbox.min.x < min.x) min.x = bbox.min.x;
-        if (bbox.min.y < min.y) min.y = bbox.min.y;
-        if (bbox.min.z < min.z) min.z = bbox.min.z;
-
-        /* max */
-        if (bbox.max.x > max.x) max.x = bbox.max.x;
-        if (bbox.max.y > max.y) max.y = bbox.max.y;
-        if (bbox.max.z > max.z) max.z = bbox.max.z;
-
-        setBoundingBox({ min, max, id: uuidv4() });
-      }
-    }
-  };
-
   const handleMetaData = (metadata = {}) => {
     let metaData_copy = metaData;
 

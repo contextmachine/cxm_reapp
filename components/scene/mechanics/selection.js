@@ -18,8 +18,7 @@ const Selection = () => {
   const [caughtLevel, setCaughtLevel] = useState();
 
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
-
-  console.log("caughtMeshes", caughtMeshes);
+  const setHoverBox = useStatusStore(({ setHoverBox }) => setHoverBox);
 
   useEffect(() => {
     const handleRaycasting = (e) => {
@@ -97,23 +96,13 @@ const Selection = () => {
       const caughtLevelObject = scene.getObjectById(caughtLevel);
 
       if (caughtLevelObject) {
-        scene.children.map((item = {}) => {
-          if (item.type === "BoxHelper" && item.id !== caughtLevel) {
-            scene.remove(item);
-          }
-        });
+        const box3 = new THREE.Box3();
+        box3.setFromObject(caughtLevelObject);
 
-        const box = new THREE.BoxHelper(caughtLevelObject, 0x0000ff);
-        box.material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-
-        scene.add(box);
+        setHoverBox({ ...box3, logId: uuidv4() });
       }
     } else {
-      scene.children.map((item = {}) => {
-        if (item.type === "BoxHelper") {
-          scene.remove(item);
-        }
-      });
+      setHoverBox(null);
     }
 
     setNeedsRender(true);

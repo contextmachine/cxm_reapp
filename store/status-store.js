@@ -25,6 +25,9 @@ const useStatusStore = create((set) => ({
   boundingBox: null /* {min: {x,y,z}, max: {x,y,z}, isBox3} */,
   setBoundingBox: (e) => set({ boundingBox: e }),
   /* */
+  hoverBox: null,
+  setHoverBox: (e) => set({ hoverBox: e }),
+  /* */
   linksStructure: null,
   setLinksStructure: (e) => set({ linksStructure: e }),
   linksLogId: null,
