@@ -15,8 +15,6 @@ const InfographicsProvider = () => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
   useEffect(() => {
-    console.log("keyFilter", keyFilter);
-
     if (keyFilter) {
       const { key, value: val } = keyFilter;
 
@@ -28,7 +26,11 @@ const InfographicsProvider = () => {
           ({ id, value }) => id === key && value === val
         );
 
-        if (!foundKey && obj.name !== "bounding-box") {
+        if (
+          !foundKey &&
+          obj.name !== "bounding-box" &&
+          obj.name !== "hover-box"
+        ) {
           if (obj.material) {
             obj.visible = false;
 

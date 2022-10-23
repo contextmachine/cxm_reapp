@@ -91,7 +91,14 @@ const LayerTreemap = () => {
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   const renderTree = (nodes) => {
-    if (!(nodes.isCamera || nodes.isLight || nodes.name === "bounding-box"))
+    if (
+      !(
+        nodes.isCamera ||
+        nodes.isLight ||
+        nodes.name === "bounding-box" ||
+        nodes.name === "hover-box"
+      )
+    )
       return (
         <TreeItem
           key={nodes.id}
