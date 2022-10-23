@@ -8,7 +8,13 @@ import { v4 as uuidv4 } from "uuid";
 
 const Selection = () => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
+  const userData = useStatusStore(({ userData }) => userData);
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
+
+  const setInfographicsData = useStatusStore(
+    ({ setInfographicsData }) => setInfographicsData
+  );
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -30,8 +36,6 @@ const Selection = () => {
 
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
   const setHoverBox = useStatusStore(({ setHoverBox }) => setHoverBox);
-
-  console.log("deepLevel", deepLevel);
 
   /* Шаг 1: На этом этапе мы находим какой объект на самом глубоком уровне попадает в область курсора  */
   useEffect(() => {
@@ -107,6 +111,8 @@ const Selection = () => {
         setCaughtLevel(null);
         setDeepLevel(1);
         setBoundingBox(null);
+
+        setInfographicsData(null);
         setUserData(null);
       };
 
