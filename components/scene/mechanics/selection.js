@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const Selection = () => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+  const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -29,6 +30,8 @@ const Selection = () => {
 
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
   const setHoverBox = useStatusStore(({ setHoverBox }) => setHoverBox);
+
+  console.log("deepLevel", deepLevel);
 
   /* Шаг 1: На этом этапе мы находим какой объект на самом глубоком уровне попадает в область курсора  */
   useEffect(() => {
@@ -104,6 +107,7 @@ const Selection = () => {
         setCaughtLevel(null);
         setDeepLevel(1);
         setBoundingBox(null);
+        setUserData(null);
       };
 
       window.addEventListener("click", handleClick);
@@ -139,6 +143,8 @@ const Selection = () => {
         let caughtLevelId;
 
         if (caughtItem.id === deepObjectId) {
+          console.log("aa");
+
           /* Шаг 2.3: Определяем id выбранного объекта на определенном этапе погружения */
           if (deepLevel < indexList.length) {
             /* Шаг 2.3.1: Если актуальный уровень погружения меньше списка предков */
@@ -148,8 +154,12 @@ const Selection = () => {
             caughtLevelId = caughtItem.id;
           }
         } else {
+          console.log("ab");
+
           /* Если спустились на определенный уровень у другого объекта, а актуального объекта другая структура вложения парент групп */
           if (deepObjectId) {
+            console.log("aba");
+
             const alterItem = scene.getObjectById(deepObjectId);
             const alterList = [];
 
@@ -164,12 +174,22 @@ const Selection = () => {
             const diff = indexList.filter((x) => !alterList.includes(x));
 
             if (diff.length > 0) {
+              console.log("abaa");
               caughtLevelId = diff[0];
             } else {
+              console.log("abab");
               /* значит, соседний братан в подгруппе по сравнению с предыдуще выбранным оъектом */
-              caughtLevelId = caughtItem.id;
+              if (deepLevel < indexList.length) {
+                /* Шаг 2.3.1: Если актуальный уровень погружения меньше списка предков */
+                caughtLevelId = indexList[deepLevel];
+              } else {
+                /* Шаг 2.3.2: Если список предков меньше уровня погружения, значит мы дошли до самого элемента */
+                caughtLevelId = caughtItem.id;
+              }
             }
           } else {
+            console.log("abb");
+
             caughtLevelId = indexList.length > 1 ? indexList[1] : caughtItem.id;
           }
         }
@@ -206,6 +226,9 @@ const Selection = () => {
 
         const object = scene.getObjectById(caughtLevel);
         if (object) {
+          const { userData, name, id } = object;
+          setUserData({ ...userData, logId: uuidv4(), name, id });
+
           const box3 = new THREE.Box3();
           box3.setFromObject(object);
 
