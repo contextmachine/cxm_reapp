@@ -4,6 +4,7 @@ import useStatusStore from "../../../store/status-store";
 
 const BoundingBox = () => {
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
+  const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const BoundingBox = () => {
       }) */}
 
       {edges.map((side = [], i) => {
+        console.log({side})
         return (
           <Line
             key={`side:${i}`}

@@ -4,6 +4,9 @@ import {
   disposeBoundsTree,
   acceleratedRaycast,
 } from "three-mesh-bvh";
+import {v4 as uuidv4} from "uuid";
+import {AVERAGE} from "three-mesh-bvh";
+import {useThree} from "@react-three/fiber";
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -15,8 +18,11 @@ const handleAddingScene = ({
   handleColorsLayer = () => {},
   handleBoundingBox = () => {},
   setLinksStructure = () => {},
+  handleZoomingToBox = () => {},
   scene,
   layerName,
+  initialZoomId ,
+  setBoundingBox,
 }) => {
   let materialsData = {};
   let bbox = {
@@ -27,6 +33,7 @@ const handleAddingScene = ({
   /* Шаг 1: Если геометрия — это целостная группа из подготовленных three.js элементов */
   const isGroup = dataGeometry?.isGroup;
   const isObject3D = dataGeometry?.isObject3D;
+  console.log({initialZoomId})
 
   /*  */
   if (!(isGroup || isObject3D)) {
@@ -87,7 +94,7 @@ const handleAddingScene = ({
       }
 
       /* bounding BVH */
-      geometry.computeBoundsTree();
+      geometry.computeBoundsTree({strategy: AVERAGE});
       const { boundingBox = {} } = geometry ? geometry : {};
       const { min = {}, max = {}, isBox3 } = boundingBox;
       if (isBox3) {
@@ -119,7 +126,25 @@ const handleAddingScene = ({
 
     handleColorsLayer(materialsData);
 
+    const box3 = new THREE.Box3();
+    console.log({scene})
+    if (initialZoomId && scene) {
+      const object = scene.getObjectByProperty("id", initialZoomId);
+      if (object) {
+        box3.setFromObject(object);
+        setBoundingBox({ ...box3, logId: uuidv4() });
+        handleZoomingToBox(box3)
+      }
+    } else if (!initialZoomId && scene) {
+      if (fileGroup) {
+        box3.setFromObject(fileGroup);
+        setBoundingBox({ ...box3, logId: uuidv4() });
+        handleZoomingToBox(box3)
+      }
+    }
+
     scene.add(fileGroup);
+
 
     /*const box3 = new THREE.Box3();
     box3.setFromObject(group);*/
@@ -187,6 +212,13 @@ const handleAddingScene = ({
 
     if (dataGeometry.isPoints) {
       dataGeometry.material.size = 1.4;
+    }
+
+    const box3 = new THREE.Box3();
+    if (dataGeometry) {
+      box3.setFromObject(dataGeometry);
+      setBoundingBox({ ...box3, logId: uuidv4() });
+      handleZoomingToBox(box3)
     }
 
     scene.add(dataGeometry);

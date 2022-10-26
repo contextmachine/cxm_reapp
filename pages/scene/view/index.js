@@ -80,7 +80,7 @@ const View = ({ viewType, setViewType }) => {
 
   const fullsize = useMemo(() => {
     if (full) return true;
-  });
+  }, [full]);
 
   return (
     <Wrapper data-mode={fullsize ? "full" : "mini"}>
