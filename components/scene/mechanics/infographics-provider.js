@@ -36,16 +36,11 @@ const InfographicsProvider = () => {
 
             obj.material.opacity = 0.3;
             obj.material.transparent = true;
-
-            console.log("obj name", obj.name);
-            console.log("obj.material.opacity", obj.material.opacity);
           }
         } else {
           obj.visible = true;
         }
       });
-
-      console.log("scene enter", scene);
     } else {
       scene.traverse((obj = {}) => {
         if (obj.material) {

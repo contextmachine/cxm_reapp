@@ -172,8 +172,6 @@ const InfographicsScene = () => {
       })
       .flat();
 
-    console.log("itemsList", itemsList);
-
     let itemQuatro = [];
     for (let i = 0; i < 4; i++) {
       const q = itemsList.length / 4;
@@ -182,8 +180,6 @@ const InfographicsScene = () => {
         [...itemsList].filter((_, v) => v >= q * i && v < q * (i + 1))
       );
     }
-
-    console.log("itemQuatro", itemQuatro);
 
     let items = itemQuatro.map((l, i) => {
       return (

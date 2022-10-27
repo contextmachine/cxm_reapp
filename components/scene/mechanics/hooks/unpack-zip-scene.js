@@ -24,7 +24,6 @@ const unpackZipScene = async ({
       loader.parse(
         inflated,
         function (obj) {
-          console.log("obj", obj);
 
           setDataGeometry(obj);
           SetFetched(true);
@@ -37,7 +36,6 @@ const unpackZipScene = async ({
     } else {
       /* Шаг 2.2: тип сцены - массив с элементами, надо разбирать каждую */
       setDataGeometry(inflated);
-      console.log("inflated", inflated);
 
       SetFetched(true);
     }

@@ -48,8 +48,6 @@ const Scene = ({ viewType, includedKeys, pid }) => {
     }
   }, [experimental]);
 
-  console.log("experimentalModule", experimentalModule);
-
   return (
     <>
       <Canvas frameloop="demand">

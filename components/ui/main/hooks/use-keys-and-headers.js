@@ -26,7 +26,7 @@ const useKeysAndHeaders = ({
       const { includes = [], metadata = {}, chart = {} } = data;
       const { headers = [] } = chart;
       const { default_view } = metadata;
-
+      
       /* Шаг 2. Устанавливаем headers */
       setHeaders(headers);
 

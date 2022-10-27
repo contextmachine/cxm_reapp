@@ -56,7 +56,6 @@ const BoundingBox = () => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
   useEffect(() => {
-    console.log("caughtItemcaughtItem");
     setNeedsRender(true);
   }, [boundingBox]);
 

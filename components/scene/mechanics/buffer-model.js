@@ -229,7 +229,7 @@ export default BufferModel;
             return response.json();
           })
           .then((responseJSON) => {
-            console.log("responseJSON", responseJSON);
+           
 
             setDataGeometry(responseJSON);
             SetFetched(true);

@@ -210,8 +210,6 @@ class Rhino3dmLoader extends Loader {
       diffusecolor.b = 1;
     }
 
-    // console.log( material );
-
     const mat = new MeshStandardMaterial({
       color: diffusecolor,
       name: material.name,
@@ -261,7 +259,6 @@ class Rhino3dmLoader extends Loader {
   }
 
   _createGeometry(data) {
-    // console.log(data);
 
     const object = new Object3D();
     const instanceDefinitionObjects = [];
@@ -751,7 +748,6 @@ function Rhino3dmWorker() {
 
     switch (message.type) {
       case "init":
-        // console.log(message)
         libraryConfig = message.libraryConfig;
         const wasmBinary = libraryConfig.wasmBinary;
         let RhinoModule;

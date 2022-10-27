@@ -91,8 +91,6 @@ const LogAuth = () => {
         body,
       })
         .then((res) => {
-          const body = res.json().then((a) => console.log("a", a));
-
           if (id) {
             setDone(true);
           } else {

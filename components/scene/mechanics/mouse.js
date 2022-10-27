@@ -115,7 +115,6 @@ const Mouse = () => {
 
   /*useEffect(() => {
     if (lineRef && lineRef.current) {
-      console.log("lineRef", lineRef);
     }
   }, [lineRef]);*/
 

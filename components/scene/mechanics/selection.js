@@ -149,7 +149,6 @@ const Selection = () => {
         let caughtLevelId;
 
         if (caughtItem.id === deepObjectId) {
-          console.log("aa");
 
           /* Шаг 2.3: Определяем id выбранного объекта на определенном этапе погружения */
           if (deepLevel < indexList.length) {
@@ -160,11 +159,9 @@ const Selection = () => {
             caughtLevelId = caughtItem.id;
           }
         } else {
-          console.log("ab");
 
           /* Если спустились на определенный уровень у другого объекта, а актуального объекта другая структура вложения парент групп */
           if (deepObjectId) {
-            console.log("aba");
 
             const alterItem = scene.getObjectById(deepObjectId);
             const alterList = [];
@@ -180,10 +177,8 @@ const Selection = () => {
             const diff = indexList.filter((x) => !alterList.includes(x));
 
             if (diff.length > 0) {
-              console.log("abaa");
               caughtLevelId = diff[0];
             } else {
-              console.log("abab");
               /* значит, соседний братан в подгруппе по сравнению с предыдуще выбранным оъектом */
               if (deepLevel < indexList.length) {
                 /* Шаг 2.3.1: Если актуальный уровень погружения меньше списка предков */
@@ -194,7 +189,6 @@ const Selection = () => {
               }
             }
           } else {
-            console.log("abb");
 
             caughtLevelId = indexList.length > 1 ? indexList[1] : caughtItem.id;
           }
