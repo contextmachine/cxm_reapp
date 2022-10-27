@@ -560,7 +560,7 @@ const TopBar = ({ headers = [] }) => {
           </Space>
         </LeftSide>
 
-        <RightSide
+        {/* <RightSide
           ref={graphicsRef}
           data-type={graphicsPanel ? "fullsize" : "default"}
         >
@@ -575,7 +575,7 @@ const TopBar = ({ headers = [] }) => {
           </ChartHeader>
 
           {graphicsAreReady && <ChartBar headers={headers} />}
-        </RightSide>
+          </RightSide> */}
       </Bar>
     </>
   );
