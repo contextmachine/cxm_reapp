@@ -51,12 +51,14 @@ const App = () => {
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
   const setMouse = useToolsStore(({ setMouse }) => setMouse);
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
+  const setInitialZoomId = useStatusStore(({ setInitialZoomId }) => setInitialZoomId);
 
   useEffect(() => {
     setLayersData({});
     setMetaData({});
     setMouse(false);
     setBoundingBox(null);
+    setInitialZoomId(null)
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
@@ -67,7 +69,7 @@ const App = () => {
   const { pid, experimental } = query;
 
   /* Шаг 1.1: Хук */
-  useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders });
+  useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders, setInitialZoomId });
 
   /* Настроить взаимодействие с telegram API */
   useHandleStatus({ pid, isExportScreen, tools, user });

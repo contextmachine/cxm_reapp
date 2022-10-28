@@ -27,6 +27,8 @@ const useStatusStore = create((set) => ({
   /* */
   hoverBox: null,
   setHoverBox: (e) => set({ hoverBox: e }),
+  initialZoomId: null,
+  setInitialZoomId: (e) => set({ initialZoomId: e }),
   /* */
   linksStructure: null,
   setLinksStructure: (e) => set({ linksStructure: e }),
@@ -35,6 +37,9 @@ const useStatusStore = create((set) => ({
   /* */
   hiddenLayers: null,
   setHiddenLayers: (e) => set({ hiddenLayers: e }),
+  /* */
+  zoomSetting: null,
+  setZoomSetting: (e) => set({ zoomSetting: e }),
   /* */
   needsRender: false,
   setNeedsRender: (e) => set({ needsRender: e }),

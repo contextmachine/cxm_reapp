@@ -15,12 +15,6 @@ import { v4 as uuidv4 } from "uuid";
 const Camera = (props = {}) => {
   const { viewType } = props;
 
-  const [zoom, setZoom] = useState(0);
-  const [position, setPosition] = useState([0, 0, 50]);
-  const [target0, setTarget0] = useState([0, 0, 0]);
-
-  const [changeLogId, setChangeLogId] = useState(uuidv4());
-
   /* Шаг 1: refs и useThree */
 
   const perspectiveCam = useRef();
@@ -36,8 +30,6 @@ const Camera = (props = {}) => {
     ({ setControlsInProcess }) => setControlsInProcess
   );
 
-  const zoomSetting = useStatusStore(({ zoomSetting }) => zoomSetting);
-
   const { get, set } = useThree(({ get, set }) => ({ get, set }));
 
   useEffect(() => {
@@ -47,16 +39,16 @@ const Camera = (props = {}) => {
       if (viewType === "perspective") {
         set({ camera: perspectiveCam.current });
 
-        setZoom(zoomSetting ? zoomSetting : 20);
+        setZoom(20);
         setPosition([-500, 900, 800]);
       } else {
         set({ camera: orthoCam.current });
 
         if (viewType === "top") {
-          setZoom(zoomSetting ? zoomSetting : 6);
+          setZoom(6);
           setPosition([0, 0, 1900]);
         } else {
-          setZoom(zoomSetting ? zoomSetting : 6);
+          setZoom(6);
           setPosition([-500, 900, 800]);
         }
       }
@@ -83,6 +75,12 @@ const Camera = (props = {}) => {
       controls.current.removeEventListener("end", activeNorender);
     };
   }, [controls]); */
+
+  const [zoom, setZoom] = useState(0);
+  const [position, setPosition] = useState([0, 0, 50]);
+  const [target0, setTarget0] = useState([0, 0, 0]);
+
+  const [changeLogId, setChangeLogId] = useState(uuidv4());
 
   useEffect(() => {
     if (controlsInProccess) {
@@ -116,7 +114,7 @@ const Camera = (props = {}) => {
       <OrbitControls
         minPolarAngle={0}
         maxPolarAngle={Math.PI * 0.7}
-        enableRotate={viewType !== "top"}
+        enableRotate={viewType === "top" ? false : true}
         enableZoom
         enablePan
         rev

@@ -513,7 +513,7 @@ const TopBar = ({ headers = [] }) => {
                               }
                             >
                               <Text
-                                ellipsis={{ rows: 1 }}
+                                ellipsis={{rows: true}}
                                 style={{ maxWidth: "120px" }}
                               >
                                 {name === "По цветам"

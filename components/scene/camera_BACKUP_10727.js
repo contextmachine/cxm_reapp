@@ -84,6 +84,15 @@ const Camera = (props = {}) => {
     };
   }, [controls]); */
 
+<<<<<<< HEAD
+  const [zoom, setZoom] = useState(0);
+  const [position, setPosition] = useState([0, 0, 50]);
+  const [target0, setTarget0] = useState([0, 0, 0]);
+
+  const [changeLogId, setChangeLogId] = useState(uuidv4());
+
+=======
+>>>>>>> origin/develop-a
   useEffect(() => {
     if (controlsInProccess) {
       const timer = setTimeout(() => {

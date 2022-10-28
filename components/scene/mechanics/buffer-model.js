@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
-/* import {
+import {
   computeBoundsTree,
   disposeBoundsTree,
   acceleratedRaycast,
-} from "three-mesh-bvh";*/
+} from "three-mesh-bvh";
 import useStatusStore from "../../../store/status-store";
 import unpackZipScene from "./hooks/unpack-zip-scene";
 import handleAddingScene from "./hooks/handle-adding-scene";
@@ -32,9 +32,14 @@ const BufferModel = ({ path, index, layerName }) => {
   const metaData = useStatusStore(({ metaData }) => metaData);
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
 
-  /* Глоб хук: boudning box */
+  /* Глоб хук: bounding box */
   const boundingBox = useStatusStore(({ boundingBox }) => boundingBox);
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
+
+  const initialZoomId = useStatusStore(({ initialZoomId }) => initialZoomId);
+  const setInitialZoomId = useStatusStore(
+    ({ setInitialZoomId }) => setInitialZoomId
+  );
 
   /* Глоб хук: link structure */
   const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
@@ -51,7 +56,11 @@ const BufferModel = ({ path, index, layerName }) => {
 
   const [dataGeometry, setDataGeometry] = useState(null);
 
-  const { scene } = useThree();
+  const {
+    scene,
+    camera,
+    size: { width, height },
+  } = useThree();
 
   /* Шаг 1: Загрузить данные ключа */
   useEffect(() => {
@@ -81,6 +90,40 @@ const BufferModel = ({ path, index, layerName }) => {
 
     setLayersData(layersData_copy);
     setLayersUpdated(true);
+  };
+
+  const handleZoomingToBox = (objBox) => {
+    if (objBox) {
+      camera.zoom = Math.min(
+        width / (objBox.max.x - objBox.min.x) / 3,
+        height / (objBox.max.y - objBox.min.y) / 3
+      );
+      camera?.updateProjectionMatrix();
+    }
+  };
+
+  const handleBoundingBox = (bbox) => {
+    if (bbox) {
+      if (!boundingBox) {
+        setBoundingBox({ ...bbox, id: uuidv4() });
+      } else {
+        let { min: _min = {}, max: _max = {} } = boundingBox;
+        let min = { ..._min };
+        let max = { ..._max };
+
+        /* min */
+        if (bbox.min.x < min.x) min.x = bbox.min.x;
+        if (bbox.min.y < min.y) min.y = bbox.min.y;
+        if (bbox.min.z < min.z) min.z = bbox.min.z;
+
+        /* max */
+        if (bbox.max.x > max.x) max.x = bbox.max.x;
+        if (bbox.max.y > max.y) max.y = bbox.max.y;
+        if (bbox.max.z > max.z) max.z = bbox.max.z;
+
+        setBoundingBox({ min, max, id: uuidv4() });
+      }
+    }
   };
 
   const handleMetaData = (metadata = {}) => {
@@ -199,6 +242,10 @@ const BufferModel = ({ path, index, layerName }) => {
           layerName,
           scene,
           setLinksStructure,
+          linksStructure,
+          initialZoomId,
+          setBoundingBox,
+          handleZoomingToBox,
         });
 
         setNeedsRender(true);

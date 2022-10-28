@@ -27,11 +27,9 @@ const Camera = (props = {}) => {
   const orthoCam = useRef();
   const controls = useRef();
 
-  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+  const { scene, invalidate } = useThree();
 
-  const controlsInProccess = useStatusStore(
-    ({ controlsInProccess }) => controlsInProccess
-  );
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
   const setControlsInProcess = useStatusStore(
     ({ setControlsInProcess }) => setControlsInProcess
   );
@@ -67,12 +65,15 @@ const Camera = (props = {}) => {
   }, [get, set, viewType]);
 
   /* useEffect(() => {
+    console.log("controls 1");
 
     const activeRender = () => {
+      console.log("movig");
       setNeedsRender(true);
     };
 
     const activeNorender = () => {
+      console.log("end ");
       setNeedsRender(false);
     };
 
@@ -85,16 +86,14 @@ const Camera = (props = {}) => {
   }, [controls]); */
 
   useEffect(() => {
-    if (controlsInProccess) {
-      const timer = setTimeout(() => {
-        setControlsInProcess(false);
-      }, 100);
+    const timer = setTimeout(() => {
+      setControlsInProcess(false);
+    }, 100);
 
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [changeLogId, controlsInProccess]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [changeLogId]);
 
   return (
     <>
@@ -124,7 +123,12 @@ const Camera = (props = {}) => {
         panSpeed={viewType === "perspective" ? 0.06 : 2}
         rotateSpeed={2}
         target={target0}
-        /* onEnd={() => setControlsInProcess(false)} */
+        /* onChange={(e) => console.log("eee", e)} */
+        /* onStart={() => {
+          setNeedsRender(true);
+          setControlsInProcess(true);
+        }}
+        onEnd={() => setControlsInProcess(false)} */
         onStart={(e) => {
           setNeedsRender(true);
           setControlsInProcess(true);

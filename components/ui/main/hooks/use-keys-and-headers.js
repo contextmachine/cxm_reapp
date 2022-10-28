@@ -9,6 +9,7 @@ const useKeysAndHeaders = ({
   setIncludedKeys = () => {},
   setViewType = () => {},
   setHeaders = () => {},
+  setInitialZoomId = () => {},
 }) => {
   const setLoadingMessage = useStatusStore(
     ({ setLoadingMessage }) => setLoadingMessage
@@ -25,8 +26,8 @@ const useKeysAndHeaders = ({
       const { data } = response;
       const { includes = [], metadata = {}, chart = {} } = data;
       const { headers = [] } = chart;
-      const { default_view } = metadata;
-      
+      const { default_view, default_zoom_on_id = undefined } = metadata;
+
       /* Шаг 2. Устанавливаем headers */
       setHeaders(headers);
 
@@ -36,6 +37,10 @@ const useKeysAndHeaders = ({
         (default_view === "perspective" && default_view === "ortho")
       ) {
         setViewType(default_view);
+      }
+
+      if (default_zoom_on_id) {
+        setInitialZoomId(default_zoom_on_id);
       }
 
       setIncludedKeys(includes);
