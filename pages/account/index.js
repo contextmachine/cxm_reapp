@@ -62,7 +62,9 @@ const Account = () => {
   /* Взаимодействие с telegram API */
   useEffect(() => {
     if (user) {
-      const webapp = window.Telegram.WebApp;
+      const Telegram = window.Telegram;
+
+      const { WebApp: webapp } = Telegram ? Telegram : {};
       const mainbutton = webapp.MainButton;
 
       webapp.expand();
