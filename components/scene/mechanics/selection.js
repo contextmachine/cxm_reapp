@@ -106,7 +106,12 @@ const Selection = () => {
         window.removeEventListener("click", handleClick);
       };
     } else if (caughtMeshes && caughtMeshes.length === 0 && scene) {
-      const handleClick = () => {
+      const handleClick = (e) => {
+        const rightPanel = document.getElementById("right-panel");
+        const isClickOnRightPanel = rightPanel && rightPanel.contains(e.target);
+
+        if (isClickOnRightPanel) return;
+
         setDeepObjectId(null);
         setCaughtLevel(null);
         setDeepLevel(1);
@@ -149,7 +154,6 @@ const Selection = () => {
         let caughtLevelId;
 
         if (caughtItem.id === deepObjectId) {
-
           /* Шаг 2.3: Определяем id выбранного объекта на определенном этапе погружения */
           if (deepLevel < indexList.length) {
             /* Шаг 2.3.1: Если актуальный уровень погружения меньше списка предков */
@@ -159,16 +163,16 @@ const Selection = () => {
             caughtLevelId = caughtItem.id;
           }
         } else {
-
           /* Если спустились на определенный уровень у другого объекта, а актуального объекта другая структура вложения парент групп */
           if (deepObjectId) {
-
             const alterItem = scene.getObjectById(deepObjectId);
             const alterList = [];
 
-            alterItem.traverseAncestors((obj = {}, i) => {
-              alterList.push(obj.id);
-            });
+            if (alterItem) {
+              alterItem.traverseAncestors((obj = {}, i) => {
+                alterList.push(obj.id);
+              });
+            }
 
             alterList = [...alterList].reverse();
 
@@ -189,7 +193,6 @@ const Selection = () => {
               }
             }
           } else {
-
             caughtLevelId = indexList.length > 1 ? indexList[1] : caughtItem.id;
           }
         }

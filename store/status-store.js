@@ -56,6 +56,9 @@ const useStatusStore = create((set) => ({
   /* */
   keyFilter: null,
   setKeyFilter: (e) => set({ keyFilter: e }),
+  /* */
+  keyFetch: null,
+  setKeyFetch: (e) => set({ keyFetch: e }),
 }));
 
 export default useStatusStore;

@@ -4,6 +4,7 @@ import { Header, Wrapper, HR, Overflow, List, Tag } from "./__styles";
 import { Row } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import ChartBlock from "./blocks/chart";
+import ControlsBlock from "./blocks/controls";
 
 /* userData для item */
 /*const userData = {
@@ -61,6 +62,8 @@ const Infographics = () => {
     infographics = [],
   } = infographicsData ? infographicsData : {};
 
+  console.log("infographicsData", infographicsData);
+
   const handleClose = () => {
     setInfographicsData(null);
   };
@@ -69,7 +72,7 @@ const Infographics = () => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper id={`right-panel`}>
         <Header>
           <div style={{ fontSize: "24px" }}>
             {name ? name : `Группа без имени`}
@@ -98,6 +101,11 @@ const Infographics = () => {
                       type.includes("piechart")) && (
                       <ChartBlock data={item} key={`c`} />
                     )}
+
+                  {type && type.includes("controls") && (
+                    <ControlsBlock data={item} />
+                  )}
+
                   <HR />
                 </Row>
               );

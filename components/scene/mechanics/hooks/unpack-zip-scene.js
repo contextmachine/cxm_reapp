@@ -24,7 +24,6 @@ const unpackZipScene = async ({
       loader.parse(
         inflated,
         function (obj) {
-
           setDataGeometry(obj);
           SetFetched(true);
         },

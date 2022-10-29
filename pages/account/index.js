@@ -229,6 +229,9 @@ const Account = () => {
                   ExperimentalList.map((item = {}, i) => {
                     const { id, name } = item;
 
+                    console.log("id", id);
+                    console.log("name", name);
+
                     return (
                       <Project
                         key={`project:${i}`}
