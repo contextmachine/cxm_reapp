@@ -5,7 +5,7 @@ import { globalUrl } from "../../../store/server";
 
 import axios from "axios";
 
-const BufferIfcGroup = ({ includedKeys, pid }) => {
+const BufferIfcGroup = ({ includedKeys, pid, setPreviewImage }) => {
   const [serverInit, setServerInit] = useState(false);
 
   const [JSONlinks, setJSONllinks] = useState();
@@ -85,6 +85,7 @@ const BufferIfcGroup = ({ includedKeys, pid }) => {
               key={`b:${i}`}
               path={path}
               layerName={JSON_names[i]}
+              setPreviewImage={setPreviewImage}
             />
           );
         })}

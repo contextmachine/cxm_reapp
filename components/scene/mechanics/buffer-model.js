@@ -11,7 +11,7 @@ import unpackZipScene from "./hooks/unpack-zip-scene";
 import handleAddingScene from "./hooks/handle-adding-scene";
 import { v4 as uuidv4 } from "uuid";
 
-const BufferModel = ({ path, index, layerName }) => {
+const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
   const [loaded, setLoaded] = useState(false);
   const [fetched, SetFetched] = useState(false);
 
@@ -60,6 +60,7 @@ const BufferModel = ({ path, index, layerName }) => {
     scene,
     camera,
     size: { width, height },
+    gl,
   } = useThree();
 
   /* Шаг 1: Загрузить данные ключа */
@@ -94,10 +95,12 @@ const BufferModel = ({ path, index, layerName }) => {
 
   const handleZoomingToBox = (objBox) => {
     if (objBox) {
-      camera.zoom = Math.min(
-        width / (objBox.max.x - objBox.min.x) / 3,
-        height / (objBox.max.y - objBox.min.y) / 3
-      );
+      console.log({ objBox });
+      camera.zoom =
+        Math.min(
+          width / (objBox.max.x - objBox.min.x) / 1.5,
+          height / (objBox.max.y - objBox.min.y) / 1.5
+        ) / 1.5;
       camera?.updateProjectionMatrix();
     }
   };
@@ -255,6 +258,19 @@ const BufferModel = ({ path, index, layerName }) => {
       }
     }
   }, [loaded, dataGeometry, index, loadingFileIndex, layerName]);
+
+  useEffect(() => {
+    if (loaded) {
+      const screenshot = gl?.domElement.toDataURL("image/jpeg", 0.5);
+      if (setPreviewImage) {
+        setPreviewImage(screenshot);
+        //let img = new Image();
+        //img.src = screenshot;
+        //let w = window.open("", "");
+        //w.document.body.appendChild(img);
+      }
+    }
+  }, [loaded]);
 
   return <></>;
 };

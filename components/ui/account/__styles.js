@@ -92,7 +92,12 @@ Project.Wrapper = styled.div`
 Project.Preview = styled.div`
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(155deg, #1a56f554, #ec6baca6);
+  background-image: ${({ $preview = false }) =>
+    $preview
+      ? `url(${$preview})`
+      : "linear-gradient(155deg, #1a56f554, #ec6baca6)"};
+  background-position: center center;
+  background-size: cover;
 `;
 
 Project.Header = styled.div`

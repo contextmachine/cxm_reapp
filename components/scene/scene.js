@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 
 import Camera from "./camera";
 
@@ -23,7 +23,7 @@ import InfographicsProvider from "./mechanics/infographics-provider";
 
 import useStatusStore from "../../store/status-store";
 
-const Scene = ({ viewType, includedKeys, pid }) => {
+const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
 
   const router = useRouter();
@@ -51,35 +51,37 @@ const Scene = ({ viewType, includedKeys, pid }) => {
   }, [experimental]);
 
   return (
-    <>
-      <Canvas frameloop="demand">
-        <Camera {...{ viewType }} />
+    <Canvas frameloop="demand" gl={{ preserveDrawingBuffer: true }}>
+      <Camera {...{ viewType }} />
 
-        <UpdateLayers />
+      <UpdateLayers />
 
-        <ambientLight />
-        <pointLight position={[50, 50, 60]} intensity={8} />
+      <ambientLight />
+      <pointLight position={[50, 50, 60]} intensity={8} />
 
-        {mouse && <Mouse />}
-        <Selection />
+      {mouse && <Mouse />}
+      <Selection />
 
-        {!experimental && (
-          <BufferIfcGroup includedKeys={includedKeys} pid={pid} />
-        )}
+      {!experimental && (
+        <BufferIfcGroup
+          includedKeys={includedKeys}
+          pid={pid}
+          setPreviewImage={setPreviewImage}
+        />
+      )}
 
-        {experimental && <BufferExperimental pid={pid} />}
+      {experimental && <BufferExperimental pid={pid} />}
 
-        <BoundingBox />
+      <BoundingBox />
 
-        <LayersProvider />
-        <InfographicsProvider />
+      <LayersProvider />
+      <InfographicsProvider />
 
-        <Invalidate />
+      <Invalidate />
 
-        {/* <Buffer3dm /> */}
-        {/*<BufferRhinoGroup />*/}
-      </Canvas>
-    </>
+      {/* <Buffer3dm /> */}
+      {/*<BufferRhinoGroup />*/}
+    </Canvas>
   );
 };
 
