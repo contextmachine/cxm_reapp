@@ -5,6 +5,7 @@ import { Skeleton, Space, Row, Col, Grid, Tooltip } from "antd";
 import axios from "axios";
 import AuthWrapper from "../../components/main/auth-wrapper";
 import LocalScripts from "../../components/ui/main/hooks/local-scripts";
+import { urlFor } from "../../lib/sanity";
 
 import {
   Wrapper,
@@ -18,6 +19,7 @@ import useSWR from "swr";
 import { appProdUrl, globalUrl } from "../../store/server";
 
 import ExperimentalList from "../../components/scene/mechanics/experimental/experimental-list";
+import { getAccountInfo, getAllScenes } from "../../lib/sanity";
 
 const { useBreakpoint } = Grid;
 
@@ -35,6 +37,8 @@ const Account = () => {
 
   const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
+  const [scenesData, setScenesData] = useState([]);
+
   useEffect(() => {
     if (!user) {
       fetch("/api/auth/user")
@@ -48,6 +52,18 @@ const Account = () => {
         });
     }
   }, [user]);
+
+  useEffect(() => {
+    getAllScenes()
+      .then((res) => {
+        console.log({ res });
+        if (scenesData.length === 0 && res?.length > 0) {
+          setScenesData(res);
+        }
+      })
+      .catch((e) => console.log(e));
+    //getAccountInfo({user_id: 'someone-like-you'}).then((res) => console.log(res)).catch(e => console.log({e}))
+  }, []);
 
   const { first_name = "", last_name = "" } = user ? user : {};
 
@@ -65,7 +81,7 @@ const Account = () => {
       const Telegram = window.Telegram;
 
       const { WebApp: webapp } = Telegram ? Telegram : {};
-      const mainbutton = webapp.MainButton;
+      const mainbutton = webapp?.MainButton;
 
       webapp.expand();
       if (mainbutton && user) {
@@ -82,6 +98,7 @@ const Account = () => {
       }
     }
   }, [tgLoaded, user]);
+  console.log(user?.id);
 
   /* Шаг 1: Загрузка */
   useEffect(() => {
@@ -182,13 +199,25 @@ const Account = () => {
                   <>
                     {scenes && !loadingProjects ? (
                       ["all", ...scenes].map((name, i) => {
+                        const sceneData = scenesData.find(
+                          (el) => el.scene_id === name
+                        );
+                        console.log({ sceneData });
                         return (
                           <Project
                             key={`project:${i}`}
                             onClick={() => handleProjectRedirect({ name })}
                           >
                             <Project.Wrapper>
-                              <Project.Preview></Project.Preview>
+                              <Project.Preview
+                                $preview={
+                                  sceneData?.thumbnail_img
+                                    ? urlFor(sceneData?.thumbnail_img)
+                                        .quality(75)
+                                        .url()
+                                    : false
+                                }
+                              />
                               <Project.Header>
                                 <Project.Title data-type="headTitle">
                                   {name === "all" ? (

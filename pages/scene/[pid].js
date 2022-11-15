@@ -17,6 +17,7 @@ import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-heade
 import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 import AuthWrapper from "../../components/main/auth-wrapper";
 import Infographics from "../../components/ui/infographics/infographics";
+import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/handle-update-info";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -31,6 +32,9 @@ const App = () => {
   /* Шаг 0: данные пользователя */
   const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
+
+  const [sceneData, setSceneData] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -51,14 +55,17 @@ const App = () => {
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
   const setMouse = useToolsStore(({ setMouse }) => setMouse);
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
-  const setInitialZoomId = useStatusStore(({ setInitialZoomId }) => setInitialZoomId);
+  const setInitialZoomId = useStatusStore(
+    ({ setInitialZoomId }) => setInitialZoomId
+  );
 
   useEffect(() => {
     setLayersData({});
     setMetaData({});
     setMouse(false);
     setBoundingBox(null);
-    setInitialZoomId(null)
+    setInitialZoomId(null);
+    setPreviewImage(null);
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
@@ -69,10 +76,18 @@ const App = () => {
   const { pid, experimental } = query;
 
   /* Шаг 1.1: Хук */
-  useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders, setInitialZoomId });
+  useKeysAndHeaders({
+    pid,
+    setIncludedKeys,
+    setViewType,
+    setHeaders,
+    setInitialZoomId,
+  });
 
   /* Настроить взаимодействие с telegram API */
   useHandleStatus({ pid, isExportScreen, tools, user });
+
+  useHandleUpdateInfo({ pid, sceneData, setSceneData, previewImage });
 
   return (
     <AuthWrapper user={user} userFetched={userFetched}>
@@ -102,6 +117,7 @@ const App = () => {
                   viewType,
                   includedKeys,
                   pid,
+                  setPreviewImage,
                 }}
               />
             )}
