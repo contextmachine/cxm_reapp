@@ -1,6 +1,6 @@
 import create from "zustand";
 
-const useStatusStore = create((set) => ({
+const useStatusStore = create((set, get) => ({
   serverInit: false,
   setServerInit: (e) => set({ serverInit: e }),
   /* */
@@ -59,6 +59,39 @@ const useStatusStore = create((set) => ({
   /* */
   keyFetch: null,
   setKeyFetch: (e) => set({ keyFetch: e }),
+  /* */
+  loadingAuth: 0,
+  setLoadingAuth: (e) => {
+    set({ loadingAuth: e });
+  },
+  loadingFilesDownload: 0,
+  setLoadingFilesDownload: (e) => {
+    set({ loadingFilesDownload: e });
+  },
+  loadingFilesDownloadTotal: 0,
+  setLoadingFilesDownloadTotal: (e) => {
+    set({ loadingFilesDownloadTotal: e });
+  },
+  loadingFilesUnarchive: 0,
+  setLoadingFilesUnarchive: (e) => {
+    set({ loadingFilesUnarchive: e });
+  },
+  loadingMetadata: 0,
+  setLoadingMetadata: (e) => {
+    set({ loadingMetadata: e });
+  },
+  loadingThreeJS: 0,
+  setLoadingThreeJS: (e) => {
+    set({ loadingThreeJS: e });
+  },
+  loadingDataSceneSanity: 0,
+  setLoadingDataSceneSanity: (e) => {
+    set({ loadingDataSceneSanity: e });
+  },
+  loadingDataThumbnail: 0,
+  setLoadingDataThumbnail: (e) => {
+    set({ loadingDataThumbnail: e });
+  },
 }));
 
 export default useStatusStore;

@@ -51,6 +51,37 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
     ({ setLayersUpdated }) => setLayersUpdated
   );
 
+  const setLoadingFilesDownload = useStatusStore(
+    ({ setLoadingFilesDownload }) => setLoadingFilesDownload
+  );
+
+  const setLoadingFilesUnarchive = useStatusStore(
+    ({ setLoadingFilesUnarchive }) => setLoadingFilesUnarchive
+  );
+
+  const setLoadingFilesDownloadTotal = useStatusStore(
+    ({ setLoadingFilesDownloadTotal }) => setLoadingFilesDownloadTotal
+  );
+
+  const setLoadingMetadata = useStatusStore(
+    ({ setLoadingMetadata }) => setLoadingMetadata
+  );
+
+  const setLoadingThreeJS = useStatusStore(
+    ({ setLoadingThreeJS }) => setLoadingThreeJS
+  );
+
+  const {
+    loadingFilesDownload,
+    loadingFilesUnarchive,
+    loadingFilesDownloadTotal,
+    loadingMetadata,
+    loadingThreeJS,
+    loadingAuth,
+    loadingDataSceneSanity,
+    loadingDataThumbnail,
+  } = useStatusStore();
+
   const filesTab = "По файлам";
   const materialsTab = "По цветам";
 
@@ -75,7 +106,18 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
           SetFetched(true);
         };
 
-        unpackZipScene({ path, setDataGeometry, SetFetched, onFailing });
+        unpackZipScene({
+          path,
+          setDataGeometry,
+          SetFetched,
+          onFailing,
+          setLoadingFilesDownload,
+          setLoadingFilesDownloadTotal,
+          setLoadingFilesUnarchive,
+          loadingFilesDownload,
+          loadingFilesUnarchive,
+          loadingFilesDownloadTotal,
+        });
       }
     }
   }, [path, index, loadingFileIndex, fetched]);
@@ -130,6 +172,7 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
   };
 
   const handleMetaData = (metadata = {}) => {
+    let metadataStart = performance.now();
     let metaData_copy = metaData;
 
     /* Добавляем версионность, чтобы отслеживать обновления */
@@ -197,6 +240,8 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
     });
 
     setMetaData(metaData_copy);
+    let metadataEnd = performance.now();
+    setLoadingMetadata(metadataEnd - metadataStart);
   };
 
   /* Управление вкладкой "По цветам" */
@@ -236,6 +281,9 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
 
   useEffect(() => {
     if (!loaded) {
+      setLoadingThreeJS(0);
+      let sceneAddingStart = performance.now();
+
       if (dataGeometry && index === loadingFileIndex) {
         /* Шаг 3: Если нужно превратить данные в mesh и для всех случаев добавить в сцену */
         handleAddingScene({
@@ -256,6 +304,8 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
         setLoaded(true);
         setLoadingFileIndex(loadingFileIndex + 1);
       }
+      let sceneAddingEnd = performance.now();
+      setLoadingThreeJS(loadingThreeJS + (sceneAddingEnd - sceneAddingStart));
     }
   }, [loaded, dataGeometry, index, loadingFileIndex, layerName]);
 
@@ -269,6 +319,28 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
         //let w = window.open("", "");
         //w.document.body.appendChild(img);
       }
+
+      console.log(
+        `
+          %cLoading complete!\n
+          Results:\n\n
+          Total time: ${
+            loadingAuth +
+            loadingFilesDownloadTotal +
+            loadingMetadata +
+            loadingThreeJS +
+            loadingDataSceneSanity +
+            loadingDataThumbnail
+          }ms;\n
+          Authorisation: ${loadingAuth}ms;\n
+          Files downloaded: ${loadingFilesDownload}ms;\n
+          Files unarchived: ${loadingFilesUnarchive}ms;\n
+          Files download + unarchivation: ${loadingFilesDownloadTotal}ms;\n
+          Files metadata update: ${loadingMetadata}ms;\n
+          Files added to three.js scene: ${loadingThreeJS}ms;\n
+`,
+        "color: green; font-weight: bold;"
+      );
     }
   }, [loaded]);
 

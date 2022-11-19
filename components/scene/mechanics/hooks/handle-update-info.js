@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSceneData } from "../../../../lib/sanity";
-import { useThree } from "@react-three/fiber";
+import useToolsStore from "../../../../store/tools-store";
+import useStatusStore from "../../../../store/status-store";
 /*<foo onClick={() => {
   gl.render(scene, camera)
   const screenshot = gl.domElement.toDataURL()
@@ -48,6 +49,13 @@ export const useHandleUpdateInfo = ({
   const [needsUpdate, setNeedsUpdate] = useState(false);
   const currentTime = new Date();
 
+  const setLoadingDataSceneSanity = useStatusStore(
+    ({ setLoadingDataSceneSanity }) => setLoadingDataSceneSanity
+  );
+  const setLoadingDataThumbnail = useStatusStore(
+    ({ setLoadingDataThumbnail }) => setLoadingDataThumbnail
+  );
+
   const currentTimeString = `${currentTime.getFullYear()}-${(
     "0" +
     (currentTime.getMonth() + 1)
@@ -58,7 +66,7 @@ export const useHandleUpdateInfo = ({
     if (pid) {
       getSceneData({ pid })
         .then((res) => {
-          console.log({ res });
+          //console.log({ res });
           if (res.length === 0) {
             //setSceneData({});
             setNeedsUpdate(true);
@@ -72,30 +80,54 @@ export const useHandleUpdateInfo = ({
 
   useEffect(() => {
     if (needsUpdate) {
+      let sceneUpdateStartTime = performance.now();
+
       sendSceneData(pid, currentTimeString, currentTimeString)
         .then((res) => {
-          console.log({ res }, 100);
+          //console.log({ res }, 100);
           setSceneData(res[0]);
         })
         .catch((e) => console.log(e))
         .finally(() => {
           setNeedsUpdate(false);
         });
+
+      let sceneUpdateEndTime = performance.now();
+
+      const processTimeResult = sceneUpdateEndTime - sceneUpdateStartTime;
+
+      setLoadingDataSceneSanity(processTimeResult);
+
+      console.log(
+        `%c Call to update scene data on Sanity took ${
+          sceneUpdateEndTime - sceneUpdateStartTime
+        } milliseconds`,
+        "color: green"
+      );
     }
   }, [needsUpdate]);
 
-  console.log({ sceneData });
+  //console.log({ sceneData });
 
   useEffect(() => {
     if (pid && previewImage && sceneData?._id) {
+      let sceneUpdateThumbnailStartTime = performance.now();
+
       const _id = sceneData?._id;
 
-      const thumbnail_img = previewImage;
-      //console.log({ thumbnail_img });
-
-      updateScenePreviewData(_id, thumbnail_img, currentTimeString)
-        .then((res) => console.log({ res }, 2000))
+      updateScenePreviewData(_id, previewImage, currentTimeString)
+        .then((res) => console.log("Scene thumbnail update"))
         .catch((e) => console.log(e));
+      let sceneUpdateThumbnailEndTime = performance.now();
+      const processTimeResult =
+        sceneUpdateThumbnailEndTime - sceneUpdateThumbnailStartTime;
+
+      setLoadingDataThumbnail(processTimeResult);
+
+      console.log(
+        `%c Call to update scene thumbnail on Sanity took ${processTimeResult} milliseconds`,
+        "color: green"
+      );
     }
   }, [previewImage]);
 };
