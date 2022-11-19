@@ -17,6 +17,7 @@ import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-heade
 import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 import AuthWrapper from "../../components/main/auth-wrapper";
 import GUI from "../../components/ui/gui/gui";
+import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/handle-update-info";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -31,6 +32,9 @@ const App = () => {
   /* Шаг 0: данные пользователя */
   const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
+
+  const [sceneData, setSceneData] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -61,6 +65,7 @@ const App = () => {
     setMouse(false);
     setBoundingBox(null);
     setInitialZoomId(null);
+    setPreviewImage(null);
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
@@ -81,6 +86,8 @@ const App = () => {
 
   /* Настроить взаимодействие с telegram API */
   useHandleStatus({ pid, isExportScreen, tools, user });
+
+  useHandleUpdateInfo({ pid, sceneData, setSceneData, previewImage });
 
   return (
     <AuthWrapper user={user} userFetched={userFetched}>
@@ -110,6 +117,7 @@ const App = () => {
                   viewType,
                   includedKeys,
                   pid,
+                  setPreviewImage,
                 }}
               />
             )}
