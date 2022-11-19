@@ -36,8 +36,12 @@ const App = () => {
   const [sceneData, setSceneData] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
+  const setLoadingAuth = useStatusStore(({ setLoadingAuth }) => setLoadingAuth);
+
   useEffect(() => {
-    if (!user) {
+    if (!user && setLoadingAuth) {
+      let authStartTime = performance.now();
+
       fetch("/api/auth/user")
         .then((res) => res.json())
         .then((res) => {
@@ -47,8 +51,15 @@ const App = () => {
 
           setUserFetched(true);
         });
+
+      let authEndTime = performance.now();
+
+      const resultTime = authEndTime - authStartTime;
+      setLoadingAuth(resultTime);
+
+      console.log(`Call to fetch user info took ${resultTime} milliseconds`);
     }
-  }, [user]);
+  }, [user, setLoadingAuth]);
 
   /* Шаг 1: Подчищаем данные */
   const setLayersData = useStatusStore(({ setLayersData }) => setLayersData);
@@ -60,12 +71,22 @@ const App = () => {
   );
 
   useEffect(() => {
+    let cleanupStartTime = performance.now();
+
     setLayersData({});
     setMetaData({});
     setMouse(false);
     setBoundingBox(null);
     setInitialZoomId(null);
     setPreviewImage(null);
+
+    let cleanupEndTime = performance.now();
+    console.log(
+      `%c Call to clear states took ${
+        cleanupEndTime - cleanupStartTime
+      } milliseconds`,
+      "color: green"
+    );
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
