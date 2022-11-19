@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 
 import ExperimentalList from "./mechanics/experimental/experimental-list";
 import BufferExperimental from "./mechanics/buffer-experimental";
-import InfographicsProvider from "./mechanics/infographics-provider";
+import GUIProvider from "./mechanics/gui-provider";
 
 import useStatusStore from "../../store/status-store";
 
@@ -72,7 +72,7 @@ const Scene = ({ viewType, includedKeys, pid }) => {
         <BoundingBox />
 
         <LayersProvider />
-        <InfographicsProvider />
+        <GUIProvider />
 
         <Invalidate />
 

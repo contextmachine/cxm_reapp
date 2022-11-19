@@ -1,0 +1,4 @@
+{
+    "d": true,
+    "something": "const something = n1 + n2; let v = 0; for(let i = 1; i < 1000; i ++) {v+=1}; const result = v + Math.sqrt(something); return result"
+}

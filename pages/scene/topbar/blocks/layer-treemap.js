@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const { Text } = Typography;
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
 
   &&&,

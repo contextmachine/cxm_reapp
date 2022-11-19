@@ -55,11 +55,9 @@ const Selection = styled(Select)`
   }
 `;
 
-const InfographicsPanel = ({ labels = [], racks = [] }) => {
-  const showInfographics = useStore(({ showInfographics }) => showInfographics);
-  const setShowInfographics = useStore(
-    ({ setShowInfographics }) => setShowInfographics
-  );
+const GUIPanel = ({ labels = [], racks = [] }) => {
+  const showGUI = useStore(({ showGUI }) => showGUI);
+  const setShowGUI = useStore(({ setShowGUI }) => setShowGUI);
 
   const infoSection = useStore(({ infoSection }) => infoSection);
   const setInfoSection = useStore(({ setInfoSection }) => setInfoSection);
@@ -182,7 +180,7 @@ const InfographicsPanel = ({ labels = [], racks = [] }) => {
         ListRef.current &&
         !ListRef.current.contains(e.target)
       )
-        setShowInfographics(false);
+        setShowGUI(false);
     };
 
     window.addEventListener("click", clickOutside);
@@ -192,7 +190,7 @@ const InfographicsPanel = ({ labels = [], racks = [] }) => {
     };
   }, []);
 
-  if (!showInfographics) return <></>;
+  if (!showGUI) return <></>;
 
   return (
     <Paper ref={PaperRef} data-type="infographics">
@@ -321,4 +319,4 @@ const InfographicsPanel = ({ labels = [], racks = [] }) => {
   );
 };
 
-export default InfographicsPanel;
+export default GUIPanel;

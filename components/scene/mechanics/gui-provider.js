@@ -4,13 +4,11 @@ import useStatusStore from "../../../store/status-store";
 import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
 
-const InfographicsProvider = () => {
+const GUIProvider = () => {
   const { scene } = useThree();
 
   const userData = useStatusStore(({ userData }) => userData);
-  const setInfographicsData = useStatusStore(
-    ({ setInfographicsData }) => setInfographicsData
-  );
+  const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
 
   const keyFilter = useStatusStore(({ keyFilter }) => keyFilter);
   const keyFetch = useStatusStore(({ keyFetch }) => keyFetch);
@@ -65,53 +63,61 @@ const InfographicsProvider = () => {
   useEffect(() => {
     if (userData) {
       let { name, id } = userData;
-      let { infographics, logId, ...otherUserData } = userData;
+      let { gui, logId, ...otherUserData } = userData;
 
-      if (infographics) {
+      if (gui) {
         /* Найти родительский объект-группу по id */
         const object = scene.getObjectById(id);
 
-        infographics = infographics.map((item = {}) => {
-          const { key } = item;
+        gui = gui.map((item = {}) => {
+          const { type } = item;
 
-          let values = {};
+          if (!(type === "controls")) {
+            const { key } = item;
 
-          if (object) {
-            /* Поиск, используя аттрибут "key" */
-            object.traverseVisible((obj = {}) => {
-              const { userData } = obj;
-              if (userData) {
-                const { properties = [] } = userData;
-                const foundKey = properties.find(({ id }) => id === key);
+            let values = {};
 
-                if (foundKey) {
-                  const { value } = foundKey;
+            if (object) {
+              /* Поиск, используя аттрибут "key" */
+              object.traverseVisible((obj = {}) => {
+                const { userData } = obj;
+                if (userData) {
+                  const { properties = [] } = userData;
+                  const foundKey = properties.find(({ id }) => id === key);
 
-                  if (!values[value]) values[value] = 0;
-                  values[value] += 1;
+                  if (foundKey) {
+                    const { value } = foundKey;
+
+                    if (!values[value]) values[value] = 0;
+                    values[value] += 1;
+                  }
                 }
-              }
+              });
+            }
+
+            let data = [];
+            Object.keys(values).map((name) => {
+              const count = values[name];
+
+              data.push({ id: name, value: count });
             });
+
+            console.log("gui", gui);
+
+            /* добавить children в аттрибут */
+            return { ...item, data };
           }
 
-          let data = [];
-          Object.keys(values).map((name) => {
-            const count = values[name];
-
-            data.push({ id: name, value: count });
-          });
-
-          /* добавить children в аттрибут */
-          return { ...item, data };
+          return item;
         });
 
-        setInfographicsData({
+        setGUIData({
           logId: uuidv4(),
-          infographics,
+          gui,
           ...otherUserData,
         });
       } else {
-        setInfographicsData(null);
+        setGUIData(null);
       }
     }
   }, [userData, scene]);
@@ -189,4 +195,4 @@ const InfographicsProvider = () => {
   return <></>;
 };
 
-export default InfographicsProvider;
+export default GUIProvider;

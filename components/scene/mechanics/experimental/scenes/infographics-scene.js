@@ -188,7 +188,7 @@ const InfographicsScene = () => {
           name={`Quarter #${i + 1}`}
           userData={{
             version: "1.0",
-            infographics: [
+            gui: [
               {
                 id: "color-linechart",
                 name: "график по цветам",
@@ -216,7 +216,7 @@ const InfographicsScene = () => {
         name={"figures"}
         userData={{
           version: "1.0",
-          infographics: [
+          gui: [
             {
               id: "shape-linechart",
               name: "график по фигурам",

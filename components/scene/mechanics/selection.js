@@ -12,9 +12,7 @@ const Selection = () => {
   const userData = useStatusStore(({ userData }) => userData);
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
-  const setInfographicsData = useStatusStore(
-    ({ setInfographicsData }) => setInfographicsData
-  );
+  const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -117,7 +115,7 @@ const Selection = () => {
         setDeepLevel(1);
         setBoundingBox(null);
 
-        setInfographicsData(null);
+        setGUIData(null);
         setUserData(null);
       };
 

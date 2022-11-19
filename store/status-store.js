@@ -51,8 +51,8 @@ const useStatusStore = create((set) => ({
   /* Инфографика */
   userData: null,
   setUserData: (e) => set({ userData: e }),
-  infographicsData: null,
-  setInfographicsData: (e) => set({ infographicsData: e }),
+  GUIData: null,
+  setGUIData: (e) => set({ GUIData: e }),
   /* */
   keyFilter: null,
   setKeyFilter: (e) => set({ keyFilter: e }),

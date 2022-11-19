@@ -16,7 +16,7 @@ import useKeysAndHeaders from "../../components/ui/main/hooks/use-keys-and-heade
 
 import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 import AuthWrapper from "../../components/main/auth-wrapper";
-import Infographics from "../../components/ui/infographics/infographics";
+import GUI from "../../components/ui/gui/gui";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -51,14 +51,16 @@ const App = () => {
   const setMetaData = useStatusStore(({ setMetaData }) => setMetaData);
   const setMouse = useToolsStore(({ setMouse }) => setMouse);
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
-  const setInitialZoomId = useStatusStore(({ setInitialZoomId }) => setInitialZoomId);
+  const setInitialZoomId = useStatusStore(
+    ({ setInitialZoomId }) => setInitialZoomId
+  );
 
   useEffect(() => {
     setLayersData({});
     setMetaData({});
     setMouse(false);
     setBoundingBox(null);
-    setInitialZoomId(null)
+    setInitialZoomId(null);
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
@@ -69,7 +71,13 @@ const App = () => {
   const { pid, experimental } = query;
 
   /* Шаг 1.1: Хук */
-  useKeysAndHeaders({ pid, setIncludedKeys, setViewType, setHeaders, setInitialZoomId });
+  useKeysAndHeaders({
+    pid,
+    setIncludedKeys,
+    setViewType,
+    setHeaders,
+    setInitialZoomId,
+  });
 
   /* Настроить взаимодействие с telegram API */
   useHandleStatus({ pid, isExportScreen, tools, user });
@@ -82,7 +90,7 @@ const App = () => {
         <Screen>
           <TopBar headers={headers} />
 
-          <Infographics />
+          <GUI />
 
           <Export
             enabled={isExportScreen}

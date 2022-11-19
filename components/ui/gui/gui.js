@@ -35,7 +35,7 @@ import ControlsBlock from "./blocks/controls";
 /*  userData для itemGroup */
 /*
 const userData = {
-  infographics: [
+  gui: [
     {
       id: "shape-linechart",
       name: "график по фигурам",
@@ -48,27 +48,17 @@ const userData = {
   ],
 };*/
 
-const Infographics = () => {
-  const infographicsData = useStatusStore(
-    ({ infographicsData }) => infographicsData
-  );
-  const setInfographicsData = useStatusStore(
-    ({ setInfographicsData }) => setInfographicsData
-  );
+const GUI = () => {
+  const GUIData = useStatusStore(({ GUIData }) => GUIData);
+  const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
 
-  const {
-    name,
-    id,
-    infographics = [],
-  } = infographicsData ? infographicsData : {};
-
-  console.log("infographicsData", infographicsData);
+  const { name, id, gui = [] } = GUIData ? GUIData : {};
 
   const handleClose = () => {
-    setInfographicsData(null);
+    setGUIData(null);
   };
 
-  if (!infographicsData) return <></>;
+  if (!GUIData) return <></>;
 
   return (
     <>
@@ -88,7 +78,7 @@ const Infographics = () => {
         <Overflow>
           <List>
             <HR />
-            {infographics.map((item = {}, i) => {
+            {gui.map((item = {}, i) => {
               const { type } = item;
 
               return (
@@ -117,4 +107,4 @@ const Infographics = () => {
   );
 };
 
-export default Infographics;
+export default GUI;

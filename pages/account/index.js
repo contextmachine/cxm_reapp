@@ -64,10 +64,12 @@ const Account = () => {
     if (user) {
       const Telegram = window.Telegram;
 
-      const { WebApp: webapp } = Telegram ? Telegram : {};
+      const { WebApp: webapp = {} } = Telegram ? Telegram : {};
       const mainbutton = webapp.MainButton;
 
-      webapp.expand();
+      const { expand = () => {} } = webapp ? webapp : {};
+      expand();
+
       if (mainbutton && user) {
         mainbutton.enable();
         mainbutton.show();

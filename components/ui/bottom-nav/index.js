@@ -229,9 +229,7 @@ const BottomNav = ({
 }) => {
   const screens = useBreakpoint();
 
-  const setShowInfographics = useStore(
-    ({ setShowInfographics }) => setShowInfographics
-  );
+  const setShowGUI = useStore(({ setShowGUI }) => setShowGUI);
 
   return (
     <>
@@ -304,7 +302,7 @@ const BottomNav = ({
           data-size="large"
           onClick={(e) => {
             e.stopPropagation();
-            setShowInfographics(true);
+            setShowGUI(true);
           }}
         >
           <Button size="large" type="noborder">

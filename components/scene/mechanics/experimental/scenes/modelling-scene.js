@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import * as THREE from "three";
 import { Box } from "@react-three/drei";
 import useStatusStore from "../../../../../store/status-store";
+import functions from "./data/functions.json";
 
 const paramsData = {
   segments: [
@@ -33,6 +34,14 @@ const ModellingScene = () => {
   const [metalPlane, setMetalPlane] = useState();
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
+  useEffect(() => {
+    const res = new Function("n1", "n2", functions.something);
+
+    // const result = eval(functions.something);
+
+    console.log("res", res(5, 3.5));
+  }, [functions]);
 
   useEffect(() => {
     fetch("/api/modelling/metal-plane", {
@@ -87,28 +96,93 @@ const ModellingScene = () => {
     <>
       <group
         userData={{
-          infographics: [
+          gui: [
             {
-              type: ["controls"],
-              name: "Блок управления геометрией metal plane",
-              button: {
-                label: "Сохранить",
+              type: "controls",
+              data: {
+                name: "main Settings",
+                children: [
+                  {
+                    name: "first",
+                    value: {
+                      min: 5,
+                      max: 10,
+                      value: 7,
+                    },
+                  },
+                  {
+                    name: "select",
+                    value: {
+                      options: ["first option", "second option"],
+                    },
+                  },
+                  {
+                    name: "interval",
+                    value: {
+                      min: 0,
+                      max: 10,
+                      value: [2, 6],
+                    },
+                  },
+                  {
+                    name: "color",
+                    value: {
+                      r: 255,
+                      g: 255,
+                      b: 0,
+                      a: 0,
+                    },
+                  },
+                  {
+                    name: "number",
+                    value: 0,
+                  },
+                  {
+                    name: "folder 2",
+                    children: [
+                      {
+                        name: "boolean",
+                        value: false,
+                      },
+                      {
+                        name: "textarea",
+                        value: {
+                          value:
+                            "Some longread heresdfkjsdfdsfsdlfjdslkjfsldjfsdf",
+                        },
+                      },
+                      {
+                        name: "folder 3",
+                        children: [
+                          {
+                            name: "save",
+                            value: {
+                              type: "button",
+                              value: `(scene, data) => {console.log(scene,data)}`,
+                            },
+                          },
+                          {
+                            name: "folder 4",
+                            children: [
+                              {
+                                name: "some",
+                                value: "some",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
               },
-              fetch: {
-                body: paramsData,
-                endpoint: "/api/modelling/metal-plane",
-                response: ["replace", ["metal_planes", "eq", "original"]],
-              },
+              version: `1.0`,
             },
           ],
         }}
       >
         <group
           userData={{
-            needsFetch: true,
-            fetchOptions: {
-              endpoint: "/api/modelling/metal-plane",
-            },
             properties: [
               {
                 id: "metal_planes",
