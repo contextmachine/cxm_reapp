@@ -108,7 +108,7 @@ const ModuleDifition = ({ data, name }) => {
     module_ = <ModuleString {...{ value }} />;
   } else if (typeof value === "boolean") {
     module_ = <ModuleCheck />;
-  } else if (isSelect) {
+  } /*  else if (isSelect) {
     module_ = <ModuleSelect />;
   } else if (isSlider) {
     const { min, max, value: _value } = value;
@@ -118,7 +118,7 @@ const ModuleDifition = ({ data, name }) => {
     } else {
       module_ = <ModuleSlider {...{ min, max, value: _value }} dbl />;
     }
-  }
+  } */
 
   return (
     <>

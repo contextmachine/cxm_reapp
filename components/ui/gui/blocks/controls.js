@@ -247,7 +247,7 @@ const ControlsBlock = ({ data: parentData = {}, backTop = () => {} }) => {
             <Tabs.TabPane tab="Консоль" key="item-2">
               <span>
                 <i style={{ opacity: 0.7 }}>
-                  Раздел "Консоль" пока еще в разработке
+                  Раздел &quot;Консоль&quot; пока еще в разработке
                 </i>
               </span>
 
