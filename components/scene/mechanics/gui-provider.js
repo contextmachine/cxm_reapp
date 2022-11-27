@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import useStatusStore from "../../../store/status-store";
 import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
+import { notification } from "antd";
 
 const GUIProvider = () => {
   const { scene } = useThree();
@@ -149,9 +150,6 @@ const GUIProvider = () => {
 
                   const handleDeep = (where, obj) => {
                     if (status && where) {
-                      console.log("where", where);
-                      console.log("obj", obj);
-
                       Object.keys(where).map((name) => {
                         if (obj && obj[name]) {
                           const _where = where[name];
@@ -171,8 +169,6 @@ const GUIProvider = () => {
                   };
 
                   handleDeep(where, obj);
-
-                  console.log("status", status);
 
                   if (status) wrappers.push(obj);
                 });
@@ -198,10 +194,20 @@ const GUIProvider = () => {
 
               setNeedsRender(true);
               setKeyFetch(null);
+
+              notification.success({
+                message: "Сцена обновлена!",
+                placement: "bottomRight",
+                duration: 2.5,
+              });
             }
           })
           .catch(() => {
-            console.log("error");
+            notification.error({
+              message: "Возникла ошибка при получении ответа с сервера",
+              placement: "bottomRight",
+              duration: 2.5,
+            });
           });
       }
     }

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useRef } from "react";
 import useStatusStore from "../../../store/status-store";
 import { Header, Wrapper, HR, Overflow, List, Tag } from "./__styles";
 import { Row } from "antd";
@@ -58,11 +59,16 @@ const GUI = () => {
     setGUIData(null);
   };
 
+  const panelRef = useRef();
+  const backTop = () => {
+    panelRef.current.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (!GUIData) return <></>;
 
   return (
     <>
-      <Wrapper id={`right-panel`}>
+      <Wrapper id={`right-panel`} ref={panelRef}>
         <Header>
           <div style={{ fontSize: "24px" }}>
             {name ? name : `Группа без имени`}
@@ -90,7 +96,9 @@ const GUI = () => {
                     <ChartBlock data={item} key={`c`} />
                   )}
 
-                  {type && type === "controls" && <ControlsBlock data={item} />}
+                  {type && type === "controls" && (
+                    <ControlsBlock backTop={backTop} data={item} />
+                  )}
 
                   <HR />
                 </Row>

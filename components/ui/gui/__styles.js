@@ -65,7 +65,14 @@ export const HR = styled.div`
 export const Overflow = styled.div`
   width: 100%:
   height: 100%:
-  overflow: scroll
+  overflow: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const List = styled.div`

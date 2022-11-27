@@ -8,8 +8,14 @@ import { Segmented } from "antd";
 import JSONEditor from "./controls/json-editor";
 import { Btn as BtnPrimary } from "./__styles";
 import TreeViewEditor from "./controls/tree-view-editor";
+import { notification } from "antd";
+
+import { BackTop, Row as AntRow } from "antd";
+import { HR } from "../__styles";
+import { Tabs } from "./__styles";
 
 import { v4 as uuidv4 } from "uuid";
+import { Alert } from "antd";
 
 import * as THREE from "three";
 
@@ -118,7 +124,7 @@ export const SubWrapper = styled.div`
   }
 `;
 
-const ControlsBlock = ({ data: parentData = {} }) => {
+const ControlsBlock = ({ data: parentData = {}, backTop = () => {} }) => {
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
   const metaData = useStatusStore(({ metaData }) => metaData);
   const { id } = GUIData;
@@ -144,135 +150,119 @@ const ControlsBlock = ({ data: parentData = {} }) => {
 
   const handleUpdate = () => {
     setKeyFetch({ data: input, post: output, logId: uuidv4() });
+    notification.info({
+      message: "Ожидаем ответ от сервера...",
+      placement: "bottomRight",
+      duration: 1,
+    });
+    backTop();
   };
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ fontSize: "18px", marginBottom: "12px" }}>
-          Входные данные:
-        </div>
-
-        <Row>
-          <Segmented
-            options={[
-              { label: "JSON редактор", value: "code" },
-              { label: "UI", value: "ui" },
-            ]}
-            onChange={setEditorType}
-          />
-        </Row>
-
-        {editorType === "code" && (
-          <div
-            style={{
-              height: "300px",
-              background: "lightgrey",
-              border: "1px solid grey",
-              width: "calc(100% - 0px)",
-              overflow: "hidden",
-              borderRadius: "3px",
-            }}
-          >
-            <JSONEditor data={input} onChange={setInput} type={1} />
-          </div>
-        )}
-
-        {editorType === "ui" && (
-          <TreeViewEditor data={input} onChange={setInput} />
-        )}
-
-        <div
-          style={{ fontSize: "18px", marginBottom: "12px", marginTop: "24px" }}
-        >
-          Результат заменяет:
-        </div>
-        <Row>
-          <Segmented
-            options={[
-              { label: "JSON редактор", value: "code" },
-              { label: "UI", value: "ui" },
-            ]}
-            onChange={setResultType}
-          />
-        </Row>
-
-        {resultType === "code" && (
-          <div
-            style={{
-              height: "300px",
-              background: "lightgrey",
-              border: "1px solid grey",
-              width: "calc(100% - 0px)",
-              overflow: "hidden",
-              borderRadius: "3px",
-            }}
-          >
-            <JSONEditor type={2} data={output} onChange={setOutput} />
-          </div>
-        )}
-
-        {resultType === "ui" && (
-          <TreeViewEditor data={output} onChange={setOutput} />
-        )}
-
-        <BtnPrimary
-          type="primary"
-          style={{ marginTop: "16px", height: "40px" }}
-          onClick={handleUpdate}
-        >
-          Send data
-        </BtnPrimary>
-        {/*params.map((item = {}, i) => {
-          const { name, data = [] } = item;
-
-          return (
-            <Row key={`r:${i}`}>
-              <div style={{ width: "30%", paddingTop: "8px" }}>{name}</div>
-              <div style={{ width: "70%" }}>
-                {data.map((subitem = {}, b) => {
-                  let attrs = [];
-                  Object.keys(subitem).map((name) => {
-                    const value = subitem[name];
-
-                    attrs.push({ name, value });
-                  });
-
-                  return (
-                    <FragmentSpace size={2} direction="vertical" key={`s:${b}`}>
-                      {attrs.map((attr, c) => {
-                        const { name, value } = attr;
-
-                        return (
-                          <div
-                            style={{ width: "100%", display: "flex" }}
-                            key={`n:${c}`}
-                          >
-                            <div style={{ width: "30%" }}>{name}</div>
-                            <div style={{ width: "70%" }}>
-                              <Input
-                                defaultValue={value}
-                                onChange={(e) => {
-                                  setParams((state) => {
-                                    state[i].data[b][name] = parseFloat(
-                                      e.target.value
-                                    );
-
-                                    return state;
-                                  });
-                                }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </FragmentSpace>
-                  );
-                })}
+        <AntRow>
+          <Tabs>
+            <Tabs.TabPane tab="Форма" key="item-1">
+              <div style={{ fontSize: "18px", marginBottom: "12px" }}>
+                Входные данные:
               </div>
-            </Row>
-          );
-        })*/}
+
+              <Row>
+                <Segmented
+                  options={[
+                    { label: "JSON редактор", value: "code" },
+                    { label: "UI", value: "ui" },
+                  ]}
+                  onChange={setEditorType}
+                />
+              </Row>
+
+              {editorType === "code" && (
+                <div
+                  style={{
+                    height: "300px",
+                    background: "lightgrey",
+                    border: "1px solid grey",
+                    width: "calc(100% - 0px)",
+                    overflow: "hidden",
+                    borderRadius: "3px",
+                  }}
+                >
+                  <JSONEditor data={input} onChange={setInput} type={1} />
+                </div>
+              )}
+
+              {editorType === "ui" && (
+                <TreeViewEditor data={input} onChange={setInput} />
+              )}
+
+              <div
+                style={{
+                  fontSize: "18px",
+                  marginBottom: "12px",
+                  marginTop: "24px",
+                }}
+              >
+                Результат заменяет:
+              </div>
+              <Row>
+                <Segmented
+                  options={[
+                    { label: "JSON редактор", value: "code" },
+                    { label: "UI", value: "ui" },
+                  ]}
+                  onChange={setResultType}
+                />
+              </Row>
+
+              {resultType === "code" && (
+                <div
+                  style={{
+                    height: "300px",
+                    background: "lightgrey",
+                    border: "1px solid grey",
+                    width: "calc(100% - 0px)",
+                    overflow: "hidden",
+                    borderRadius: "3px",
+                  }}
+                >
+                  <JSONEditor type={2} data={output} onChange={setOutput} />
+                </div>
+              )}
+
+              {resultType === "ui" && (
+                <TreeViewEditor data={output} onChange={setOutput} />
+              )}
+
+              <BackTop />
+              <BtnPrimary
+                type="primary"
+                style={{ marginTop: "16px", height: "40px", width: "100%" }}
+                onClick={handleUpdate}
+              >
+                Send data
+              </BtnPrimary>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Консоль" key="item-2">
+              <span>
+                <i style={{ opacity: 0.7 }}>
+                  Раздел "Консоль" пока еще в разработке
+                </i>
+              </span>
+
+              <Space
+                direction="vertical"
+                style={{ width: "100%", marginTop: "18px" }}
+              >
+                <Alert message="Success Tips" type="success" showIcon />
+                <Alert message="Informational Notes" type="info" showIcon />
+                <Alert message="Warning" type="warning" showIcon closable />
+                <Alert message="Error" type="error" showIcon />
+              </Space>
+            </Tabs.TabPane>
+          </Tabs>
+        </AntRow>
       </div>
     </>
   );
