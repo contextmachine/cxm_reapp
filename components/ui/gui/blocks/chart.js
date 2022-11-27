@@ -11,7 +11,7 @@ import stc from "string-to-color";
 import useStatusStore from "../../../../store/status-store";
 
 const ChartBlock = ({ data: props }) => {
-  let { type, data = [], key } = props;
+  let { type, require = [], data = [], key } = props;
 
   data = data.map((item = {}, i) => {
     return { ...item, color: stc(i), label: `sdfs${i}` };
@@ -19,15 +19,17 @@ const ChartBlock = ({ data: props }) => {
 
   const [section, setSection] = useState(null);
   useEffect(() => {
-    if (type && type.length > 0) {
-      setSection(type[0]);
+    if (require && require.length > 0) {
+      setSection(require[0]);
     }
-  }, [type]);
+  }, [require]);
 
   const typeIcons = {
     linechart: <BarChartIcon />,
     piechart: <DataUsageIcon />,
   };
+
+  console.log("section", section);
 
   const setKeyFilter = useStatusStore(({ setKeyFilter }) => setKeyFilter);
 
@@ -37,9 +39,9 @@ const ChartBlock = ({ data: props }) => {
         <Row justify="space-between">
           <div style={{ fontSize: "18px", marginBottom: "18px" }}>{key}</div>
 
-          {type && type.length > 0 && (
+          {require && require.length > 0 && (
             <Space>
-              {type.map((name, i) => {
+              {require.map((name, i) => {
                 return (
                   <Tag
                     data-active={name === section ? "active" : "def"}

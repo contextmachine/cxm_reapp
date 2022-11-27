@@ -108,19 +108,19 @@ const Wrapper = styled.div`
 
   height: 60px;
 
-  border-radius: 200px;
+  border-radius: 3px;
 
   padding: 10px;
   background: white;
 
   &&&[data-size="large"] {
     height: 80px;
-    padding: 10px 30px;
+    padding: 10px 27px;
     transform: translateY(10px);
   }
 
   && .ant-radio-button-wrapper {
-    border-radius: 200px;
+    border-radius: 3px;
 
     &::before {
       display: none;

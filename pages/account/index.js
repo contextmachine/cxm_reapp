@@ -79,7 +79,7 @@ const Account = () => {
   useEffect(() => {
     if (user) {
       const Telegram = window.Telegram;
-      
+
       const { WebApp: webapp } = Telegram ? Telegram : {};
       const mainbutton = webapp?.MainButton;
 
@@ -173,7 +173,7 @@ const Account = () => {
             </Col>
           )}
 
-          <Col flex="auto" style={{ background: "black" }}>
+          <Col flex="auto" style={{ background: "#1c1c1c" }}>
             <Wrapper>
               <Row justify="space-between">
                 <HeadTitle style={{ color: "white", fontSize: "36px" }}>

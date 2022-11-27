@@ -1,17 +1,17 @@
-import { Button, Space } from "antd";
+import { Space } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import useStatusStore from "../../../../store/status-store";
+
+import { Segmented } from "antd";
+import JSONEditor from "./controls/json-editor";
+import { Btn as BtnPrimary } from "./__styles";
+import TreeViewEditor from "./controls/tree-view-editor";
+
 import { v4 as uuidv4 } from "uuid";
 
-import TreeView from "@mui/lab/TreeView";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import TreeItem from "@mui/lab/TreeItem";
-import { Wrapper } from "../../../../pages/scene/topbar/blocks/layer-treemap";
-
-import { Input, Checkbox, Select, Slider } from "antd";
+import * as THREE from "three";
 
 const Btn = styled.div`
   width: 100%;
@@ -46,6 +46,19 @@ const Row = styled.div`
     height: 24px;
     width: 100%;
   }
+
+  && .ant-segmented {
+    width: 100%;
+    margin-bottom: 8px;
+    background: rgb(0 0 0 / 24%);
+    overflow: hidden;
+    border-radius: 10px;
+
+    & .ant-segmented-item {
+      width: 100%;
+      border-radius: 10px;
+    }
+  }
 `;
 
 const FragmentSpace = styled(Space)`
@@ -59,29 +72,6 @@ const FragmentSpace = styled(Space)`
 
   &&:hover {
     outline: 1px solid #625af6;
-  }
-`;
-
-export const TreeRow = styled.div`
-  width: 100%;
-
-  && .MuiTreeItem-group {
-    margin-left: 10px;
-  }
-
-  && .MuiTreeItem-iconContainer {
-    width: 10px;
-    margin-right: 0px;
-  }
-
-  && .MuiTreeItem-label {
-    padding-left: 0px;
-    padding-top: 3.5px;
-    padding-bottom: 3.5px;
-  }
-
-  &&& > * > * {
-    padding-left: 0;
   }
 `;
 
@@ -128,231 +118,111 @@ export const SubWrapper = styled.div`
   }
 `;
 
-export const ControlWrapper = styled.div`
-  max-width: 160px;
-  width: 100%;
-`;
-
-const ModuleString = ({ value }) => {
-  return <Input defaultValue={value} />;
-};
-
-const ModuleCheck = ({ value }) => {
-  return <Checkbox checked />;
-};
-
-const ModuleSelect = ({ value }) => {
-  return (
-    <Select
-      defaultValue="lucy"
-      onChange={() => {}}
-      options={[
-        {
-          value: "jack",
-          label: "Jack",
-        },
-        {
-          value: "lucy",
-          label: "Lucy",
-        },
-        {
-          value: "disabled",
-          disabled: true,
-          label: "Disabled",
-        },
-        {
-          value: "Yiminghe",
-          label: "yiminghe",
-        },
-      ]}
-    />
-  );
-};
-
-const ModuleSlider = ({ min, max, value, dbl }) => {
-  return (
-    <>
-      <Slider range={dbl} defaultValue={value} min={min} max={max} />
-    </>
-  );
-};
-
-const ModuleDifition = ({ data, name }) => {
-  const { value } = data;
-
-  let isButton = false;
-  let isSelect = false;
-
-  let isSlider = false;
-  let isDblSlider = false;
-
-  if (typeof value === "object") {
-    const { type, options, min, max, value: _value } = value;
-    if (type === "button") isButton = true;
-    if (options) isSelect = true;
-
-    if (typeof min === "number" && typeof max === "number") {
-      isSlider = true;
-
-      if (typeof value === "object") isDblSlider = true;
-    }
-  }
-
-  let module;
-
-  if (typeof value === "string") {
-    module = <ModuleString {...{ value }} />;
-  } else if (typeof value === "boolean") {
-    module = <ModuleCheck />;
-  } else if (isSelect) {
-    module = <ModuleSelect />;
-  } else if (isSlider) {
-    const { min, max, value: _value } = value;
-
-    if (!isDblSlider) {
-      module = <ModuleSlider {...{ min, max, value: _value }} />;
-    } else {
-      module = <ModuleSlider {...{ min, max, value: _value }} dbl />;
-    }
-  }
-
-  return (
-    <>
-      {isButton ? (
-        <Button>{name}</Button>
-      ) : (
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ fontWeight: "400", opacity: 0.7 }}>{`${name}:`}</div>
-
-          <ControlWrapper>{module ? module : <ModuleString />}</ControlWrapper>
-        </div>
-      )}
-    </>
-  );
-};
-
 const ControlsBlock = ({ data: parentData = {} }) => {
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
+  const metaData = useStatusStore(({ metaData }) => metaData);
   const { id } = GUIData;
 
-  let { data = {} } = parentData;
+  let { data = {}, post = {} } = parentData;
 
-  /*const [params, setParams] = useState([]);
+  const [input, setInput] = useState();
+  const [output, setOutput] = useState();
   useEffect(() => {
-    if (body) {
-      let params = [];
-      Object.keys(body).map((name) => {
-        const item = body[name];
-
-        params.push({ name, data: item });
-      });
-
-      setParams(params);
+    if (data) {
+      setInput(data);
     }
-  }, [body]);
+
+    if (post) {
+      setOutput(post);
+    }
+  }, [data, post]);
+
+  const [editorType, setEditorType] = useState("code");
+  const [resultType, setResultType] = useState("code");
 
   const setKeyFetch = useStatusStore(({ setKeyFetch }) => setKeyFetch);
 
-  const handleFetch = () => {
-    let obj = {};
-    params.map((item = {}) => {
-      const { name, data = [] } = item;
-
-      obj[name] = data;
-    });
-
-    setKeyFetch({
-      fetch: { body: obj, ...otherFetchParams },
-      id,
-      logId: uuidv4(),
-    });
-  }; */
-
-  let usedIndex = 0;
-  const addId = (data) => {
-    const { children } = data;
-    data.id = `${usedIndex}`;
-    usedIndex += 1;
-
-    if (children) {
-      children.map((child) => addId(child));
-    }
+  const handleUpdate = () => {
+    setKeyFetch({ data: input, post: output, logId: uuidv4() });
   };
-  addId(data);
-
-  console.log("data", data);
-
-  let allKeys = [];
-
-  const handleId = (data) => {
-    const { id } = data;
-    const { children } = data;
-
-    allKeys.push(id);
-
-    if (children) {
-      children.map((child) => handleId(child));
-    }
-  };
-  handleId(data);
-
-  const renderTree = (nodes) => (
-    <TreeRow>
-      <TreeItem
-        key={nodes.id}
-        nodeId={nodes.id}
-        label={
-          nodes.children ? (
-            <div
-              style={{ fontWeight: "600", marginLeft: "10px" }}
-            >{`${nodes.name}`}</div>
-          ) : (
-            <>{<ModuleDifition data={nodes} name={nodes.name} />}</>
-          )
-        }
-      >
-        {Array.isArray(nodes.children)
-          ? nodes.children.map((node) => renderTree(node))
-          : null}
-      </TreeItem>
-    </TreeRow>
-  );
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <Wrapper>
-          <SubWrapper>
-            <TreeView
-              aria-label="rich object"
-              defaultCollapseIcon={
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                >
-                  <ExpandMoreIcon />
-                </div>
-              }
-              defaultExpanded={allKeys}
-              defaultExpandIcon={
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                >
-                  <ChevronRightIcon />
-                </div>
-              }
-              sx={{ flexGrow: 1, maxWidth: 260, overflowY: "auto" }}
-            >
-              {renderTree(data)}
-            </TreeView>
-          </SubWrapper>
-        </Wrapper>
+        <div style={{ fontSize: "18px", marginBottom: "12px" }}>
+          Входные данные:
+        </div>
 
+        <Row>
+          <Segmented
+            options={[
+              { label: "JSON редактор", value: "code" },
+              { label: "UI", value: "ui" },
+            ]}
+            onChange={setEditorType}
+          />
+        </Row>
+
+        {editorType === "code" && (
+          <div
+            style={{
+              height: "300px",
+              background: "lightgrey",
+              border: "1px solid grey",
+              width: "calc(100% - 0px)",
+              overflow: "hidden",
+              borderRadius: "3px",
+            }}
+          >
+            <JSONEditor data={input} onChange={setInput} type={1} />
+          </div>
+        )}
+
+        {editorType === "ui" && (
+          <TreeViewEditor data={input} onChange={setInput} />
+        )}
+
+        <div
+          style={{ fontSize: "18px", marginBottom: "12px", marginTop: "24px" }}
+        >
+          Результат заменяет:
+        </div>
+        <Row>
+          <Segmented
+            options={[
+              { label: "JSON редактор", value: "code" },
+              { label: "UI", value: "ui" },
+            ]}
+            onChange={setResultType}
+          />
+        </Row>
+
+        {resultType === "code" && (
+          <div
+            style={{
+              height: "300px",
+              background: "lightgrey",
+              border: "1px solid grey",
+              width: "calc(100% - 0px)",
+              overflow: "hidden",
+              borderRadius: "3px",
+            }}
+          >
+            <JSONEditor type={2} data={output} onChange={setOutput} />
+          </div>
+        )}
+
+        {resultType === "ui" && (
+          <TreeViewEditor data={output} onChange={setOutput} />
+        )}
+
+        <BtnPrimary
+          type="primary"
+          style={{ marginTop: "16px", height: "40px" }}
+          onClick={handleUpdate}
+        >
+          Send data
+        </BtnPrimary>
         {/*params.map((item = {}, i) => {
           const { name, data = [] } = item;
 

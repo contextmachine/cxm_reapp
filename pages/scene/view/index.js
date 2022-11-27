@@ -33,7 +33,7 @@ const Panel = styled.div`
   width: max-content;
   display: flex;
   height: 100%;
-  border-radius: 100px;
+  border-radius: 3px;
   background: #a3a3a3;
   padding: 2px;
 
@@ -54,7 +54,7 @@ const Btn = styled.div`
   }
 
   color: rgba(0, 0, 0, 0.6);
-  border-radius: 100px;
+  border-radius: 3px;
   padding-left: 10px;
   padding-right: 10px;
 

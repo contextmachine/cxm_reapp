@@ -27,9 +27,7 @@ const GUIProvider = () => {
         const { userData = {} } = obj ? obj : {};
         const { properties = [] } = userData ? userData : {};
 
-        const foundKey = properties.find(
-          ({ id, value }) => id === key && value === val
-        );
+        const foundKey = properties[key] === val;
 
         if (
           !foundKey &&
@@ -82,14 +80,12 @@ const GUIProvider = () => {
               object.traverseVisible((obj = {}) => {
                 const { userData } = obj;
                 if (userData) {
-                  const { properties = [] } = userData;
-                  const foundKey = properties.find(({ id }) => id === key);
+                  const { properties = {} } = userData;
+                  const foundKey = properties ? properties[key] : null;
 
                   if (foundKey) {
-                    const { value } = foundKey;
-
-                    if (!values[value]) values[value] = 0;
-                    values[value] += 1;
+                    if (!values[foundKey]) values[foundKey] = 0;
+                    values[foundKey] += 1;
                   }
                 }
               });
@@ -101,8 +97,6 @@ const GUIProvider = () => {
 
               data.push({ id: name, value: count });
             });
-
-            console.log("gui", gui);
 
             /* добавить children в аттрибут */
             return { ...item, data };
@@ -124,21 +118,16 @@ const GUIProvider = () => {
 
   useEffect(() => {
     if (keyFetch && scene) {
-      const { fetch: fetchOptions = {} } = keyFetch;
-      const { endpoint, response = [], body } = fetchOptions;
-
-      const [method, filter = []] = response;
-      const [filterType, filterValue] = filter;
+      const { data, post } = keyFetch;
+      const { endpoint, mutation = {} } = post;
 
       if (endpoint) {
-        console.log("fetch", fetch);
-
         fetch(endpoint, {
           headers: {
             "Content-Type": "application/json",
           },
           method: "POST",
-          body: JSON.stringify(body),
+          body: JSON.stringify(data),
         })
           .then((response) => {
             return response.json();
@@ -146,40 +135,66 @@ const GUIProvider = () => {
           .then((res) => {
             if (res) {
               /* что делаем */
+              const { scene: sceneData = {} } = mutation ? mutation : {};
+              const { where } = sceneData ? sceneData : {};
 
-              let foundWrapper;
+              let wrappers = [];
 
-              scene.traverse((obj) => {
-                const { userData = {} } = obj;
-                const { properties = [] } = userData;
+              if (!where) {
+                scene.remove(...scene.children);
+                wrappers.push(scene);
+              } else {
+                scene.traverse((obj) => {
+                  let status = true;
 
-                const property = properties.find(
-                  ({ id }) => id === "metal_planes"
-                );
-                if (property) {
-                  const { value } = property;
+                  const handleDeep = (where, obj) => {
+                    if (status && where) {
+                      console.log("where", where);
+                      console.log("obj", obj);
 
-                  if (value === "original") foundWrapper = obj;
-                }
-              });
+                      Object.keys(where).map((name) => {
+                        if (obj && obj[name]) {
+                          const _where = where[name];
+                          const _obj = obj[name];
 
-              if (foundWrapper) {
-                foundWrapper.remove(...foundWrapper.children);
+                          if (_where && Object.keys(_where).includes("_eq")) {
+                            const { _eq } = _where;
+                            if (!(_obj === _eq)) status = false;
+                          } else {
+                            handleDeep(_where, _obj);
+                          }
+                        } else {
+                          status = false;
+                        }
+                      });
+                    }
+                  };
 
-                const loader = new THREE.ObjectLoader();
-                loader.parse(res, (e) => {
-                  console.log("e", e);
+                  handleDeep(where, obj);
 
-                  foundWrapper.add(e);
-                  setNeedsRender(true);
+                  console.log("status", status);
+
+                  if (status) wrappers.push(obj);
                 });
-
-                const box3 = new THREE.Box3();
-                box3.setFromObject(foundWrapper);
-
-                setBoundingBox({ ...box3, logId: uuidv4() });
               }
               /* */
+
+              wrappers.map((wrapper) => {
+                if (wrapper) {
+                  wrapper.remove(...wrapper.children);
+
+                  const loader = new THREE.ObjectLoader();
+                  loader.parse(res, (e) => {
+                    wrapper.add(e);
+                    setNeedsRender(true);
+                  });
+
+                  const box3 = new THREE.Box3();
+                  box3.setFromObject(wrapper);
+
+                  setBoundingBox({ ...box3, logId: uuidv4() });
+                }
+              });
 
               setNeedsRender(true);
               setKeyFetch(null);

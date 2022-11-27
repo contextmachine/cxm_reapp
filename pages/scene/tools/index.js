@@ -90,8 +90,8 @@ const Label = styled.div`
 `;
 
 const Icon = styled.div`
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   background: lightgrey;
 
   @media (max-width: 480px) {

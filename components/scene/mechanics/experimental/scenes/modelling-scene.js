@@ -1,31 +1,33 @@
 import { useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { Box } from "@react-three/drei";
+import { Box, Plane, Line, Text } from "@react-three/drei";
 import useStatusStore from "../../../../../store/status-store";
 import functions from "./data/functions.json";
 
 const paramsData = {
+  depth: 16,
+  offsets: 0.6,
   segments: [
     {
       length: 40,
       angle: 0,
-      radius: 0.71199999999999997,
+      radius: 5,
     },
     {
-      length: 18.489999999999998,
-      angle: 45,
-      radius: 2.4550000000000001,
+      length: 20,
+      angle: -60,
+      radius: 2,
     },
     {
-      length: 18.489999999999998,
-      angle: -45,
-      radius: 2.4550000000000001,
+      length: 15,
+      angle: 60,
+      radius: 5,
     },
     {
-      length: 18.489999999999998,
-      angle: 20,
-      radius: 2.4550000000000001,
+      length: 15,
+      angle: 0,
+      radius: 5,
     },
   ],
 };
@@ -34,14 +36,6 @@ const ModellingScene = () => {
   const [metalPlane, setMetalPlane] = useState();
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
-
-  useEffect(() => {
-    const res = new Function("n1", "n2", functions.something);
-
-    // const result = eval(functions.something);
-
-    console.log("res", res(5, 3.5));
-  }, [functions]);
 
   useEffect(() => {
     fetch("/api/modelling/metal-plane", {
@@ -72,12 +66,9 @@ const ModellingScene = () => {
         const { userData = {} } = obj;
         const { properties = [] } = userData;
 
-        const property = properties.find(({ id }) => id === "metal_planes");
-        if (property) {
-          const { value } = property;
+        const property = properties["metal_planes"];
 
-          if (value === "original") foundWrapper = obj;
-        }
+        if (property === "original") foundWrapper = obj;
       });
 
       if (foundWrapper) {
@@ -86,6 +77,7 @@ const ModellingScene = () => {
         const loader = new THREE.ObjectLoader();
         loader.parse(metalPlane, (e) => {
           foundWrapper.add(e);
+
           setNeedsRender(true);
         });
       }
@@ -94,13 +86,77 @@ const ModellingScene = () => {
 
   return (
     <>
-      <group
-        userData={{
-          gui: [
-            {
-              type: "controls",
-              data: {
-                name: "main Settings",
+      <group>
+        <group
+          name="Form #1"
+          userData={{
+            gui: [
+              {
+                type: "controls",
+                data: paramsData,
+                post: {
+                  endpoint: "/api/modelling/metal-plane",
+                  mutation: {
+                    scene: {
+                      where: {
+                        userData: {
+                          properties: {
+                            metal_planes: { _eq: "original" },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                version: `1.0`,
+              },
+            ],
+          }}
+        >
+          <group
+            name="form"
+            userData={{
+              properties: {
+                metal_planes: "original",
+              },
+            }}
+          ></group>
+        </group>
+
+        <group position={[40, -6, 0]}>
+          <Line
+            points={[
+              [-50, 20],
+              [50, 20],
+              [50, -20],
+              [-50, -20],
+              [-50, 20],
+            ]}
+            color="white"
+            lineWidth={1}
+            dashed={false}
+          />
+
+          <Text
+            scale={[20, 20, 20]}
+            position={[-54, 0, 0]}
+            rotation={[0, 0, -0.5 * Math.PI]}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Example Form #1
+          </Text>
+        </group>
+      </group>
+    </>
+  );
+};
+
+export default ModellingScene;
+
+/* data: {
+                name: "2in Settings",
                 children: [
                   {
                     name: "first",
@@ -175,26 +231,4 @@ const ModellingScene = () => {
                     ],
                   },
                 ],
-              },
-              version: `1.0`,
-            },
-          ],
-        }}
-      >
-        <group
-          userData={{
-            properties: [
-              {
-                id: "metal_planes",
-                name: "принадлежность категории metal_planes",
-                value: "original",
-              },
-            ],
-          }}
-        ></group>
-      </group>
-    </>
-  );
-};
-
-export default ModellingScene;
+              }, */

@@ -64,17 +64,19 @@ export const useHandleUpdateInfo = ({
   // Загрузка данных из Sanity
   useEffect(() => {
     if (pid) {
-      getSceneData({ pid })
-        .then((res) => {
-          //console.log({ res });
-          if (res.length === 0) {
-            //setSceneData({});
-            setNeedsUpdate(true);
-          } else {
-            setSceneData(res[0]);
-          }
-        })
-        .catch((e) => console.log({ e }));
+      try {
+        getSceneData({ pid })
+          .then((res) => {
+            //console.log({ res });
+            if (res.length === 0) {
+              //setSceneData({});
+              setNeedsUpdate(true);
+            } else {
+              setSceneData(res[0]);
+            }
+          })
+          .catch((e) => console.log({ e }));
+      } catch (e) {}
     }
   }, []);
 

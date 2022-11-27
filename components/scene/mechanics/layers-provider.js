@@ -11,6 +11,8 @@ const LayersProvider = () => {
   );
   const setLinksLogId = useStatusStore(({ setLinksLogId }) => setLinksLogId);
 
+  console.log("scene", scene);
+
   useEffect(() => {
     setLinksStructure(scene);
     setLinksLogId(uuidv4());

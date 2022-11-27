@@ -129,23 +129,11 @@ const InfographicsScene = () => {
             let size = sizes[sizeType];
 
             /* Шаг 4: properties  */
-            const properties = [
-              {
-                id: "shape",
-                name: "шейп фигуры в сечении",
-                value: shapeName,
-              },
-              {
-                id: "color",
-                name: "Цвет фигуры",
-                value: color,
-              },
-              {
-                id: "size",
-                name: "длина фигуры",
-                value: size,
-              },
-            ];
+            const properties = {
+              shape: shapeName,
+              color,
+              size,
+            };
 
             shapeIndex += 1;
 
@@ -220,21 +208,24 @@ const InfographicsScene = () => {
             {
               id: "shape-linechart",
               name: "график по фигурам",
-              type: ["linechart"],
+              type: "chart",
+              require: ["linechart"],
               key: "shape",
               colors: "default",
             },
             {
               id: "size-linechart",
               name: "график по размерам",
-              type: ["linechart", "piechart"],
+              type: "chart",
+              require: ["linechart", "piechart"],
               key: "size",
               colors: "default",
             },
             {
               id: "color-linechart",
               name: "график по цветам",
-              type: ["piechart"],
+              type: "chart",
+              require: ["piechart"],
               key: "color",
               colors: "default",
             },

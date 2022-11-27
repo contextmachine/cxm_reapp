@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Button } from "antd";
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -10,7 +11,14 @@ export const Wrapper = styled.div`
   top: 20px;
   z-index: 200;
   background: white;
-  border-radius: 10px;
+  border-radius: 3px;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
 
   overflow: scroll;
 

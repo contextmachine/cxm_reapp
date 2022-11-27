@@ -86,15 +86,11 @@ const GUI = () => {
                   style={{ display: "flex", flexDirection: "column" }}
                   key={`key:${i}`}
                 >
-                  {type &&
-                    (type.includes("linechart") ||
-                      type.includes("piechart")) && (
-                      <ChartBlock data={item} key={`c`} />
-                    )}
-
-                  {type && type.includes("controls") && (
-                    <ControlsBlock data={item} />
+                  {type && type === "chart" && (
+                    <ChartBlock data={item} key={`c`} />
                   )}
+
+                  {type && type === "controls" && <ControlsBlock data={item} />}
 
                   <HR />
                 </Row>
