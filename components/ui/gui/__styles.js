@@ -5,7 +5,8 @@ export const Wrapper = styled.div`
   position: fixed;
 
   width: 310px;
-  height: calc(100vh - 100px + 50px);
+  //height: calc(100vh - 100px + 50px);
+  height: max-content;
   max-height: 800px;
   right: 10px;
   top: 20px;

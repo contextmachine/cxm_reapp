@@ -122,7 +122,7 @@ const App = () => {
 
           <Export
             enabled={isExportScreen}
-            {...{ setExportScreen, setNeedsData }}
+            {...{ setExportScreen, setNeedsData, sceneData }}
           />
 
           <View {...{ viewType, setViewType }} />

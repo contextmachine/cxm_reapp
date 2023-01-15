@@ -41,13 +41,10 @@ export default async function handler(req, res) {
               })
               .commit();
           })
-          .then(() => {
-            console.log("Done!");
-          });
+          .then(() => {});
 
         res.status(200).json({ data, msg: "edited" });
       } catch (err) {
-        console.log(err);
         res.status(500);
       }
 

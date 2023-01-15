@@ -29,6 +29,7 @@ const updateScenePreviewData = async (
   previewImage,
   thumbnail_last_updated
 ) => {
+  return true;
   return await fetch("/api/sanityUpdateScenePreview", {
     method: "POST",
     "content-type": "application/json",

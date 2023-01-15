@@ -64,6 +64,8 @@ const GUIProvider = () => {
       let { name, id } = userData;
       let { gui, logId, ...otherUserData } = userData;
 
+      let objectData = { logId: uuidv4(), ...otherUserData };
+
       if (gui) {
         /* Найти родительский объект-группу по id */
         const object = scene.getObjectById(id);
@@ -106,14 +108,10 @@ const GUIProvider = () => {
           return item;
         });
 
-        setGUIData({
-          logId: uuidv4(),
-          gui,
-          ...otherUserData,
-        });
-      } else {
-        setGUIData(null);
+        objectData = { ...objectData, gui };
       }
+
+      setGUIData(objectData);
     }
   }, [userData, scene]);
 

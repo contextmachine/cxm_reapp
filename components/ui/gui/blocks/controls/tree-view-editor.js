@@ -37,8 +37,27 @@ export const TreeRow = styled.div`
   }
 `;
 
-const ModuleString = ({ value }) => {
-  return <Input value={value} />;
+export const Value = styled.div`
+  ${({ type }) =>
+    type === "string"
+      ? `
+    color: #249D6B;
+  `
+      : type === "number"
+      ? `color: #ef6016;`
+      : ``}
+`;
+
+const ModuleString = ({ value, editable }) => {
+  return (
+    <>
+      {editable ? (
+        <Input value={value} />
+      ) : (
+        <Value type={typeof value}>{value}</Value>
+      )}
+    </>
+  );
 };
 
 const ModuleCheck = ({ value }) => {
@@ -81,7 +100,7 @@ const ModuleCheck = ({ value }) => {
   );
 }; */
 
-const ModuleDifition = ({ data, name }) => {
+const ModuleDifition = ({ data, name, editable = false }) => {
   const { value } = data;
 
   let isButton = false;
@@ -105,7 +124,7 @@ const ModuleDifition = ({ data, name }) => {
   let module_;
 
   if (typeof value === "string" || typeof value === "number") {
-    module_ = <ModuleString {...{ value }} />;
+    module_ = <ModuleString {...{ value, editable }} />;
   } else if (typeof value === "boolean") {
     module_ = <ModuleCheck />;
   } /*  else if (isSelect) {

@@ -56,7 +56,6 @@ const Account = () => {
   useEffect(() => {
     getAllScenes()
       .then((res) => {
-        console.log({ res });
         if (scenesData.length === 0 && res?.length > 0) {
           setScenesData(res);
         }
@@ -100,7 +99,6 @@ const Account = () => {
       }
     }
   }, [tgLoaded, user]);
-  console.log(user?.id);
 
   /* Шаг 1: Загрузка */
   useEffect(() => {
@@ -204,7 +202,7 @@ const Account = () => {
                         const sceneData = scenesData.find(
                           (el) => el.scene_id === name
                         );
-                        console.log({ sceneData });
+
                         return (
                           <Project
                             key={`project:${i}`}
@@ -259,9 +257,6 @@ const Account = () => {
                 {section === "experimental" &&
                   ExperimentalList.map((item = {}, i) => {
                     const { id, name } = item;
-
-                    console.log("id", id);
-                    console.log("name", name);
 
                     return (
                       <Project

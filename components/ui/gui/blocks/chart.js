@@ -29,8 +29,6 @@ const ChartBlock = ({ data: props }) => {
     piechart: <DataUsageIcon />,
   };
 
-  console.log("section", section);
-
   const setKeyFilter = useStatusStore(({ setKeyFilter }) => setKeyFilter);
 
   return (

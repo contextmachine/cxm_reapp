@@ -137,7 +137,6 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
 
   const handleZoomingToBox = (objBox) => {
     if (objBox) {
-      console.log({ objBox });
       camera.zoom =
         Math.min(
           width / (objBox.max.x - objBox.min.x) / 1.5,

@@ -227,8 +227,16 @@ const Selection = () => {
 
         const object = scene.getObjectById(caughtLevel);
         if (object) {
-          const { userData, name, id } = object;
-          setUserData({ ...userData, logId: uuidv4(), name, id });
+          const { userData, name, id, uuid, type, children = [] } = object;
+          setUserData({
+            ...userData,
+            logId: uuidv4(),
+            name,
+            id,
+            uuid,
+            type,
+            children: { length: children.length },
+          });
 
           const box3 = new THREE.Box3();
           box3.setFromObject(object);

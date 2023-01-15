@@ -73,8 +73,8 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
       {experimental && <BufferExperimental pid={pid} />}
 
       <BoundingBox />
-        <LayersProvider />
-        <GUIProvider />
+      <LayersProvider />
+      <GUIProvider />
 
       <Invalidate />
 

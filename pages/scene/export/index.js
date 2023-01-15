@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
+import useStatusStore from "../../../store/status-store";
 import useClickedOutside from "../topbar/outside-hook";
 
 const Wrapper = styled.div`
@@ -62,8 +63,11 @@ const Export = ({
   enabled = false,
   setExportScreen = () => {},
   setNeedsData = () => {},
+  sceneData,
 }) => {
   const ref = useRef();
+
+  const scene = useStatusStore(({ linksStructure }) => linksStructure);
 
   useClickedOutside(ref, setExportScreen);
 
@@ -77,9 +81,24 @@ const Export = ({
           <Btn
             onClick={() => {
               setNeedsData(true);
+
+              if (scene) {
+                const json = scene.toJSON();
+                if (json) {
+                  const output = JSON.stringify(json);
+                  let blob = new Blob([output], {
+                    type: "application/json",
+                  });
+
+                  let link = document.createElement("a");
+                  link.href = window.URL.createObjectURL(blob);
+                  link.download = "scene.json";
+                  link.click();
+                }
+              }
             }}
           >
-            Экспорт в 3DM
+            Экспорт в JSON
           </Btn>
         </Paper>
         <Paper>
