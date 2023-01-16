@@ -32,9 +32,7 @@ const AuthWrapper = (props = {}) => {
         router.replace({ pathname }).then(() => router.reload());
         return;
       })
-      .catch(() => {
-        console.log("error");
-      });
+      .catch(() => {});
   }
 
   if (!userFetched)

@@ -69,9 +69,7 @@ const Buffer3dm = ({
           faces.delete();
         });
       })
-      .catch((error) => {
-        console.log("error", error);
-      });
+      .catch((error) => {});
   }, [path]);
 
   return <></>;

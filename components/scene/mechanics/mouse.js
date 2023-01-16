@@ -173,9 +173,7 @@ const Mouse = () => {
 
           setCaughtMeshes(intersect.map(handleUUID));
         }
-      } catch (err) {
-        console.log("errpr", err);
-      }
+      } catch (err) {}
     };
 
     if (true) {

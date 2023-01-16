@@ -13,6 +13,7 @@ const Selection = () => {
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
+  const setCameraData = useStatusStore(({ setCameraData }) => setCameraData);
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -241,7 +242,17 @@ const Selection = () => {
           const box3 = new THREE.Box3();
           box3.setFromObject(object);
 
-          setBoundingBox({ ...box3, logId: uuidv4() });
+          const center = box3.getCenter(new THREE.Vector3());
+          const size = box3.getSize(new THREE.Vector3());
+
+          setBoundingBox({
+            ...box3,
+            center,
+            size,
+            logId: uuidv4(),
+            e: { x: e.clientX, y: e.clientY },
+          });
+          setCameraData(camera);
         }
 
         /* */
@@ -263,7 +274,7 @@ const Selection = () => {
         window.removeEventListener("click", handleClick);
       };
     }
-  }, [caughtLevel]);
+  }, [caughtLevel, camera]);
 
   return <></>;
 };

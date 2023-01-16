@@ -18,6 +18,7 @@ import { CoreLayout, Screen, Space3D } from "../../components/ui/main/__styles";
 import AuthWrapper from "../../components/main/auth-wrapper";
 import GUI from "../../components/ui/gui/gui";
 import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/handle-update-info";
+import Popover from "../../components/ui/popover/popover";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -119,6 +120,7 @@ const App = () => {
           <TopBar headers={headers} />
 
           <GUI />
+          <Popover />
 
           <Export
             enabled={isExportScreen}
