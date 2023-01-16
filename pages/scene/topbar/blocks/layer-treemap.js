@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import useStatusStore from "../../../../store/status-store";
-import { Tree } from "antd";
+import { Space, Tree } from "antd";
 import { useThree } from "@react-three/fiber";
 import { Typography } from "antd";
 
@@ -82,6 +82,12 @@ const FlexLabel = styled.div`
   }
 `;
 
+const FlexItem = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
 const LayerTreemap = () => {
   /* linksStructure = scene. Те же самые данные */
   let linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
@@ -89,6 +95,13 @@ const LayerTreemap = () => {
 
   const setBoundingBox = useStatusStore(({ setBoundingBox }) => setBoundingBox);
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
+
+  const GUIData = useStatusStore(({ GUIData }) => GUIData);
+
+  const [logId, setLogId] = useState(uuidv4());
+  /* useEffect(() => {
+    setLogId(uuidv4());
+  }, [GUIData]); */
 
   const renderTree = (nodes) => {
     if (
@@ -103,14 +116,27 @@ const LayerTreemap = () => {
         <TreeItem
           key={nodes.id}
           nodeId={nodes.id}
+          ContentProps={
+            GUIData && GUIData.id === nodes.id
+              ? { className: "Mui-selected" }
+              : {}
+          }
           label={
-            <FlexLabel
-              fill={nodes.type === "Group" ? "/layers/3.svg" : "/layers/4.svg"}
-            >
-              <Text ellipsis={{ rows: 1 }}>
-                {nodes.name ? nodes.name : nodes.type}
-              </Text>
-            </FlexLabel>
+            <FlexItem>
+              <FlexLabel
+                fill={
+                  nodes.type === "Group" ? "/layers/3.svg" : "/layers/4.svg"
+                }
+              >
+                <Text ellipsis={{ rows: 1 }}>
+                  {nodes.name ? nodes.name : nodes.type}
+                </Text>
+              </FlexLabel>
+
+              <Space>
+                <div>dfsdf</div>
+              </Space>
+            </FlexItem>
           }
           onClick={(e) => {
             e.preventDefault();
@@ -131,20 +157,56 @@ const LayerTreemap = () => {
         >
           {Array.isArray(nodes.children)
             ? nodes.children
-                .filter((_, i) => i < 50)
+                .filter((obj, i) => {
+                  let isSel = false;
+                  if (GUIData) {
+                    isSel = obj.id === GUIData.id;
+                  }
+
+                  return i < 50 || isSel;
+                })
                 .map((node) => renderTree(node))
             : null}
         </TreeItem>
       );
   };
 
+  const defExpanded = useMemo(() => {
+    if (sceneLogId) {
+      let keys = [linksStructure.id];
+
+      if (GUIData) {
+        const objId = GUIData.id;
+
+        let parentKeys = [];
+
+        linksStructure.traverse((obj = {}) => {
+          if (obj.id === objId) {
+            obj.traverseAncestors((par = {}) => {
+              parentKeys.push(par.id);
+            });
+          }
+        });
+
+        keys = parentKeys;
+      }
+
+      return keys;
+    } else {
+      return [];
+    }
+  }, [sceneLogId, linksStructure, GUIData]);
+
+  console.log("defExpanded", defExpanded);
+
   return (
     <>
       <Wrapper>
         {linksStructure && (
           <TreeView
+            key={`fd:${logId}`}
             aria-label="rich object"
-            defaultExpanded={sceneLogId ? [linksStructure.id] : []}
+            defaultExpanded={defExpanded}
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
             sx={{

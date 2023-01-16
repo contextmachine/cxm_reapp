@@ -364,6 +364,8 @@ const TopBar = ({ headers = [] }) => {
   const [graphicsPanel, showGraphicsPanel] = useState(false);
   const [graphicsAreReady, setGraphicsReady] = useState(false);
 
+  const GUIData = useStatusStore(({ GUIData }) => GUIData);
+
   useEffect(() => {
     if (graphicsPanel) {
       const timer = setTimeout(() => setGraphicsReady(true), 400);
@@ -378,6 +380,12 @@ const TopBar = ({ headers = [] }) => {
 
   const [layersPanel, setLayersPanel] = useState(false);
   const [colorPickerPanel, setColorPickerPanel] = useState(false);
+
+  useEffect(() => {
+    if (GUIData) {
+      setLayersPanel(true);
+    }
+  }, [GUIData]);
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
   const setControlsInProcess = useStatusStore(
@@ -513,7 +521,7 @@ const TopBar = ({ headers = [] }) => {
                               }
                             >
                               <Text
-                                ellipsis={{rows: true}}
+                                ellipsis={{ rows: true }}
                                 style={{ maxWidth: "120px" }}
                               >
                                 {name === "По цветам"
