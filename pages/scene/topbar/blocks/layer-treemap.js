@@ -12,6 +12,10 @@ import TreeItem from "@mui/lab/TreeItem";
 import * as THREE from "three";
 import { v4 as uuidv4 } from "uuid";
 
+import FocusIcon from "./icons/focus";
+import VisibleIcon from "./icons/visible";
+import HiddenIcon from "./icons/hidden";
+
 const { Text } = Typography;
 
 export const Wrapper = styled.div`
@@ -86,6 +90,37 @@ const FlexItem = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  & *[data-type="actions"] {
+    opacity: 0;
+  }
+
+  &&:hover {
+    & *[data-type="actions"] {
+      opacity: 1;
+    }
+  }
+`;
+
+const Action = styled.div`
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+
+  &&::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background: url(${({ type }) =>
+      type === "focus"
+        ? `"/icons/focus.svg"`
+        : type === "visible"
+        ? `"/icons/visible.svg"`
+        : type === "hidden"
+        ? `"/icons/n-visible.svg"`
+        : ``});
+  }
 `;
 
 const LayerTreemap = () => {
@@ -97,6 +132,8 @@ const LayerTreemap = () => {
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
+
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
   const [logId, setLogId] = useState(uuidv4());
   /* useEffect(() => {
@@ -122,7 +159,7 @@ const LayerTreemap = () => {
               : {}
           }
           label={
-            <FlexItem>
+            <FlexItem style={!nodes.visible ? { opacity: 0.5 } : {}}>
               <FlexLabel
                 fill={
                   nodes.type === "Group" ? "/layers/3.svg" : "/layers/4.svg"
@@ -134,7 +171,22 @@ const LayerTreemap = () => {
               </FlexLabel>
 
               <Space>
-                <div>dfsdf</div>
+                <FocusIcon data-type="actions" />
+                <VisibleIcon
+                  data-type={nodes.visible ? "actions" : ""}
+                  visible={nodes.visible}
+                  onClick={() => {
+                    let vis = nodes.visible;
+
+                    if (linksStructure) {
+                      nodes.traverse((obj) => {
+                        obj.visible = vis ? false : true;
+                      });
+
+                      setNeedsRender(true);
+                    }
+                  }}
+                />
               </Space>
             </FlexItem>
           }
@@ -196,8 +248,6 @@ const LayerTreemap = () => {
       return [];
     }
   }, [sceneLogId, linksStructure, GUIData]);
-
-  console.log("defExpanded", defExpanded);
 
   return (
     <>

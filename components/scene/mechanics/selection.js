@@ -136,7 +136,7 @@ const Selection = () => {
       if (caughtItem) {
         /* Шаг 2.1: составляем список всех предков. 
            Порядок ближайший предок -> дальний предок -> еще более дальний */
-        const indexList = [];
+        let indexList = [];
 
         caughtItem.traverseAncestors((obj = {}, i) => {
           indexList.push(obj.id);
@@ -164,7 +164,7 @@ const Selection = () => {
           /* Если спустились на определенный уровень у другого объекта, а актуального объекта другая структура вложения парент групп */
           if (deepObjectId) {
             const alterItem = scene.getObjectById(deepObjectId);
-            const alterList = [];
+            let alterList = [];
 
             if (alterItem) {
               alterItem.traverseAncestors((obj = {}, i) => {
@@ -245,7 +245,7 @@ const Selection = () => {
         }
 
         /* */
-        const indexList = [];
+        let indexList = [];
 
         object.traverseAncestors((obj = {}, i) => {
           indexList.push(obj.id);
