@@ -67,6 +67,17 @@ const Popover = () => {
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
+  const handleZoomingToBox = (objBox, camera) => {
+    if (objBox) {
+      camera.zoom =
+        Math.min(
+          objBox.canvasSize.width / (objBox.max.x - objBox.min.x) / 1.5,
+          objBox.canvasSize.height / (objBox.max.y - objBox.min.y) / 1.5
+        ) / 1.5;
+      camera?.updateProjectionMatrix();
+    }
+  };
+
   if (!bb) return <></>;
 
   return (
@@ -78,7 +89,7 @@ const Popover = () => {
           <Btn
             onClick={() => {
               if (bb && cameraData) {
-                let offset = 300;
+                /* let offset = 300;
                 offset = offset || 1.5;
 
                 const { center, size } = bb;
@@ -99,7 +110,8 @@ const Popover = () => {
                   (camera.position.y * endDistance) / startDistance,
                   (camera.position.z * endDistance) / startDistance
                 );
-                camera.lookAt(center);
+                camera.lookAt(center); */
+                handleZoomingToBox(bb, cameraData);
 
                 setNeedsRender(true);
               }

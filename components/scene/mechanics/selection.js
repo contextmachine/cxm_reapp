@@ -25,7 +25,7 @@ const Selection = () => {
   const [deepObjectId, setDeepObjectId] = useState(null);
   const [deepLevel, setDeepLevel] = useState(1);
 
-  const { camera, scene } = useThree();
+  const { camera, scene, size: canvasSize } = useThree();
 
   /* список всех объекты, которые попали в область курсора */
   const [caughtMeshes, setCaughtMeshes] = useState([]);
@@ -251,6 +251,7 @@ const Selection = () => {
             size,
             logId: uuidv4(),
             e: { x: e.clientX, y: e.clientY },
+            canvasSize,
           });
           setCameraData(camera);
         }
@@ -274,7 +275,7 @@ const Selection = () => {
         window.removeEventListener("click", handleClick);
       };
     }
-  }, [caughtLevel, camera]);
+  }, [caughtLevel, camera, canvasSize]);
 
   return <></>;
 };
