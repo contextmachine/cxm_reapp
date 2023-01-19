@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 
 import Camera from "./camera";
@@ -13,7 +13,7 @@ import LayersProvider from "./mechanics/layers-provider";
 
 import Invalidate from "./mechanics/invalidate";
 import Selection from "./mechanics/selection";
-import { Box } from "@react-three/drei";
+import { Bounds, Box } from "@react-three/drei";
 
 import { useRouter } from "next/router";
 
@@ -22,6 +22,11 @@ import BufferExperimental from "./mechanics/buffer-experimental";
 import GUIProvider from "./mechanics/gui-provider";
 
 import useStatusStore from "../../store/status-store";
+import BoundWrapper from "./mechanics/bound-wrapper";
+
+const BoundsWrapper = ({ children }) => {
+  return <>{children}</>;
+};
 
 const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
@@ -60,17 +65,23 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
       <pointLight position={[50, 50, 60]} intensity={8} />
 
       {mouse && <Mouse />}
-      <Selection />
+      <Selection viewType={viewType} />
 
-      {!experimental && (
-        <BufferIfcGroup
-          includedKeys={includedKeys}
-          pid={pid}
-          setPreviewImage={setPreviewImage}
-        />
-      )}
+      <Bounds damping={0} margin={viewType === "perspective" ? 40 : 3}>
+        <BoundWrapper>
+          <group>
+            {!experimental && (
+              <BufferIfcGroup
+                includedKeys={includedKeys}
+                pid={pid}
+                setPreviewImage={setPreviewImage}
+              />
+            )}
 
-      {experimental && <BufferExperimental pid={pid} />}
+            {experimental && <BufferExperimental pid={pid} />}
+          </group>
+        </BoundWrapper>
+      </Bounds>
 
       <BoundingBox />
       <LayersProvider />

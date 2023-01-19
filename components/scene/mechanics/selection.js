@@ -6,14 +6,19 @@ import useStatusStore from "../../../store/status-store";
 
 import { v4 as uuidv4 } from "uuid";
 
-const Selection = () => {
+const Selection = ({ viewType }) => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
+  console.log("viewType", viewType);
 
   const userData = useStatusStore(({ userData }) => userData);
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
   const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
   const setCameraData = useStatusStore(({ setCameraData }) => setCameraData);
+  const setControlsData = useStatusStore(
+    ({ setControlsData }) => setControlsData
+  );
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -25,7 +30,7 @@ const Selection = () => {
   const [deepObjectId, setDeepObjectId] = useState(null);
   const [deepLevel, setDeepLevel] = useState(1);
 
-  const { camera, scene, size: canvasSize } = useThree();
+  const { camera, scene, size: canvasSize, controls, get } = useThree();
 
   /* список всех объекты, которые попали в область курсора */
   const [caughtMeshes, setCaughtMeshes] = useState([]);
@@ -41,11 +46,14 @@ const Selection = () => {
     const handleRaycasting = (e) => {
       const pointer = new THREE.Vector2();
 
+      let { camera } = get();
+
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
       const raycaster = new THREE.Raycaster();
       raycaster.firstHitOnly = true;
+
       raycaster.setFromCamera(pointer, camera);
 
       try {
@@ -86,7 +94,7 @@ const Selection = () => {
     return () => {
       window.removeEventListener("mousemove", handleRaycasting);
     };
-  }, [scene, camera]);
+  }, [scene, camera, viewType, get]);
 
   /* Шаг 2: При клике выбрать deepObject */
   useEffect(() => {
@@ -126,7 +134,7 @@ const Selection = () => {
         window.removeEventListener("click", handleClick);
       };
     }
-  }, [caughtMeshes, scene]);
+  }, [caughtMeshes, scene, camera, viewType]);
 
   useEffect(() => {
     if (caughtMeshes && caughtMeshes.length > 0 && scene) {
@@ -201,7 +209,7 @@ const Selection = () => {
     } else {
       setCaughtLevel(null);
     }
-  }, [caughtMeshes, scene, deepLevel, deepObjectId]);
+  }, [caughtMeshes, scene, deepLevel, camera, deepObjectId, viewType]);
 
   useEffect(() => {
     if (typeof caughtLevel === "number") {
@@ -218,7 +226,7 @@ const Selection = () => {
     }
 
     setNeedsRender(true);
-  }, [caughtLevel, scene]);
+  }, [caughtLevel, scene, camera, viewType]);
 
   useEffect(() => {
     if (typeof caughtLevel === "number") {
@@ -254,6 +262,7 @@ const Selection = () => {
             canvasSize,
           });
           setCameraData(camera);
+          setControlsData(controls);
         }
 
         /* */
@@ -275,7 +284,7 @@ const Selection = () => {
         window.removeEventListener("click", handleClick);
       };
     }
-  }, [caughtLevel, camera, canvasSize]);
+  }, [caughtLevel, camera, canvasSize, controls, viewType]);
 
   return <></>;
 };

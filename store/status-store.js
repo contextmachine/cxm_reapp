@@ -55,6 +55,8 @@ const useStatusStore = create((set, get) => ({
   setGUIData: (e) => set({ GUIData: e }),
   cameraData: null,
   setCameraData: (e) => set({ cameraData: e }),
+  controlsData: null,
+  setControlsData: (e) => set({ controlsData: e }),
   /* */
   keyFilter: null,
   setKeyFilter: (e) => set({ keyFilter: e }),

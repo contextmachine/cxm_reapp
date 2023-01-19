@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { Box, Line } from "@react-three/drei";
 import useStatusStore from "../../../store/status-store";
 
+import { Bounds, useBounds } from "@react-three/drei";
+
 const handleBoxEdges = (boundingBox) => {
   if (boundingBox) {
     let points = [];

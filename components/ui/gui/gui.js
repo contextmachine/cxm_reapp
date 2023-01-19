@@ -67,8 +67,6 @@ const GUI = () => {
     panelRef.current.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  console.log("gui", gui);
-
   if (!GUIData) return <></>;
 
   return (

@@ -120,7 +120,6 @@ const App = () => {
           <TopBar headers={headers} />
 
           <GUI />
-          <Popover />
 
           <Export
             enabled={isExportScreen}

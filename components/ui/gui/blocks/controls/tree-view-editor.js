@@ -160,35 +160,37 @@ const TreeViewEditor = ({ data, onChange = () => {} }) => {
   let allKeys = [];
 
   const handleFormat = (data) => {
-    const l = Object.keys(data).map((name) => {
-      const hasChildren = typeof data[name] === "object";
-      const hasArrayChildren = Array.isArray(data[name]);
+    if (data && typeof data === "object") {
+      const l = Object.keys(data).map((name) => {
+        const hasChildren = typeof data[name] === "object";
+        const hasArrayChildren = Array.isArray(data[name]);
 
-      const value = data[name];
+        const value = data[name];
 
-      let result = {
-        name,
-      };
+        let result = {
+          name,
+        };
 
-      if (hasChildren) {
-        if (!hasArrayChildren) {
-          result.children = handleFormat(value);
+        if (hasChildren) {
+          if (!hasArrayChildren) {
+            result.children = handleFormat(value);
+          } else {
+            result.children = value.map((item, i) => {
+              return {
+                name: `${name}_${i}`,
+                children: handleFormat(item),
+              };
+            });
+          }
         } else {
-          result.children = value.map((item, i) => {
-            return {
-              name: `${name}_${i}`,
-              children: handleFormat(item),
-            };
-          });
+          result.value = value;
         }
-      } else {
-        result.value = value;
-      }
 
-      return result;
-    });
+        return result;
+      });
 
-    return l;
+      return l;
+    }
   };
 
   let treeData = { name: "data", children: handleFormat(data) };

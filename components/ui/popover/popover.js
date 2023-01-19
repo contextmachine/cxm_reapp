@@ -3,6 +3,8 @@ import styled, { createGlobalStyle } from "styled-components";
 import { Popover as AntPopover } from "antd";
 import FocusIcon from "../../../pages/scene/topbar/blocks/icons/focus";
 
+import * as THREE from "three";
+
 const Focus = styled.div`
   width: 25px;
   height: 25px;
@@ -64,17 +66,109 @@ const Popover = () => {
   const bb = useStatusStore(({ boundingBox }) => boundingBox);
 
   const cameraData = useStatusStore(({ cameraData }) => cameraData);
+  const controlsData = useStatusStore(({ controlsData }) => controlsData);
 
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
-  const handleZoomingToBox = (objBox, camera) => {
-    if (objBox) {
-      camera.zoom =
-        Math.min(
-          objBox.canvasSize.width / (objBox.max.x - objBox.min.x) / 1.5,
-          objBox.canvasSize.height / (objBox.max.y - objBox.min.y) / 1.5
-        ) / 1.5;
-      camera?.updateProjectionMatrix();
+  const handleZoomingToBox = (
+    objBox,
+    camera,
+    controls,
+    fitOffset = 1.2 * 20
+  ) => {
+    if (objBox && camera && controls) {
+      console.log("camera", camera.type);
+      const box = objBox;
+
+      if (camera.type === "PerspectiveCamera") {
+        const size = box.size;
+        const center = box.center;
+
+        const maxSize = Math.max(size.x, size.y, size.z);
+        const fitHeightDistance =
+          maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
+        const fitWidthDistance = fitHeightDistance / camera.aspect;
+        const distance =
+          fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+        const direction = controls.target
+          .clone()
+          .sub(camera.position)
+          .normalize()
+          .multiplyScalar(distance);
+
+        controls.maxDistance = distance * 10;
+        controls.target.copy(center);
+
+        camera.near = distance / 100;
+        camera.far = distance * 100;
+        camera.updateProjectionMatrix();
+
+        camera.position.copy(controls.target).sub(direction);
+        controls.update();
+      } else if (camera.type === "OrthographicCamera") {
+        const size = box.size;
+        const center = box.center;
+
+        const maxSize = Math.max(size.x, size.y, size.z);
+        const fitHeightDistance =
+          maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
+        const fitWidthDistance = fitHeightDistance / camera.aspect;
+        const distance =
+          fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+        const direction = controls.target
+          .clone()
+          .sub(camera.position)
+          .normalize()
+          .multiplyScalar(distance);
+
+        controls.maxDistance = distance * 10;
+        controls.target.copy(center);
+
+        camera.near = distance / 100;
+        camera.far = distance * 100;
+        camera.updateProjectionMatrix();
+
+        camera.position.copy(controls.target).sub(direction);
+        controls.update();
+
+        /* const size = box.size;
+        const center = box.center;
+
+        const maxSize = Math.max(size.x, size.y, size.z);
+
+        let newPositionCamera = new THREE.Vector3(maxSize, maxSize, maxSize);
+        camera.zoom = 1;
+        camera.left = -(2 * maxSize);
+        camera.bottom = -(2 * maxSize);
+        camera.top = 2 * maxSize;
+        camera.right = 2 * maxSize;
+        camera.near = -maxSize * 4;
+        camera.far = maxSize * 4;
+        // camera;
+        camera.position.set(
+          newPositionCamera.x,
+          newPositionCamera.y,
+          newPositionCamera.z
+        );
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+
+        controls.target.copy(center);
+        controls.update(); */
+
+        /* */
+        const width = objBox.canvasSize.width;
+        const height = objBox.canvasSize.height;
+
+        camera.zoom =
+          Math.min(
+            width / (objBox.max.x - objBox.min.x) / 1.5,
+            height / (objBox.max.y - objBox.min.y) / 1.5
+          ) / 1.5;
+        camera?.updateProjectionMatrix();
+      }
     }
   };
 
@@ -111,7 +205,7 @@ const Popover = () => {
                   (camera.position.z * endDistance) / startDistance
                 );
                 camera.lookAt(center); */
-                handleZoomingToBox(bb, cameraData);
+                handleZoomingToBox(bb, cameraData, controlsData);
 
                 setNeedsRender(true);
               }
