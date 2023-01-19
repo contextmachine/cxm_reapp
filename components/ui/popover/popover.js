@@ -78,7 +78,7 @@ const Popover = () => {
     }
   };
 
-  if (!bb) return <></>;
+  if (!(bb && bb.e)) return <></>;
 
   return (
     <>
