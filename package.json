@@ -22,7 +22,7 @@
     "@nivo/core": "^0.80.0",
     "@nivo/pie": "^0.80.0",
     "@nivo/sankey": "^0.80.0",
-    "@react-three/drei": "^9.17.3",
+    "@react-three/drei": "^9.53.3",
     "@react-three/fiber": "^8.2.1",
     "@sanity/image-url": "^1.0.1",
     "@uiw/react-color-colorful": "^1.1.0",

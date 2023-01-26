@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import React, { useEffect } from "react";
+import { Canvas } from "@react-three/fiber";
 
 import Camera from "./camera";
 
@@ -13,20 +13,22 @@ import LayersProvider from "./mechanics/layers-provider";
 
 import Invalidate from "./mechanics/invalidate";
 import Selection from "./mechanics/selection";
-import { Bounds, Box } from "@react-three/drei";
+import {
+  Bounds,
+  Grid,
+  GizmoHelper,
+  GizmoViewport,
+  AdaptiveDpr,
+  AdaptiveEvents,
+} from "@react-three/drei";
 
 import { useRouter } from "next/router";
 
-import ExperimentalList from "./mechanics/experimental/experimental-list";
 import BufferExperimental from "./mechanics/buffer-experimental";
 import GUIProvider from "./mechanics/gui-provider";
 
 import useStatusStore from "../../store/status-store";
 import BoundWrapper from "./mechanics/bound-wrapper";
-
-const BoundsWrapper = ({ children }) => {
-  return <>{children}</>;
-};
 
 const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
@@ -34,17 +36,6 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const router = useRouter();
   const { query } = router;
   const { experimental } = query;
-
-  let experimentalModule = useMemo(() => {
-    if (experimental) {
-      const foundModule = ExperimentalList.find(({ id }) => id === pid);
-      if (foundModule) {
-        const { module } = foundModule;
-
-        return module;
-      }
-    }
-  }, [experimental, pid]);
 
   const setLoadingMessage = useStatusStore(
     ({ setLoadingMessage }) => setLoadingMessage
@@ -58,12 +49,9 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   return (
     <Canvas frameloop="demand" gl={{ preserveDrawingBuffer: true }}>
       <Camera {...{ viewType }} />
-
       <UpdateLayers />
-
       <ambientLight />
       <pointLight position={[50, 50, 60]} intensity={8} />
-
       {mouse && <Mouse />}
       <Selection viewType={viewType} />
 
@@ -82,13 +70,20 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
           </group>
         </BoundWrapper>
       </Bounds>
-
       <BoundingBox />
       <LayersProvider />
       <GUIProvider />
-
       <Invalidate />
 
+      <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+        <GizmoViewport
+          axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]}
+          labelColor="white"
+        />
+      </GizmoHelper>
+
+      <AdaptiveDpr pixelated />
+      <AdaptiveEvents />
       {/* <Buffer3dm /> */}
       {/*<BufferRhinoGroup />*/}
     </Canvas>
