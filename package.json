@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "find:unused": "next-unused"
+  },
+  "next-unused": {
+    "include": [
+      "components",
+      "store",
+      "pages"
+    ],
+    "exclude": [],
+    "entrypoints": []
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -41,6 +51,7 @@
     "next-auth": "^4.10.3",
     "next-sanity": "^1.0.8",
     "next-transpile-modules": "^10.0.0",
+    "next-unused": "^0.0.6",
     "pako": "^2.0.4",
     "prettier": "^2.7.1",
     "react": "^18.2.0",

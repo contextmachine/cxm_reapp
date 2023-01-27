@@ -15,7 +15,6 @@ import Invalidate from "./mechanics/invalidate";
 import Selection from "./mechanics/selection";
 import {
   Bounds,
-  Grid,
   GizmoHelper,
   GizmoViewport,
   AdaptiveDpr,
@@ -29,6 +28,8 @@ import GUIProvider from "./mechanics/gui-provider";
 
 import useStatusStore from "../../store/status-store";
 import BoundWrapper from "./mechanics/bound-wrapper";
+
+import Grid from "./mechanics/grid";
 
 const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
@@ -55,6 +56,8 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
       {mouse && <Mouse />}
       <Selection viewType={viewType} />
 
+      <Grid />
+
       <Bounds damping={0} margin={viewType === "perspective" ? 40 : 3}>
         <BoundWrapper>
           <group>
@@ -70,6 +73,7 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
           </group>
         </BoundWrapper>
       </Bounds>
+
       <BoundingBox />
       <LayersProvider />
       <GUIProvider />
