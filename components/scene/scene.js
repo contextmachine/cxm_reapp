@@ -30,6 +30,7 @@ import useStatusStore from "../../store/status-store";
 import BoundWrapper from "./mechanics/bound-wrapper";
 
 import Grid from "./mechanics/grid";
+import Lighting from "./mechanics/lighting";
 
 const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   const mouse = useToolsStore(({ mouse }) => mouse);
@@ -48,11 +49,17 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
   }, [experimental]);
 
   return (
-    <Canvas frameloop="demand" gl={{ preserveDrawingBuffer: true }}>
+    <Canvas
+      frameloop="demand"
+      /* dpr={[1, 2]}
+      performance={{ min: 0.2 }} */
+      gl={{ preserveDrawingBuffer: true /* , antialias: false */ }}
+    >
       <Camera {...{ viewType }} />
       <UpdateLayers />
-      <ambientLight />
-      <pointLight position={[50, 50, 60]} intensity={8} />
+
+      <Lighting />
+
       {mouse && <Mouse />}
       <Selection viewType={viewType} />
 
@@ -86,10 +93,8 @@ const Scene = ({ viewType, includedKeys, pid, setPreviewImage }) => {
         />
       </GizmoHelper>
 
-      <AdaptiveDpr pixelated />
-      <AdaptiveEvents />
-      {/* <Buffer3dm /> */}
-      {/*<BufferRhinoGroup />*/}
+      {/* <AdaptiveDpr pixelated />
+      <AdaptiveEvents /> */}
     </Canvas>
   );
 };

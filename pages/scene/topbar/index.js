@@ -2,20 +2,23 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Router from "next/router";
 
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import useClickedOutside from "./outside-hook";
 import ChartBar from "./chart";
 import useStatusStore from "../../../store/status-store";
 
-import { Space, Tabs, Typography } from "antd";
+import { Popover, Space, Tabs, Tooltip, Typography } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { LeftOutlined } from "@ant-design/icons";
 import LayerTreemap from "./blocks/layer-treemap";
 
 import stc from "string-to-color";
 import LayerColormap from "./blocks/layer-colormap";
+import Zoom from "../../../components/ui/topbar/sections/zoom/zoom";
+import Selection from "../../../components/ui/topbar/sections/selection/selection";
+import Logs from "../../../components/ui/topbar/sections/logs/logs";
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -47,6 +50,11 @@ const LogoHome = styled.div`
   letter-spacing: 0.8px;
   padding-left: 5px;
   padding-right: 5px;
+
+  background: url("/icons/topbar/logo.svg");
+  background-size: cover;
+  width: 124px;
+  height: 25px;
 
   display: flex;
   && > * + * {
@@ -82,6 +90,10 @@ const PaperWrapper = styled.div`
   padding: 5px;
 
   cursor: pointer;
+
+  && > * + * {
+    margin-left: 8px;
+  }
 `;
 
 const Paper = (props) => {
@@ -94,7 +106,7 @@ const Paper = (props) => {
   );
 };
 
-const LeftSide = styled.div`
+export const LeftSide = styled.div`
   width: max-content;
 
   position: absolute;
@@ -136,93 +148,28 @@ LeftSide.Btn = styled.div`
     ${({ section }) =>
       section === "layers"
         ? `
-      background: url('/icons/layers-ic-1.svg');
+      background: url('/icons/topbar/layers.svg');
       `
-        : `
-      background: url('/icons/history-ic-1.svg');
-      `}
+        : section === "zoom"
+        ? `
+      background: url('/icons/topbar/zoom.svg');
+      `
+        : section === "bbox"
+        ? `background: url('/icons/topbar/bbox.svg');`
+        : section === "light"
+        ? `background: url('/icons/topbar/light.svg');`
+        : section === "note"
+        ? `background: url('/icons/topbar/note.svg');`
+        : ``}
     background-size: cover;
-    mix-blend-mode: difference;
+    //mix-blend-mode: difference;
   }
 `;
 
-const RightSide = styled.div`
-  width: 150px;
-  height: 50px;
-
-  @media (max-width: 480px) {
-    & {
-      width: 110px;
-      height: 40px;
-    }
-  }
-
-  transition: all 0.2s ease-in-out;
-
-  background: white;
-  border-radius: 10px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-
-  &[data-type="fullsize"] {
-    width: 500px;
-    right: 10px;
-    height: 230px;
-
-    @media (max-width: 480px) {
-      right: -0px;
-      width: 100%;
-    }
-  }
-`;
-
-const ChartHeader = styled.div`
-  width: 100%;
-  height: 50px;
-  position: absolute;
-  cursor: pointer;
-
-  @media (max-width: 480px) {
-    & {
-      height: 40px;
-    }
-  }
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  && > * + * {
-    margin-left: 8px;
-  }
-
-  &&,
-  && * {
-    color: black;
-    font-size: 14px;
-    line-height: 22px;
-    letter-spacing: -0.4px;
-
-    @media (max-width: 480px) {
-      & {
-        font-size: 9px;
-      }
-    }
-  }
-`;
-
-const Arrow = styled.div`
-  min-width: 7.18px;
-  height: 4.59px;
-  background: url("/icons/arrow-bar.svg");
-  mix-blend-mode: difference;
-  transition: all 0.3s ease-in-out;
-
-  &[data-rotation="up"] {
-    transform: rotate(180deg);
-  }
+export const VR = styled.div`
+  width: 1px;
+  height: 24px;
+  background: #c6c5d1;
 `;
 
 const LayersPanel = styled.div`
@@ -360,6 +307,25 @@ Sections.Tab = styled.div`
   }
 `;
 
+export const HotKey = styled.span`
+  padding: 2px 8px;
+  background: black;
+  border-radius: 3px;
+  color: white;
+`;
+
+export const GlobalStyles = createGlobalStyle`
+    &&&&& {
+        & .ant-popover-arrow {
+            display: none
+        }
+
+       & .ant-popover-content {
+        transform: translateY(-10px) !important;
+       }
+    }
+`;
+
 const TopBar = ({ headers = [] }) => {
   const [graphicsPanel, showGraphicsPanel] = useState(false);
   const [graphicsAreReady, setGraphicsReady] = useState(false);
@@ -460,6 +426,8 @@ const TopBar = ({ headers = [] }) => {
 
   return (
     <>
+      <GlobalStyles />
+
       <Bar>
         {layersPanel && (
           <LayersPanel ref={layersRef}>
@@ -548,22 +516,33 @@ const TopBar = ({ headers = [] }) => {
 
         <LeftSide>
           <Space>
-            <Paper type="bar" onClick={goHome}>
-              <LogoHome>
-                <LeftOutlined />
-                <div>CXM</div>
-              </LogoHome>
-            </Paper>
-
             <Paper type="bar">
-              <LeftSide.Btn
-                section="layers"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  return setLayersPanel((state) => !state);
-                }}
-              />
-              <LeftSide.Btn section="history" />
+              <Tooltip title="Вернуться к проектам">
+                <LogoHome onClick={goHome}></LogoHome>
+              </Tooltip>
+
+              <VR />
+
+              <Tooltip title="Слои">
+                <LeftSide.Btn
+                  section="layers"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    return setLayersPanel((state) => !state);
+                  }}
+                />
+              </Tooltip>
+
+              <VR />
+
+              <Zoom />
+              <Selection />
+
+              <Tooltip title="Настройки освещения">
+                <LeftSide.Btn section="light" />
+              </Tooltip>
+
+              <Logs />
             </Paper>
           </Space>
         </LeftSide>

@@ -19,6 +19,7 @@ import AuthWrapper from "../../components/main/auth-wrapper";
 import GUI from "../../components/ui/gui/gui";
 import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/handle-update-info";
 import Popover from "../../components/ui/popover/popover";
+import useLightingStore from "../../store/lighting-store";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -71,6 +72,8 @@ const App = () => {
     ({ setInitialZoomId }) => setInitialZoomId
   );
 
+  const setLights = useLightingStore(({ setLights }) => setLights);
+
   useEffect(() => {
     let cleanupStartTime = performance.now();
 
@@ -80,6 +83,7 @@ const App = () => {
     setBoundingBox(null);
     setInitialZoomId(null);
     setPreviewImage(null);
+    setLights({});
 
     let cleanupEndTime = performance.now();
     console.log(
