@@ -19,6 +19,7 @@ import LayerColormap from "./blocks/layer-colormap";
 import Zoom from "../../../components/ui/topbar/sections/zoom/zoom";
 import Selection from "../../../components/ui/topbar/sections/selection/selection";
 import Logs from "../../../components/ui/topbar/sections/logs/logs";
+import Lighting from "../../../components/ui/topbar/sections/lighting/lighting";
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -424,6 +425,8 @@ const TopBar = ({ headers = [] }) => {
     }
   }, [tab, layersPanel]);
 
+  const [section, setSection] = useState();
+
   return (
     <>
       <GlobalStyles />
@@ -535,34 +538,13 @@ const TopBar = ({ headers = [] }) => {
 
               <VR />
 
-              <Zoom />
-              <Selection />
-
-              <Tooltip title="Настройки освещения">
-                <LeftSide.Btn section="light" />
-              </Tooltip>
-
-              <Logs />
+              <Zoom {...{ section, setSection }} />
+              <Selection {...{ section, setSection }} />
+              <Lighting {...{ section, setSection }} />
+              <Logs {...{ section, setSection }} />
             </Paper>
           </Space>
         </LeftSide>
-
-        {/* <RightSide
-          ref={graphicsRef}
-          data-type={graphicsPanel ? "fullsize" : "default"}
-        >
-          <ChartHeader
-            onClick={(e) => {
-              e.stopPropagation();
-              return showGraphicsPanel((state) => !state);
-            }}
-          >
-            <Arrow data-rotation={graphicsPanel ? "up" : "down"} />
-            <div>Инфографика</div>
-          </ChartHeader>
-
-          {graphicsAreReady && <ChartBar headers={headers} />}
-          </RightSide> */}
       </Bar>
     </>
   );

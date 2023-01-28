@@ -9,8 +9,6 @@ import { v4 as uuidv4 } from "uuid";
 const Selection = ({ viewType }) => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
 
-  console.log("viewType", viewType);
-
   const userData = useStatusStore(({ userData }) => userData);
   const setUserData = useStatusStore(({ setUserData }) => setUserData);
 
@@ -73,9 +71,20 @@ const Selection = ({ viewType }) => {
             .filter((intersect = {}) => {
               /* пойманный в область курсора объект не может быть типа bounding-box */
               const { object = {} } = intersect;
-              const { name } = object;
+              const { name, isTransformControls } = object;
 
-              return !(name === "bounding-box" || name === "hover-box");
+              let foundTransformChildren = false;
+              object.traverseAncestors((obj = {}, i) => {
+                const { isTransformControls } = obj;
+                if (isTransformControls) foundTransformChildren = true;
+              });
+
+              return !(
+                name === "bounding-box" ||
+                name === "hover-box" ||
+                isTransformControls ||
+                foundTransformChildren
+              );
             })
             .filter(handleUUID)
             .filter((_, i) => {

@@ -1,4 +1,4 @@
-import { Wrapper } from "../../../../../pages/scene/topbar/blocks/layer-treemap";
+import { Wrapper } from "../../../topbar/patterns/treemap/__styles";
 import { SubWrapper } from "../controls";
 
 import TreeView from "@mui/lab/TreeView";

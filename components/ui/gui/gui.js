@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import useStatusStore from "../../../store/status-store";
 import { Header, Wrapper, HR, Overflow, List, Tag } from "./__styles";
 import { Row } from "antd";
@@ -56,6 +56,8 @@ const GUI = () => {
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
   const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
 
+  const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
+
   const { name, id, gui = [], logId } = GUIData ? GUIData : {};
 
   const handleClose = () => {
@@ -66,6 +68,35 @@ const GUI = () => {
   const backTop = () => {
     panelRef.current.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const object = useMemo(() => {
+    if (linksStructure && GUIData) {
+      const { id } = GUIData;
+
+      let found;
+      linksStructure.traverse((obj = {}) => {
+        const { id: _id } = obj;
+        if (id === _id) {
+          found = obj;
+        }
+      });
+
+      const { logId, ...other } = GUIData;
+      let res = { ...other };
+
+      if (found) {
+        const { type, isLight } = found;
+        res = { ...res, type };
+
+        if (isLight) {
+          const { intensity } = found;
+          res = { ...res, intensity };
+        }
+      }
+
+      return res;
+    }
+  }, [GUIData, linksStructure]);
 
   if (!GUIData) return <></>;
 
@@ -87,7 +118,7 @@ const GUI = () => {
         <Tabs defaultActiveKey={gui.length > 0 ? "item-2" : "item-1"}>
           <Tabs.TabPane tab="Детали" key="item-1">
             <Overflow>
-              <TreeViewEditor data={GUIData} />
+              <TreeViewEditor data={/* GUIData */ object} />
             </Overflow>
           </Tabs.TabPane>
 

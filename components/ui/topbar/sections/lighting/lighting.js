@@ -1,10 +1,10 @@
-import { Popover, Space, Tooltip } from "antd";
-import { useRef, useState } from "react";
+import { Tooltip, Popover } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { LeftSide } from "../../../../../pages/scene/topbar";
 import useClickedOutside from "../../../../../pages/scene/topbar/outside-hook";
-import { Hotkey, Li } from "../__styles";
+import List from "./list";
 
-const Selection = () => {
+const Lighting = () => {
   const [open, setOpen] = useState();
   const ref = useRef();
 
@@ -18,18 +18,11 @@ const Selection = () => {
       placement="bottomLeft"
       content={
         <div ref={ref}>
-          <Space ref={ref} direction="vertical" size={0}>
-            <Li>
-              BBox объекта<Hotkey>B</Hotkey>
-            </Li>
-            <Li>
-              Контур объекта<Hotkey>E</Hotkey>
-            </Li>
-          </Space>
+          <List />
         </div>
       }
     >
-      <Tooltip title="Тип выделения объекта" open={open ? false : undefined}>
+      <Tooltip title="Настройки освещения" open={open ? false : undefined}>
         <LeftSide.Btn
           onClick={(e) => {
             if (!open) {
@@ -38,11 +31,11 @@ const Selection = () => {
 
             setOpen((state) => !state);
           }}
-          section="bbox"
+          section="light"
         />
       </Tooltip>
     </Popover>
   );
 };
 
-export default Selection;
+export default Lighting;

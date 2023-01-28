@@ -10,6 +10,7 @@ import useStatusStore from "../../../store/status-store";
 import unpackZipScene from "./hooks/unpack-zip-scene";
 import handleAddingScene from "./hooks/handle-adding-scene";
 import { v4 as uuidv4 } from "uuid";
+import useLogsStore from "../../../store/logs-store";
 
 const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
   const [loaded, setLoaded] = useState(false);
@@ -40,6 +41,9 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
   const setInitialZoomId = useStatusStore(
     ({ setInitialZoomId }) => setInitialZoomId
   );
+
+  /* Логи */
+  const setLogs = useLogsStore(({ setLogs }) => setLogs);
 
   /* Глоб хук: link structure */
   const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
@@ -319,27 +323,61 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
         //w.document.body.appendChild(img);
       }
 
-      console.log(
-        `
-          %cLoading complete!\n
-          Results:\n\n
-          Total time: ${
-            loadingAuth +
-            loadingFilesDownloadTotal +
-            loadingMetadata +
-            loadingThreeJS +
-            loadingDataSceneSanity +
-            loadingDataThumbnail
-          }ms;\n
-          Authorisation: ${loadingAuth}ms;\n
-          Files downloaded: ${loadingFilesDownload}ms;\n
-          Files unarchived: ${loadingFilesUnarchive}ms;\n
-          Files download + unarchivation: ${loadingFilesDownloadTotal}ms;\n
-          Files metadata update: ${loadingMetadata}ms;\n
-          Files added to three.js scene: ${loadingThreeJS}ms;\n
-`,
-        "color: green; font-weight: bold;"
+      const roundize = (e) => {
+        if (e) return Math.round((e * 1000) / 1000);
+        return 0;
+      };
+
+      const n = (
+        <div>
+          Loading complete!
+          <br />
+          Results:
+          <br />
+          Total time:
+          <span style={{ color: "#ef6016" }}>
+            {roundize(
+              loadingAuth +
+                loadingFilesDownloadTotal +
+                loadingMetadata +
+                loadingThreeJS +
+                loadingDataSceneSanity +
+                loadingDataThumbnail
+            )}
+            ms
+          </span>
+          <br />
+          Authorisation:{" "}
+          <span style={{ color: "#ef6016" }}>{roundize(loadingAuth)}ms</span>
+          <br />
+          Files downloaded:{" "}
+          <span style={{ color: "#ef6016" }}>
+            {roundize(loadingFilesDownload)} ms
+          </span>
+          <br />
+          Files unarchived:{" "}
+          <span style={{ color: "#ef6016" }}>
+            {roundize(loadingFilesUnarchive)} ms
+          </span>
+          <br />
+          Files download + unarchivation:{" "}
+          <span style={{ color: "#ef6016" }}>
+            {roundize(loadingFilesDownloadTotal)} ms
+          </span>
+          <br />
+          Files metadata update:{" "}
+          <span style={{ color: "#ef6016" }}>
+            {roundize(loadingMetadata)} ms
+          </span>
+          <br />
+          Files added to three.js scene:{" "}
+          <span style={{ color: "#ef6016" }}>
+            {roundize(loadingThreeJS)} ms
+          </span>
+        </div>
       );
+
+      setLogs([{ content: n }]);
     }
   }, [loaded]);
 

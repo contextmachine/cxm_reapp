@@ -13,20 +13,34 @@ const Zoom = () => {
   return (
     <Popover
       className="topbar"
+      trigger={[]}
       open={open}
       placement="bottomLeft"
       content={
-        <Space ref={ref} direction="vertical" size={0}>
-          <Li>
-            Выделенный объект<Hotkey>Z</Hotkey>
-          </Li>
-          <Li>
-            Вся сцена<Hotkey>G</Hotkey>
-          </Li>
-        </Space>
+        <div ref={ref}>
+          <Space direction="vertical" size={0}>
+            <Li>
+              Выделенный объект<Hotkey>Z</Hotkey>
+            </Li>
+            <Li>
+              Вся сцена<Hotkey>G</Hotkey>
+            </Li>
+          </Space>
+        </div>
       }
     >
-      <LeftSide.Btn section="zoom" />
+      <Tooltip title="Зум" open={open ? false : undefined}>
+        <LeftSide.Btn
+          onClick={(e) => {
+            if (!open) {
+              e.stopPropagation();
+            }
+
+            setOpen((state) => !state);
+          }}
+          section="zoom"
+        />
+      </Tooltip>
     </Popover>
   );
 };

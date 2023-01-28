@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getSceneData } from "../../../../lib/sanity";
 import useToolsStore from "../../../../store/tools-store";
 import useStatusStore from "../../../../store/status-store";
+import useLogsStore from "../../../../store/logs-store";
 /*<foo onClick={() => {
   gl.render(scene, camera)
   const screenshot = gl.domElement.toDataURL()
@@ -62,6 +63,8 @@ export const useHandleUpdateInfo = ({
     (currentTime.getMonth() + 1)
   ).slice(-2)}-${("0" + currentTime.getDate()).slice(-2)}`;
 
+  const setLogs = useLogsStore(({ setLogs }) => setLogs);
+
   // Загрузка данных из Sanity
   useEffect(() => {
     if (pid) {
@@ -101,8 +104,16 @@ export const useHandleUpdateInfo = ({
 
       setLoadingDataSceneSanity(processTimeResult);
 
+      setLogs([
+        {
+          content: `Call to update scene data on Sanity took ${
+            sceneUpdateEndTime - sceneUpdateStartTime
+          } milliseconds`,
+        },
+      ]);
+
       console.log(
-        `%c Call to update scene data on Sanity took ${
+        `Call to update scene data on Sanity took ${
           sceneUpdateEndTime - sceneUpdateStartTime
         } milliseconds`,
         "color: green"

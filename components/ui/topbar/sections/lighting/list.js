@@ -1,31 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
-import useStatusStore from "../../../../store/status-store";
-import { Space, Tree } from "antd";
-import { useThree } from "@react-three/fiber";
-import { Typography } from "antd";
+import React, { useMemo, useState } from "react";
+import useStatusStore from "../../../../../store/status-store";
+import { Space, Typography } from "antd";
 
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
-import {
-  Wrapper,
-  FlexLabel,
-  FlexItem,
-} from "../../../../components/ui/topbar/patterns/treemap/__styles";
+import { Wrapper, FlexLabel, FlexItem } from "../../patterns/treemap/__styles";
 
 import * as THREE from "three";
 import { v4 as uuidv4 } from "uuid";
 
-import FocusIcon from "./icons/focus";
-import VisibleIcon from "./icons/visible";
-import HiddenIcon from "./icons/hidden";
+import FocusIcon from "../../../../../pages/scene/topbar/blocks/icons/focus";
+import VisibleIcon from "../../../../../pages/scene/topbar/blocks/icons/visible";
 
 const { Text } = Typography;
 
-const LayerTreemap = () => {
-  /* linksStructure = scene. Те же самые данные */
+const List = (props = {}) => {
   let linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
   const sceneLogId = useStatusStore(({ sceneLogId }) => sceneLogId);
 
@@ -38,19 +29,10 @@ const LayerTreemap = () => {
 
   const [logId, setLogId] = useState(uuidv4());
 
-  console.log("linksStructure,", linksStructure);
-
   const renderTree = (nodes) => {
-    if (
-      !(
-        nodes.isCamera ||
-        nodes.isLight ||
-        nodes.isTransformControls ||
-        nodes.name === "bounding-box" ||
-        nodes.name === "hover-box" ||
-        nodes.name === "light-box"
-      )
-    )
+    const { isLight } = nodes;
+
+    if (nodes.isLight || nodes.isScene)
       return (
         <TreeItem
           key={nodes.id}
@@ -153,7 +135,7 @@ const LayerTreemap = () => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper {...props}>
         {linksStructure && (
           <TreeView
             key={`fd:${logId}`}
@@ -176,4 +158,4 @@ const LayerTreemap = () => {
   );
 };
 
-export default LayerTreemap;
+export default List;

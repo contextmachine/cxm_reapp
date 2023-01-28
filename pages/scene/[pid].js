@@ -20,6 +20,7 @@ import GUI from "../../components/ui/gui/gui";
 import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/handle-update-info";
 import Popover from "../../components/ui/popover/popover";
 import useLightingStore from "../../store/lighting-store";
+import useLogsStore from "../../store/logs-store";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -40,6 +41,14 @@ const App = () => {
 
   const setLoadingAuth = useStatusStore(({ setLoadingAuth }) => setLoadingAuth);
 
+  /* Шаг 0.5: Логи */
+  const setLogs = useLogsStore(({ setLogs }) => setLogs);
+  const setEmptyLogs = useLogsStore(({ setEmptyLogs }) => setEmptyLogs);
+
+  useEffect(() => {
+    setEmptyLogs();
+  }, []);
+
   useEffect(() => {
     if (!user && setLoadingAuth) {
       let authStartTime = performance.now();
@@ -59,7 +68,18 @@ const App = () => {
       const resultTime = authEndTime - authStartTime;
       setLoadingAuth(resultTime);
 
-      console.log(`Call to fetch user info took ${resultTime} milliseconds`);
+      setLogs([
+        {
+          content: (
+            <div>
+              Call to fetch user info took{" "}
+              <span style={{ color: "#ef6016" }}>
+                {Math.round(resultTime * 1000) / 1000} ms
+              </span>
+            </div>
+          ),
+        },
+      ]);
     }
   }, [user, setLoadingAuth]);
 
@@ -86,12 +106,19 @@ const App = () => {
     setLights({});
 
     let cleanupEndTime = performance.now();
-    console.log(
-      `%c Call to clear states took ${
-        cleanupEndTime - cleanupStartTime
-      } milliseconds`,
-      "color: green"
-    );
+
+    setLogs([
+      {
+        content: (
+          <div>
+            Call to clear states took&nbsp;
+            <span style={{ color: "#ef6016" }}>
+              {Math.round((cleanupEndTime - cleanupStartTime) * 1000) / 1000} ms
+            </span>{" "}
+          </div>
+        ),
+      },
+    ]);
   }, []);
 
   /* Шаг 1: Ключи, Headers и настройка камеры */
