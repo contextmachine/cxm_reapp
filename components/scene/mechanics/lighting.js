@@ -34,15 +34,13 @@ const Lighting = () => {
       box3.getSize(size);
 
       center = [
-        center.x - size.x * 0.5,
-        center.y - size.y * 0.5,
-        center.z + size.z + 10,
+        center.x - size.x * 0.8,
+        center.y - size.y * 0.8,
+        center.z + (size.z + size.x + size.y) * /* 0.4 */ 0.2,
       ];
 
-      const square = size.x * size.y;
-      const intensity = (5 / 2318) * 0.7 * square;
-
-      console.log("intensity", intensity);
+      const square = size.x + size.y + size.z;
+      const intensity = 0.05 * square;
 
       let scale = size.x > size.y ? size.x : size.y;
       scale *= 2;
@@ -101,13 +99,32 @@ const Lighting = () => {
     }
   }, [isEdit]);
 
+  useEffect(() => {
+    if (userData) {
+      const { name } = userData;
+
+      if (name === "pointLight_1") {
+        setEdit(true);
+      }
+    }
+  }, [userData]);
+
   return (
     <>
-      <ambientLight />
+      {point && point.center ? (
+        <ambientLight name="ambientLight_0" intensity={point.intensity * 0.3} />
+      ) : (
+        <ambientLight name="ambientLight_0" />
+      )}
 
       {point && point.center ? (
         <>
-          <pointLight position={point.center} intensity={point.intensity} />
+          <pointLight
+            name="pointLight_1"
+            position={point.center}
+            intensity={point.intensity}
+            userData={{ link: { name: "light-box" } }}
+          />
 
           {isEdit && (
             <TransformControls
@@ -136,8 +153,11 @@ const Lighting = () => {
           )}
 
           <Octahedron
+            userData={{ link: "pointLight_1" }}
             name="light-box"
-            onClick={() => setEdit(true)}
+            onClick={() => {
+              setEdit(true);
+            }}
             position={point.center}
             args={[(1.5 / 3.5) * point.intensity, 0]}
           >
@@ -145,7 +165,7 @@ const Lighting = () => {
           </Octahedron>
         </>
       ) : (
-        <pointLight position={[50, 50, 60]} intensity={8} />
+        <pointLight name="pointLight_1" position={[50, 50, 60]} intensity={8} />
       )}
     </>
   );

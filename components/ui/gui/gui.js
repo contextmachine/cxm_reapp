@@ -118,7 +118,7 @@ const GUI = () => {
         <Tabs defaultActiveKey={gui.length > 0 ? "item-2" : "item-1"}>
           <Tabs.TabPane tab="Детали" key="item-1">
             <Overflow>
-              <TreeViewEditor data={/* GUIData */ object} />
+              <TreeViewEditor data={/* GUIData */ object} objectName={name} />
             </Overflow>
           </Tabs.TabPane>
 

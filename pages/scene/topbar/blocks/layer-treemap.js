@@ -38,8 +38,6 @@ const LayerTreemap = () => {
 
   const [logId, setLogId] = useState(uuidv4());
 
-  console.log("linksStructure,", linksStructure);
-
   const renderTree = (nodes) => {
     if (
       !(

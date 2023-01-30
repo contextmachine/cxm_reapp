@@ -245,7 +245,24 @@ const Selection = ({ viewType }) => {
 
         const object = scene.getObjectById(caughtLevel);
         if (object) {
-          const { userData, name, id, uuid, type, children = [] } = object;
+          let { userData, name, id, uuid, type, children = [] } = object;
+
+          /* Фича с привязкой данных другого объекта при необходимости */
+          if (userData.link) {
+            const linkedObject = scene.getObjectByProperty(
+              "name",
+              userData.link
+            );
+            if (linkedObject) {
+              userData = linkedObject.userData;
+              name = linkedObject.name;
+              id = linkedObject.id;
+              uuid = linkedObject.uuid;
+              type = linkedObject.type;
+              children = linkedObject.children;
+            }
+          }
+
           setUserData({
             ...userData,
             logId: uuidv4(),

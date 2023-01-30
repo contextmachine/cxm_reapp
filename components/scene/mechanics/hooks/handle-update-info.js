@@ -111,13 +111,6 @@ export const useHandleUpdateInfo = ({
           } milliseconds`,
         },
       ]);
-
-      console.log(
-        `Call to update scene data on Sanity took ${
-          sceneUpdateEndTime - sceneUpdateStartTime
-        } milliseconds`,
-        "color: green"
-      );
     }
   }, [needsUpdate]);
 
@@ -138,10 +131,11 @@ export const useHandleUpdateInfo = ({
 
       setLoadingDataThumbnail(processTimeResult);
 
-      console.log(
-        `%c Call to update scene thumbnail on Sanity took ${processTimeResult} milliseconds`,
-        "color: green"
-      );
+      setLogs([
+        {
+          content: `Call to update scene thumbnail on Sanity took ${processTimeResult} milliseconds`,
+        },
+      ]);
     }
   }, [previewImage]);
 };

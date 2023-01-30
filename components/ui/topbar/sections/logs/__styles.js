@@ -14,9 +14,25 @@ export const Message = styled.div`
     font-size: 12px;
   }
 
-  ${({last}) => last ? `
+  ${({ last }) =>
+    last
+      ? `
     & {
         border-bottom: 0px;
     }
-  ` : ``}
+  `
+      : ``}
+`;
+
+export const Line = styled.div`
+  display: flex;
+  max-height: calc(100vh - 200px);
+  overflow: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &&::-webkit-scrollbar {
+    display: none;
+  }
 `;

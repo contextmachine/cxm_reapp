@@ -21,6 +21,7 @@ import { useHandleUpdateInfo } from "../../components/scene/mechanics/hooks/hand
 import Popover from "../../components/ui/popover/popover";
 import useLightingStore from "../../store/lighting-store";
 import useLogsStore from "../../store/logs-store";
+import TestApollo from "../../components/apollo/test";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -145,6 +146,7 @@ const App = () => {
   return (
     <AuthWrapper user={user} userFetched={userFetched}>
       <CoreLayout>
+        <TestApollo />
         <LocalScripts />
 
         <Screen>

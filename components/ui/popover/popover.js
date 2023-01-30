@@ -77,7 +77,6 @@ const Popover = () => {
     fitOffset = 1.2 * 20
   ) => {
     if (objBox && camera && controls) {
-      console.log("camera", camera.type);
       const box = objBox;
 
       if (camera.type === "PerspectiveCamera") {

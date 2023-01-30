@@ -8,6 +8,8 @@ import TreeItem from "@mui/lab/TreeItem";
 
 import styled from "styled-components";
 import { Input, Checkbox } from "antd";
+import useStatusStore from "../../../../../store/status-store";
+import { useState } from "react";
 
 export const ControlWrapper = styled.div`
   max-width: 160px;
@@ -48,11 +50,28 @@ export const Value = styled.div`
       : ``}
 `;
 
-const ModuleString = ({ value, editable }) => {
+const ModuleString = ({ value, editable, objectName }) => {
+  const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
+  const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
+
+  const handleChange = (e) => {
+    if (objectName) {
+      const obj = linksStructure.getObjectByName(objectName);
+      const val = e.target.value;
+      obj.intensity = val;
+
+      setNeedsRender(true);
+    }
+  };
+
   return (
     <>
       {editable ? (
-        <Input value={value} />
+        <Input
+          style={{ height: "15px", padding: "0px" }}
+          onChange={handleChange}
+          defaultValue={value}
+        />
       ) : (
         <Value type={typeof value}>{value}</Value>
       )}
@@ -64,43 +83,7 @@ const ModuleCheck = ({ value }) => {
   return <Checkbox checked />;
 };
 
-/* const ModuleSelect = ({ value }) => {
-  return (
-    <Select
-      defaultValue="lucy"
-      onChange={() => {}}
-      options={[
-        {
-          value: "jack",
-          label: "Jack",
-        },
-        {
-          value: "lucy",
-          label: "Lucy",
-        },
-        {
-          value: "disabled",
-          disabled: true,
-          label: "Disabled",
-        },
-        {
-          value: "Yiminghe",
-          label: "yiminghe",
-        },
-      ]}
-    />
-  );
-}; */
-
-/* const ModuleSlider = ({ min, max, value, dbl }) => {
-  return (
-    <>
-      <Slider range={dbl} defaultValue={value} min={min} max={max} />
-    </>
-  );
-}; */
-
-const ModuleDifition = ({ data, name, editable = false }) => {
+const ModuleDifition = ({ data, name, editable = false, objectName }) => {
   const { value } = data;
 
   let isButton = false;
@@ -124,27 +107,19 @@ const ModuleDifition = ({ data, name, editable = false }) => {
   let module_;
 
   if (typeof value === "string" || typeof value === "number") {
-    module_ = <ModuleString {...{ value, editable }} />;
+    module_ = (
+      <ModuleString
+        {...{ value, editable: name === "intensity" || editable, objectName }}
+      />
+    );
   } else if (typeof value === "boolean") {
     module_ = <ModuleCheck />;
-  } /*  else if (isSelect) {
-    module_ = <ModuleSelect />;
-  } else if (isSlider) {
-    const { min, max, value: _value } = value;
-
-    if (!isDblSlider) {
-      module_ = <ModuleSlider {...{ min, max, value: _value }} />;
-    } else {
-      module_ = <ModuleSlider {...{ min, max, value: _value }} dbl />;
-    }
-  } */
+  }
 
   return (
     <>
       {
-        /* isButton ? (
-        <Button>{name}</Button>
-      ) : */ <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div style={{ fontWeight: "400", opacity: 0.7 }}>{`${name}:`}</div>
 
           <ControlWrapper>
@@ -156,7 +131,7 @@ const ModuleDifition = ({ data, name, editable = false }) => {
   );
 };
 
-const TreeViewEditor = ({ data, onChange = () => {} }) => {
+const TreeViewEditor = ({ data, onChange = () => {}, objectName }) => {
   let allKeys = [];
 
   const handleFormat = (data) => {
@@ -229,7 +204,15 @@ const TreeViewEditor = ({ data, onChange = () => {} }) => {
               style={{ fontWeight: "600", marginLeft: "10px" }}
             >{`${nodes.name}`}</div>
           ) : (
-            <>{<ModuleDifition data={nodes} name={nodes.name} />}</>
+            <>
+              {
+                <ModuleDifition
+                  data={nodes}
+                  name={nodes.name}
+                  {...{ objectName }}
+                />
+              }
+            </>
           )
         }
       >

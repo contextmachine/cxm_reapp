@@ -1,5 +1,5 @@
 import { useThree } from "@react-three/fiber";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useStatusStore from "../../../store/status-store";
 
 import * as THREE from "three";
@@ -23,7 +23,10 @@ const Grid = () => {
       box3.getCenter(center);
       box3.getSize(size);
 
-      center = [center.x, center.y, center.z - size.z - 1];
+      console.log("center", center);
+      console.log("size", size);
+
+      center = [center.x, center.y, center.z - size.z * 1.2];
       let scale = size.x > size.y ? size.x : size.y;
       scale *= 2;
 
@@ -33,6 +36,15 @@ const Grid = () => {
     }
   }, [loadingMessage, scene]);
 
+  const division = useMemo(() => {
+    if (grid) {
+      const div = Math.round(grid.scale / 5);
+      return div < 10 ? 10 : div;
+    }
+
+    return 10;
+  }, [grid]);
+
   if (!grid) return <></>;
 
   return (
@@ -41,7 +53,7 @@ const Grid = () => {
         infiniteGrid={true}
         rotation={[Math.PI * 0.5, 0, 0]}
         position={grid.center}
-        args={[grid.scale, Math.round(grid.scale / 5), "#786060", "#514D4D"]}
+        args={[grid.scale, division, "#786060", "#514D4D"]}
         name="bounding-box"
       />
     </>
