@@ -60,6 +60,7 @@
     "react-ace": "^10.1.0",
     "react-cookies": "^0.1.1",
     "react-dom": "^18.2.0",
+    "react-hotkeys": "^2.0.0",
     "react-monaco-editor": "^0.50.1",
     "react-telegram-auth": "^1.0.3",
     "sharp": "^0.31.2",

@@ -1,4 +1,28 @@
 import Script from "next/script";
+import { createGlobalStyle } from "styled-components";
+
+export const GlobalStyles = createGlobalStyle`
+    &&&&& {
+        .ant-notification-bottom {
+          transform: translate(-50%, -100px) !important;
+        }
+
+        & .ant-notification-notice {
+          background: #00000082;
+          padding: 12px;
+          border-radius: 10px;
+          width: max-content;
+
+          &, & * {
+            color: white
+          }
+        }
+
+        & .ant-notification-notice-close-x {
+          display: none;
+        }
+    }
+`;
 
 const LocalScripts = ({
   setRhinoConnected = () => {},
@@ -6,6 +30,8 @@ const LocalScripts = ({
 }) => {
   return (
     <>
+      <GlobalStyles />
+
       <Script
         src="https://telegram.org/js/telegram-web-app.js"
         onLoad={() => {

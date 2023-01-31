@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ToolsPanel from "./tools";
 import TopBar from "./topbar";
 import View from "./view";
@@ -22,6 +22,8 @@ import Popover from "../../components/ui/popover/popover";
 import useLightingStore from "../../store/lighting-store";
 import useLogsStore from "../../store/logs-store";
 import TestApollo from "../../components/apollo/test";
+import Hotkeys from "../../components/scene/mechanics/hotkeys";
+import useModeStore from "../../store/mode-store";
 
 const App = () => {
   const [needsData, setNeedsData] = useState(false);
@@ -92,6 +94,7 @@ const App = () => {
   const setInitialZoomId = useStatusStore(
     ({ setInitialZoomId }) => setInitialZoomId
   );
+  const setSelection = useModeStore(({ setSelection }) => setSelection);
 
   const setLights = useLightingStore(({ setLights }) => setLights);
 
@@ -105,6 +108,7 @@ const App = () => {
     setInitialZoomId(null);
     setPreviewImage(null);
     setLights({});
+    setSelection("bbox");
 
     let cleanupEndTime = performance.now();
 
@@ -145,42 +149,44 @@ const App = () => {
 
   return (
     <AuthWrapper user={user} userFetched={userFetched}>
-      <CoreLayout>
-        <TestApollo />
-        <LocalScripts />
+      <Hotkeys>
+        <CoreLayout>
+          {/* <TestApollo /> */}
+          <LocalScripts />
 
-        <Screen>
-          <TopBar headers={headers} />
+          <Screen>
+            <TopBar headers={headers} />
 
-          <GUI />
+            <GUI />
 
-          <Export
-            enabled={isExportScreen}
-            {...{ setExportScreen, setNeedsData, sceneData }}
-          />
+            <Export
+              enabled={isExportScreen}
+              {...{ setExportScreen, setNeedsData, sceneData }}
+            />
 
-          <View {...{ viewType, setViewType }} />
+            <View {...{ viewType, setViewType }} />
 
-          <Loading />
+            <Loading />
 
-          <Space3D>
-            {(includedKeys ||
-              (!includedKeys && pid === "all") ||
-              experimental) && (
-              <Scene
-                {...{
-                  viewType,
-                  includedKeys,
-                  pid,
-                  setPreviewImage,
-                }}
-              />
-            )}
-          </Space3D>
+            <Space3D>
+              {(includedKeys ||
+                (!includedKeys && pid === "all") ||
+                experimental) && (
+                <Scene
+                  {...{
+                    viewType,
+                    includedKeys,
+                    pid,
+                    setPreviewImage,
+                  }}
+                />
+              )}
+            </Space3D>
 
-          <ToolsPanel enabled={tools} {...{ setTools, setExportScreen }} />
-        </Screen>
-      </CoreLayout>
+            <ToolsPanel enabled={tools} {...{ setTools, setExportScreen }} />
+          </Screen>
+        </CoreLayout>
+      </Hotkeys>
     </AuthWrapper>
   );
 };

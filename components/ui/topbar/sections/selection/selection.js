@@ -2,6 +2,7 @@ import { Popover, Space, Tooltip } from "antd";
 import { useRef, useState } from "react";
 import { LeftSide } from "../../../../../pages/scene/topbar";
 import useClickedOutside from "../../../../../pages/scene/topbar/outside-hook";
+import useModeStore from "../../../../../store/mode-store";
 import { Hotkey, Li } from "../__styles";
 
 const Selection = () => {
@@ -9,6 +10,8 @@ const Selection = () => {
   const ref = useRef();
 
   useClickedOutside(ref, setOpen);
+
+  const setSelection = useModeStore(({ setSelection }) => setSelection);
 
   return (
     <Popover
@@ -19,11 +22,11 @@ const Selection = () => {
       content={
         <div ref={ref}>
           <Space ref={ref} direction="vertical" size={0}>
-            <Li>
-              BBox объекта<Hotkey>B</Hotkey>
+            <Li onClick={() => setSelection("bbox")}>
+              BBox объекта<Hotkey>Alt</Hotkey>
             </Li>
-            <Li>
-              Контур объекта<Hotkey>E</Hotkey>
+            <Li onClick={() => setSelection("object")}>
+              Контур объекта<Hotkey>Alt</Hotkey>
             </Li>
           </Space>
         </div>

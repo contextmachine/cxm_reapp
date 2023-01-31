@@ -5,6 +5,7 @@ import * as THREE from "three";
 import useStatusStore from "../../../store/status-store";
 
 import { v4 as uuidv4 } from "uuid";
+import useModeStore from "../../../store/mode-store";
 
 const Selection = ({ viewType }) => {
   const setNeedsRender = useStatusStore(({ setNeedsRender }) => setNeedsRender);
@@ -17,6 +18,8 @@ const Selection = ({ viewType }) => {
   const setControlsData = useStatusStore(
     ({ setControlsData }) => setControlsData
   );
+
+  const selection = useModeStore(({ selection }) => selection);
 
   /* Уровень погружения в подгруппы */
   /* 0 — вся сцена 
@@ -146,7 +149,12 @@ const Selection = ({ viewType }) => {
   }, [caughtMeshes, scene, camera, viewType]);
 
   useEffect(() => {
-    if (caughtMeshes && caughtMeshes.length > 0 && scene) {
+    if (
+      caughtMeshes &&
+      caughtMeshes.length > 0 &&
+      scene &&
+      selection === "bbox"
+    ) {
       /* Шаг 1: Берем деталь, на которую наведен курсор */
       const caughtItem = scene.getObjectById(caughtMeshes[0]);
 
@@ -218,90 +226,94 @@ const Selection = ({ viewType }) => {
     } else {
       setCaughtLevel(null);
     }
-  }, [caughtMeshes, scene, deepLevel, camera, deepObjectId, viewType]);
 
-  useEffect(() => {
-    if (typeof caughtLevel === "number") {
-      const caughtLevelObject = scene.getObjectById(caughtLevel);
+    if (selection === "object") {
+      if (caughtMeshes && caughtMeshes.length > 0 && scene) {
+        /* Шаг 1: Берем деталь, на которую наведен курсор */
+        const caughtItem = scene.getObjectById(caughtMeshes[0]);
 
-      if (caughtLevelObject) {
-        const box3 = new THREE.Box3();
-        box3.setFromObject(caughtLevelObject);
-
-        setHoverBox({ ...box3, logId: uuidv4() });
-      }
-    } else {
-      setHoverBox(null);
-    }
-
-    setNeedsRender(true);
-  }, [caughtLevel, scene, camera, viewType]);
-
-  useEffect(() => {
-    if (typeof caughtLevel === "number") {
-      const handleClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const object = scene.getObjectById(caughtLevel);
-        if (object) {
-          let { userData, name, id, uuid, type, children = [] } = object;
-
-          /* Фича с привязкой данных другого объекта при необходимости */
-          if (userData.link) {
-            const linkedObject = scene.getObjectByProperty(
-              "name",
-              userData.link
-            );
-            if (linkedObject) {
-              userData = linkedObject.userData;
-              name = linkedObject.name;
-              id = linkedObject.id;
-              uuid = linkedObject.uuid;
-              type = linkedObject.type;
-              children = linkedObject.children;
-            }
-          }
-
-          setUserData({
-            ...userData,
-            logId: uuidv4(),
-            name,
-            id,
-            uuid,
-            type,
-            children: { length: children.length },
-          });
-
+        if (caughtItem) {
           const box3 = new THREE.Box3();
-          box3.setFromObject(object);
+          box3.setFromObject(caughtItem);
 
-          const center = box3.getCenter(new THREE.Vector3());
-          const size = box3.getSize(new THREE.Vector3());
-
-          setBoundingBox({
+          setHoverBox({
             ...box3,
-            center,
-            size,
             logId: uuidv4(),
-            e: { x: e.clientX, y: e.clientY },
-            canvasSize,
+            object: caughtItem,
           });
-          setCameraData(camera);
-          setControlsData(controls);
+        }
+      } else {
+        setHoverBox(null);
+      }
+
+      setNeedsRender(true);
+    }
+  }, [
+    caughtMeshes,
+    scene,
+    deepLevel,
+    camera,
+    deepObjectId,
+    viewType,
+    selection,
+  ]);
+
+  useEffect(() => {
+    if (selection === "object") {
+      const handleClick = (e) => {
+        if (caughtMeshes && caughtMeshes.length > 0 && scene) {
+          /* Шаг 1: Берем деталь, на которую наведен курсор */
+          const caughtItem = scene.getObjectById(caughtMeshes[0]);
+
+          if (caughtItem) {
+            let { userData, name, id, uuid, type, children = [] } = caughtItem;
+
+            /* Фича с привязкой данных другого объекта при необходимости */
+            if (userData.link) {
+              const linkedObject = scene.getObjectByProperty(
+                "name",
+                userData.link
+              );
+              if (linkedObject) {
+                userData = linkedObject.userData;
+                name = linkedObject.name;
+                id = linkedObject.id;
+                uuid = linkedObject.uuid;
+                type = linkedObject.type;
+                children = linkedObject.children;
+              }
+            }
+
+            const box3 = new THREE.Box3();
+            box3.setFromObject(caughtItem);
+
+            const center = box3.getCenter(new THREE.Vector3());
+            const size = box3.getSize(new THREE.Vector3());
+
+            setUserData({
+              ...userData,
+              logId: uuidv4(),
+              name,
+              id,
+              uuid,
+              type,
+              children: { length: children.length },
+            });
+
+            setBoundingBox({
+              ...box3,
+              center,
+              size,
+              logId: uuidv4(),
+              e: { x: e.clientX, y: e.clientY },
+              canvasSize,
+            });
+            setCameraData(camera);
+            setControlsData(controls);
+          }
         }
 
-        /* */
-        let indexList = [];
-
-        object.traverseAncestors((obj = {}, i) => {
-          indexList.push(obj.id);
-        });
-
-        indexList = [...indexList].reverse();
-        /* */
-
-        setDeepLevel((state) => indexList.length + 1);
+        setNeedsRender(true);
       };
 
       window.addEventListener("click", handleClick);
@@ -310,7 +322,103 @@ const Selection = ({ viewType }) => {
         window.removeEventListener("click", handleClick);
       };
     }
-  }, [caughtLevel, camera, canvasSize, controls, viewType]);
+  }, [caughtMeshes, scene, selection, camera, canvasSize, controls, viewType]);
+
+  useEffect(() => {
+    if (selection === "bbox") {
+      if (typeof caughtLevel === "number") {
+        const caughtLevelObject = scene.getObjectById(caughtLevel);
+
+        if (caughtLevelObject) {
+          const box3 = new THREE.Box3();
+          box3.setFromObject(caughtLevelObject);
+
+          setHoverBox({ ...box3, logId: uuidv4() });
+        }
+      } else {
+        setHoverBox(null);
+      }
+
+      setNeedsRender(true);
+    }
+  }, [caughtLevel, scene, camera, viewType, selection]);
+
+  useEffect(() => {
+    if (selection === "bbox") {
+      if (typeof caughtLevel === "number") {
+        const handleClick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const object = scene.getObjectById(caughtLevel);
+          if (object) {
+            let { userData, name, id, uuid, type, children = [] } = object;
+
+            /* Фича с привязкой данных другого объекта при необходимости */
+            if (userData.link) {
+              const linkedObject = scene.getObjectByProperty(
+                "name",
+                userData.link
+              );
+              if (linkedObject) {
+                userData = linkedObject.userData;
+                name = linkedObject.name;
+                id = linkedObject.id;
+                uuid = linkedObject.uuid;
+                type = linkedObject.type;
+                children = linkedObject.children;
+              }
+            }
+
+            setUserData({
+              ...userData,
+              logId: uuidv4(),
+              name,
+              id,
+              uuid,
+              type,
+              children: { length: children.length },
+            });
+
+            const box3 = new THREE.Box3();
+            box3.setFromObject(object);
+
+            const center = box3.getCenter(new THREE.Vector3());
+            const size = box3.getSize(new THREE.Vector3());
+
+            setBoundingBox({
+              ...box3,
+              center,
+              size,
+              logId: uuidv4(),
+              e: { x: e.clientX, y: e.clientY },
+              canvasSize,
+            });
+            setCameraData(camera);
+            setControlsData(controls);
+          }
+
+          /* */
+          let indexList = [];
+
+          object.traverseAncestors((obj = {}, i) => {
+            indexList.push(obj.id);
+          });
+
+          indexList = [...indexList].reverse();
+          /* */
+
+          setDeepLevel((state) => indexList.length + 1);
+        };
+
+        window.addEventListener("click", handleClick);
+
+        return () => {
+          window.removeEventListener("click", handleClick);
+        };
+      }
+    }
+  }, [caughtLevel, selection, camera, canvasSize, controls, viewType]);
 
   return <></>;
 };

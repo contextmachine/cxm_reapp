@@ -26,4 +26,4 @@ const TestApollo = () => {
   return <></>;
 };
 
-export default TestApollo
+export default TestApollo;
