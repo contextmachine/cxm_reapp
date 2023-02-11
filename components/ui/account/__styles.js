@@ -92,12 +92,22 @@ Project.Wrapper = styled.div`
 Project.Preview = styled.div`
   width: 100%;
   height: 100%;
-  background-image: ${({ $preview = false }) =>
-    $preview
-      ? `url(${$preview})`
-      : "linear-gradient(155deg, #1a56f554, #ec6baca6)"};
-  background-position: center center;
-  background-size: cover;
+  position: relative;
+  overflow: hidden;
+
+  &&::before {
+    display: block;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-image: ${({ $preview = false }) =>
+      $preview
+        ? `url(${$preview})`
+        : "linear-gradient(155deg, #1a56f554, #ec6baca6)"};
+    background-position: center center;
+    background-size: cover;
+    transform: scale(2, 2);
+  }
 `;
 
 Project.Header = styled.div`
@@ -108,9 +118,10 @@ Project.Header = styled.div`
   padding: 10px 15px;
 `;
 
-Project.Title = styled.div`
+Project.Title = styled(Text)`
   font-size: 18px;
   font-weight: 500;
+  max-width: 80%;
 `;
 
 const Photo = styled.div`

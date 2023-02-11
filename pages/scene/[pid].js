@@ -168,7 +168,7 @@ const App = () => {
 
             <Loading />
 
-            <Space3D>
+            <Space3D id="scene-wrapper">
               {(includedKeys ||
                 (!includedKeys && pid === "all") ||
                 experimental) && (

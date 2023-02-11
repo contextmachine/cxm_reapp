@@ -20,6 +20,8 @@ import { appProdUrl, globalUrl } from "../../store/server";
 
 import ExperimentalList from "../../components/scene/mechanics/experimental/experimental-list";
 import { getAccountInfo, getAllScenes } from "../../lib/sanity";
+import useGetProjectsMeta from "../../components/scene/mechanics/hooks/project-info/a-get-projects-meta";
+import moment from "moment";
 
 const { useBreakpoint } = Grid;
 
@@ -37,7 +39,7 @@ const Account = () => {
 
   const [userFetched, setUserFetched] = useState(false);
   const [user, setUser] = useState(null);
-  const [scenesData, setScenesData] = useState([]);
+  const projectsMeta = useGetProjectsMeta();
 
   useEffect(() => {
     if (!user) {
@@ -52,17 +54,6 @@ const Account = () => {
         });
     }
   }, [user]);
-
-  useEffect(() => {
-    getAllScenes()
-      .then((res) => {
-        if (scenesData.length === 0 && res?.length > 0) {
-          setScenesData(res);
-        }
-      })
-      .catch((e) => console.log(e));
-    //getAccountInfo({user_id: 'someone-like-you'}).then((res) => console.log(res)).catch(e => console.log({e}))
-  }, []);
 
   const { first_name = "", last_name = "" } = user ? user : {};
 
@@ -199,9 +190,30 @@ const Account = () => {
                   <>
                     {scenes && !loadingProjects ? (
                       ["all", ...scenes].map((name, i) => {
-                        const sceneData = scenesData.find(
-                          (el) => el.scene_id === name
-                        );
+                        let meta;
+                        if (projectsMeta) {
+                          meta = projectsMeta.find(({ name: n }) => name === n);
+                        }
+                        meta = meta ? meta : {};
+
+                        let { last_visited } = meta;
+
+                        let formattedTime;
+
+                        if (last_visited) {
+                          let time = moment(last_visited);
+                          let now = moment();
+                          let diff = now.diff(time, "days");
+
+                          if (diff < 7) {
+                            formattedTime = time.fromNow();
+                          } else {
+                            formattedTime = time.format("DD/MM/YYYY");
+                          }
+                        }
+
+                        console.log("meta", meta);
+                        console.log("formattedTime", formattedTime);
 
                         return (
                           <Project
@@ -211,21 +223,26 @@ const Account = () => {
                             <Project.Wrapper>
                               <Project.Preview
                                 $preview={
-                                  sceneData?.thumbnail_img
-                                    ? urlFor(sceneData?.thumbnail_img)
-                                        .quality(75)
-                                        .url()
+                                  meta?.thumb
+                                    ? urlFor(meta?.thumb).quality(75).url()
                                     : false
                                 }
                               />
                               <Project.Header>
-                                <Project.Title data-type="headTitle">
+                                <Project.Title
+                                  ellipsis={{ rows: 1 }}
+                                  data-type="headTitle"
+                                >
                                   {name === "all" ? (
                                     <>Вся сцена *</>
                                   ) : (
                                     <>{name}</>
                                   )}
                                 </Project.Title>
+
+                                {meta && meta?.last_visited && (
+                                  <div>Lat visited: {formattedTime}</div>
+                                )}
                               </Project.Header>
                             </Project.Wrapper>
                           </Project>

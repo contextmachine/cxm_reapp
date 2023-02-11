@@ -314,14 +314,17 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
 
   useEffect(() => {
     if (loaded) {
-      const screenshot = gl?.domElement.toDataURL("image/jpeg", 0.5);
-      if (setPreviewImage) {
-        setPreviewImage(screenshot);
-        //let img = new Image();
-        //img.src = screenshot;
-        //let w = window.open("", "");
-        //w.document.body.appendChild(img);
-      }
+      import("html2canvas").then((html2canvas) => {
+        html2canvas
+          .default(document.getElementById("scene-wrapper"))
+          .then((canvas) => {
+            const screenshot = canvas.toDataURL("image/png", 1.0);
+
+            if (setPreviewImage) {
+              setPreviewImage(screenshot);
+            }
+          });
+      });
 
       const roundize = (e) => {
         if (e) return Math.round((e * 1000) / 1000);

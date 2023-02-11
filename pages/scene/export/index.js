@@ -3,6 +3,8 @@ import styled from "styled-components";
 import useStatusStore from "../../../store/status-store";
 import useClickedOutside from "../topbar/outside-hook";
 
+import * as THREE from "three";
+
 const Wrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -83,17 +85,59 @@ const Export = ({
               setNeedsData(true);
 
               if (scene) {
-                const json = scene.toJSON();
-                if (json) {
-                  const output = JSON.stringify(json);
-                  let blob = new Blob([output], {
-                    type: "application/json",
-                  });
+                let sceneJSON;
 
-                  let link = document.createElement("a");
-                  link.href = window.URL.createObjectURL(blob);
-                  link.download = "scene.json";
-                  link.click();
+                const handleDownload = (json) => {
+                  console.log("json", json);
+
+                  if (json && typeof json === "object") {
+                    console.log("json", json);
+                    const output = JSON.stringify(json);
+                    let blob = new Blob([output], {
+                      type: "application/json",
+                    });
+
+                    let link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "scene.json";
+                    link.click();
+                  }
+                };
+
+                try {
+                  sceneJSON = scene.toJSON();
+                  handleDownload(sceneJSON);
+                } catch (error) {
+                  scene.traverse(function (child) {
+                    if (!child) {
+                      console.error("Found undefined object in the scene");
+                      scene.remove(child);
+                    }
+                  });
+                  /*  scene.traverse(function (object) {
+                    if (
+                      object !== undefined &&
+                      object !== null &&
+                      object instanceof THREE.Object3D
+                    ) {
+                      let output = {};
+                      for (let i in object) {
+                        if (
+                          !(
+                            object[i] !== undefined &&
+                            object[i] !== null &&
+                            typeof object[i] !== "function"
+                          )
+                        )
+                          console.log("object", object);
+                      }
+                    }
+                  }); */
+
+                  sceneJSON = scene.toJSON();
+                  handleDownload(sceneJSON);
+
+                  // handleDownload(sceneJSON);
                 }
               }
             }}

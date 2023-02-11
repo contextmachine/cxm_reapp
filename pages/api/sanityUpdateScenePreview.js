@@ -1,51 +1,41 @@
 import { client } from "../../lib/sanity";
-import { basename } from "path";
-import { createReadStream } from "fs";
-import sharp from "sharp";
+import { v4 as uuidv4 } from "uuid";
 
-//return a promise that resolves with a File instance
-// https://stackoverflow.com/questions/16968945/convert-base64-png-data-to-javascript-file-objects
+const Jimp = require("jimp");
+
 export default async function handler(req, res) {
   switch (req.method) {
     case "POST":
-      let body = await JSON.parse(req.body);
-      const { _id, thumbnail_img, thumbnail_last_updated, ...otherData } = body;
+      let { id, thumbnail_img } = req.body;
 
       try {
         let data = {};
 
-        const thumbnail_buffer = Buffer.from(
-          thumbnail_img.split(";base64,").pop(),
+        const imageBuffer = Buffer.from(
+          thumbnail_img.replace(/^data:image\/\w+;base64,/, ""),
           "base64"
         );
 
-        const thumbnail_image = await sharp(thumbnail_buffer)
-          .jpeg({ quality: 100 })
-          .toBuffer();
+        const image = await Jimp.read(imageBuffer);
+        const thumbnail_image = await image
+          .quality(100)
+          .getBufferAsync(Jimp.MIME_JPEG);
 
         await client.assets
           .upload("image", thumbnail_image, {
-            filename: `preview-${thumbnail_last_updated}-${_id}`,
+            filename: `preview-${uuidv4()}-${id}`,
+            contentType: "image/jpeg",
           })
           .then((imageAsset) => {
-            return client
-              .patch(_id)
-              .set({
-                thumbnail_img: {
-                  _type: "image",
-                  asset: {
-                    _type: "reference",
-                    _ref: imageAsset._id,
-                  },
-                },
-              })
-              .commit();
-          })
-          .then(() => {});
+            const { url } = imageAsset;
 
-        res.status(200).json({ data, msg: "edited" });
+            res.status(200).json({ data, url, msg: "edited" });
+          })
+          .then((e) => {});
       } catch (err) {
-        res.status(500);
+        res
+          .status(500)
+          .send({ message: "Failed to update scene preview", error: err });
       }
 
       break;
