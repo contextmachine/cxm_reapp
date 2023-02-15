@@ -22,6 +22,8 @@ const Lighting = () => {
   const userData = useStatusStore(({ userData }) => userData);
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
 
+  const setLighting = useStatusStore(({ setLighting }) => setLighting);
+
   useEffect(() => {
     if (!loadingMessage) {
       const box3 = new THREE.Box3();
@@ -48,6 +50,13 @@ const Lighting = () => {
       size = [size.x, size.y, size.z];
 
       setPoint({ center, scale, logId: uuidv4(), intensity });
+      const handleLightStatus = () => setLighting(true);
+      const timer = setTimeout(handleLightStatus, 800);
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      setLighting(false);
     }
   }, [loadingMessage, scene, lights]);
 

@@ -83,3 +83,44 @@ export const FlexItem = styled.div`
     }
   }
 `;
+
+export const Tag = styled.div`
+  padding: 2px 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: black;
+  display: flex;
+  align-items: center;
+
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  position: relative;
+
+  ${({ active }) =>
+    active
+      ? `
+  &&& {
+    border: 3px solid black
+  }
+ 
+ `
+      : ``}
+
+  &&::before {
+    content: "";
+    border-radius: 6px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    filter: brightness(1);
+    background: ${({ color }) => (color ? color : "grey")};
+    left: 0px;
+    top: 0px;
+    opacity: 0.3;
+  }
+
+  &,
+  & * {
+    font-weight: 400;
+    font-size: 12px !important;
+  }
+`;

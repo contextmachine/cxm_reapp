@@ -96,9 +96,7 @@ const Selection = ({ viewType }) => {
 
           setCaughtMeshes(intersect.map(handleUUID));
         }
-      } catch (err) {
-        console.log("errpr", err);
-      }
+      } catch (err) {}
     };
 
     window.addEventListener("mousemove", handleRaycasting);

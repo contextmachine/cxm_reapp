@@ -97,6 +97,8 @@ const App = () => {
   const setSelection = useModeStore(({ setSelection }) => setSelection);
 
   const setLights = useLightingStore(({ setLights }) => setLights);
+  const setLighting = useStatusStore(({ setLighting }) => setLighting);
+  const setQueryModal = useStatusStore(({ setQueryModal }) => setQueryModal);
 
   useEffect(() => {
     let cleanupStartTime = performance.now();
@@ -108,7 +110,9 @@ const App = () => {
     setInitialZoomId(null);
     setPreviewImage(null);
     setLights({});
+    setLighting(false);
     setSelection("bbox");
+    setQueryModal(null);
 
     let cleanupEndTime = performance.now();
 

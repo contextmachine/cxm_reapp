@@ -11,8 +11,6 @@ import useUpdateMeta from "./project-info/b-update-meta";
 */
 
 const sendSceneData = async (sceneId, lastVisitedDate, createdDate) => {
-  console.log("sendSceneData", sceneId);
-
   return await fetch("/api/sanitySendSceneData", {
     method: "POST",
     "content-type": "application/json",
@@ -46,9 +44,7 @@ const updateScenePreviewData = async (
     }),
   })
     .then((response) => response.json())
-    .then((data) => {
-      console.log("data", data);
-    });
+    .then((data) => {});
 
   return true;
 };

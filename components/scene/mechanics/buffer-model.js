@@ -11,6 +11,7 @@ import unpackZipScene from "./hooks/unpack-zip-scene";
 import handleAddingScene from "./hooks/handle-adding-scene";
 import { v4 as uuidv4 } from "uuid";
 import useLogsStore from "../../../store/logs-store";
+import useLightingStore from "../../../store/lighting-store";
 
 const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
   const [loaded, setLoaded] = useState(false);
@@ -312,8 +313,10 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
     }
   }, [loaded, dataGeometry, index, loadingFileIndex, layerName]);
 
+  const lighting = useStatusStore(({ lighting }) => lighting);
+
   useEffect(() => {
-    if (loaded) {
+    if (loaded && lighting) {
       import("html2canvas").then((html2canvas) => {
         html2canvas
           .default(document.getElementById("scene-wrapper"))
@@ -382,7 +385,7 @@ const BufferModel = ({ path, index, layerName, setPreviewImage }) => {
 
       setLogs([{ content: n }]);
     }
-  }, [loaded]);
+  }, [loaded, lighting]);
 
   return <></>;
 };

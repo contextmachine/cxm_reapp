@@ -118,7 +118,7 @@ const GUIProvider = () => {
   useEffect(() => {
     if (keyFetch && scene) {
       const { data, post } = keyFetch;
-      const { endpoint, mutation = {} } = post;
+      const { endpoint, mutation = {}, tags = [] } = post;
 
       if (endpoint) {
         fetch(endpoint, {
@@ -134,44 +134,26 @@ const GUIProvider = () => {
           .then((res) => {
             if (res) {
               /* что делаем */
-              const { scene: sceneData = {} } = mutation ? mutation : {};
-              const { where } = sceneData ? sceneData : {};
-
               let wrappers = [];
 
-              if (!where) {
-                scene.remove(...scene.children);
-                wrappers.push(scene);
-              } else {
-                scene.traverse((obj) => {
-                  let status = true;
+              console.log("wrappers", wrappers);
+              console.log("tags", tags);
 
-                  const handleDeep = (where, obj) => {
-                    if (status && where) {
-                      Object.keys(where).map((name) => {
-                        if (obj && obj[name]) {
-                          const _where = where[name];
-                          const _obj = obj[name];
+              scene.traverse((obj) => {
+                const { userData } = obj;
+                if (userData) {
+                  const { properties } = userData;
+                  if (properties) {
+                    let includes = false;
+                    tags.map((tag) => {
+                      if (Object.keys(properties).includes(tag))
+                        includes = true;
+                    });
 
-                          if (_where && Object.keys(_where).includes("_eq")) {
-                            const { _eq } = _where;
-                            if (!(_obj === _eq)) status = false;
-                          } else {
-                            handleDeep(_where, _obj);
-                          }
-                        } else {
-                          status = false;
-                        }
-                      });
-                    }
-                  };
-
-                  handleDeep(where, obj);
-
-                  if (status) wrappers.push(obj);
-                });
-              }
-              /* */
+                    if (includes) wrappers.push(obj);
+                  }
+                }
+              });
 
               wrappers.map((wrapper) => {
                 if (wrapper) {

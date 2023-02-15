@@ -212,9 +212,6 @@ const Account = () => {
                           }
                         }
 
-                        console.log("meta", meta);
-                        console.log("formattedTime", formattedTime);
-
                         return (
                           <Project
                             key={`project:${i}`}

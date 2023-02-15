@@ -30,6 +30,9 @@ const useStatusStore = create((set, get) => ({
   initialZoomId: null,
   setInitialZoomId: (e) => set({ initialZoomId: e }),
   /* */
+  lighting: false,
+  setLighting: (e) => set({ lighting: e }),
+  /* */
   linksStructure: null,
   setLinksStructure: (e) => set({ linksStructure: e }),
   linksLogId: null,
@@ -96,6 +99,9 @@ const useStatusStore = create((set, get) => ({
   setLoadingDataThumbnail: (e) => {
     set({ loadingDataThumbnail: e });
   },
+  /* */
+  queryModal: null,
+  setQueryModal: (e) => set({ queryModal: e }),
 }));
 
 export default useStatusStore;

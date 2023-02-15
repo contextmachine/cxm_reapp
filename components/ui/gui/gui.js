@@ -1,14 +1,29 @@
 import styled from "styled-components";
 import { useMemo, useRef } from "react";
 import useStatusStore from "../../../store/status-store";
-import { Header, Wrapper, HR, Overflow, List, Tag } from "./__styles";
-import { Row } from "antd";
+import {
+  Header,
+  Wrapper,
+  HR,
+  Overflow,
+  List,
+  Tag,
+  Plus,
+  Line,
+} from "./__styles";
+import { Row, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import ChartBlock from "./blocks/chart";
 import ControlsBlock from "./blocks/controls";
 import TreeViewEditor from "./blocks/controls/tree-view-editor";
 
+import Modules from "./blocks/modules";
+
 import { Tabs } from "./blocks/__styles";
+import Queries from "./blocks/queries/queries";
+import { useRouter } from "next/router";
+
+const { Text } = Typography;
 
 /* userData для item */
 /*const userData = {
@@ -53,6 +68,10 @@ const userData = {
 };*/
 
 const GUI = () => {
+  const router = useRouter();
+  const { query } = router;
+  const { pid } = query;
+
   const GUIData = useStatusStore(({ GUIData }) => GUIData);
   const setGUIData = useStatusStore(({ setGUIData }) => setGUIData);
 
@@ -104,9 +123,9 @@ const GUI = () => {
     <>
       <Wrapper id={`right-panel`} ref={panelRef} key={`vv:${logId}`}>
         <Header>
-          <div style={{ fontSize: "24px" }}>
+          <Text ellipsis={{ rows: 1 }} style={{ fontSize: "24px" }}>
             {name ? name : `Группа без имени`}
-          </div>
+          </Text>
           <div
             onClick={handleClose}
             style={{ fontSize: "20px", cursor: "pointer" }}
@@ -115,43 +134,54 @@ const GUI = () => {
           </div>
         </Header>
 
-        <Tabs defaultActiveKey={gui.length > 0 ? "item-2" : "item-1"}>
-          <Tabs.TabPane tab="Детали" key="item-1">
-            <Overflow>
-              <TreeViewEditor data={/* GUIData */ object} objectName={name} />
-            </Overflow>
-          </Tabs.TabPane>
+        <Modules />
 
-          {gui.length > 0 && (
-            <Tabs.TabPane tab="GUI" key="item-2">
+        <Line>
+          <Tabs
+            style={{ marginBottom: "16px" }}
+            defaultActiveKey={gui.length > 0 ? "item-2" : "item-1"}
+          >
+            <Tabs.TabPane tab="Детали" key="item-1">
               <Overflow>
-                <List>
-                  <HR />
-                  {gui.map((item = {}, i) => {
-                    const { type } = item;
-
-                    return (
-                      <Row
-                        style={{ display: "flex", flexDirection: "column" }}
-                        key={`key:${i}`}
-                      >
-                        {type && type === "chart" && (
-                          <ChartBlock data={item} key={`c`} />
-                        )}
-
-                        {type && type === "controls" && (
-                          <ControlsBlock backTop={backTop} data={item} />
-                        )}
-
-                        <HR />
-                      </Row>
-                    );
-                  })}
-                </List>
+                <TreeViewEditor data={/* GUIData */ object} objectName={name} />
               </Overflow>
             </Tabs.TabPane>
-          )}
-        </Tabs>
+
+            {/* gui.length > 0 && (
+              <Tabs.TabPane tab="GUI" key="item-2">
+                <Overflow>
+                  <List>
+                    <HR />
+                    {gui.map((item = {}, i) => {
+                      const { type } = item;
+
+                      return (
+                        <Row
+                          style={{ display: "flex", flexDirection: "column" }}
+                          key={`key:${i}`}
+                        >
+                          {type && type === "chart" && (
+                            <ChartBlock data={item} key={`c`} />
+                          )}
+
+                          {type && type === "controls" && (
+                            <ControlsBlock backTop={backTop} data={item} />
+                          )}
+
+                          <HR />
+                        </Row>
+                      );
+                    })}
+                  </List>
+                </Overflow>
+              </Tabs.TabPane>
+                  ) */}
+
+            <Tabs.TabPane tab="Form" key="item-3">
+              <Queries {...{ pid }} />
+            </Tabs.TabPane>
+          </Tabs>
+        </Line>
       </Wrapper>
     </>
   );

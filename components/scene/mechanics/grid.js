@@ -23,9 +23,6 @@ const Grid = () => {
       box3.getCenter(center);
       box3.getSize(size);
 
-      console.log("center", center);
-      console.log("size", size);
-
       center = [center.x, center.y, center.z - size.z * 1.2];
       let scale = size.x > size.y ? size.x : size.y;
       scale *= 2;
