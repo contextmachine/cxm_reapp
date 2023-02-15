@@ -83,7 +83,7 @@ const Queries = ({ pid }) => {
               opacity: 0.5,
             }}
           >
-            You don't have any queries. Would you like to create new one?
+            You do not have any queries. Would you like to create new one?
           </div>
 
           <Btn

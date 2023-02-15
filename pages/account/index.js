@@ -46,6 +46,7 @@ const Account = () => {
       fetch("/api/auth/user")
         .then((res) => res.json())
         .then((res) => {
+          console.log("res.user", res.user);
           if (res.user) {
             setUser(res.user);
           }
