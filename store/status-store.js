@@ -100,6 +100,7 @@ const useStatusStore = create((set, get) => ({
     set({ loadingDataThumbnail: e });
   },
   /* */
+  /* */
   queryModal: null,
   setQueryModal: (e) => set({ queryModal: e }),
 }));
