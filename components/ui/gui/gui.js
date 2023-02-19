@@ -147,35 +147,39 @@ const GUI = () => {
               </Overflow>
             </Tabs.TabPane>
 
-            {/* gui.length > 0 && (
-              <Tabs.TabPane tab="GUI" key="item-2">
-                <Overflow>
-                  <List>
-                    <HR />
-                    {gui.map((item = {}, i) => {
-                      const { type } = item;
+            {gui &&
+              gui.filter((item = {}) => {
+                const { type } = item;
+                return type === "chart";
+              }).length > 0 && (
+                <Tabs.TabPane tab="GUI" key="item-2">
+                  <Overflow>
+                    <List>
+                      <HR />
+                      {gui.map((item = {}, i) => {
+                        const { type } = item;
 
-                      return (
-                        <Row
-                          style={{ display: "flex", flexDirection: "column" }}
-                          key={`key:${i}`}
-                        >
-                          {type && type === "chart" && (
-                            <ChartBlock data={item} key={`c`} />
-                          )}
+                        return (
+                          <Row
+                            style={{ display: "flex", flexDirection: "column" }}
+                            key={`key:${i}`}
+                          >
+                            {type && type === "chart" && (
+                              <ChartBlock data={item} key={`c`} />
+                            )}
 
-                          {type && type === "controls" && (
-                            <ControlsBlock backTop={backTop} data={item} />
-                          )}
+                            {type && type === "controls" && (
+                              <ControlsBlock backTop={backTop} data={item} />
+                            )}
 
-                          <HR />
-                        </Row>
-                      );
-                    })}
-                  </List>
-                </Overflow>
-              </Tabs.TabPane>
-                  ) */}
+                            <HR />
+                          </Row>
+                        );
+                      })}
+                    </List>
+                  </Overflow>
+                </Tabs.TabPane>
+              )}
 
             <Tabs.TabPane tab="Form" key="item-3">
               <Queries {...{ pid }} />
