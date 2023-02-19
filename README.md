@@ -1,6 +1,26 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Getting Started with Docker
+### Build and run locally
+```bash
+DOCKER_BUILDKIT=1 docker build -t sthv/cxm-viewer-local . && docker run -p 0.0.0.0:3000:3000 --name cxm-viewer sthv/cxm-viewer-local
+```
 
-## Getting Started
+### Pull and run locally
+```bash
+./runme.sh
+```
+or
+```bash
+docker pull sthv/cxm-viewer && docker run -p 0.0.0.0:3000:3000 --name cxm-viewer sthv/cxm-viewer
+```
+### Build & push on dockerhub a latest image
+```bash
+./buildme.sh
+```
+### Run
+
+## Getting Started with npm or yarn
+
 
 First, run the development server:
 
