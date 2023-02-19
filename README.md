@@ -13,7 +13,7 @@ or
 ```bash
 docker pull sthv/cxm-viewer && docker run -p 0.0.0.0:3000:3000 --name cxm-viewer sthv/cxm-viewer
 ```
-### Build & push on dockerhub a latest image
+### Build & push latest image on docker hub
 ```bash
 ./buildme.sh
 ```
