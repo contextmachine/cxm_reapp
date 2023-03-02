@@ -1,3 +1,8 @@
-export IMAGE_TAG="cr.yandex/crpfskvn79g5ht8njq0k/cxm-viewer"
-export DOCKER_BUILDKIT=1
-docker build -t $IMAGE_TAG . && docker run -p 0.0.0.0:30011:3000 --name cxm-viewer $IMAGE_TAG
+chmod +x "load_dotenv"
+eval "$(./load_dotenv build.env)"
+# shellcheck disable=SC2028
+echo "image tag: $IMAGE_TAG\nbuildx: $DOCKER_BUILDKIT"
+# if no buildx instance
+#docker buildx create --name=cxm-viewer-builder --use
+docker buildx build -t "$IMAGE_TAG" --platform=linux/amd64,linux/arm64 --push=true .
+docker buildx prune -a -f
