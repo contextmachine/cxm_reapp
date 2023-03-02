@@ -44,14 +44,17 @@ class MyLiteral:
 def main(args):
     try:
         import dotenv
-    except ImportError as err:
-
+    except ImportError:
+        import ensurepip
+        ensurepip.bootstrap()
         proc = sp.Popen(
                 ["/usr/bin/python3", "-m", "pip", "install", "--upgrade", "--no-warn-script-location", "python-dotenv"])
+
         proc.wait(timeout=600)
         import dotenv
     except Exception as err:
         raise err
+
 
     # print(args)
     for arg in args:
