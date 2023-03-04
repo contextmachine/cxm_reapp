@@ -32,9 +32,6 @@ const AddInfographics = ({ onClose, open }) => {
     variables: { id: queryId },
   });
 
-  if (error) console.log("error", error);
-  console.log("data", data);
-
   const cfgs = {
     client,
     onCompleted: onClose,
@@ -65,8 +62,6 @@ const AddInfographics = ({ onClose, open }) => {
 
     return {};
   }, [data, loading, queryId]);
-
-  console.log("data", initValues);
 
   const handleFinish = (e) => {
     const { body, name } = e;
@@ -104,7 +99,6 @@ const AddInfographics = ({ onClose, open }) => {
   };
 
   const onChartChange = (e) => {
-    console.log("e", e);
   };
 
   if (!initValues) return <></>;

@@ -51,9 +51,7 @@ const ModellingScene = () => {
       .then((res) => {
         if (res) setMetalPlane(res);
       })
-      .catch(() => {
-        console.log("error");
-      });
+      .catch(() => {});
   }, []);
 
   const { scene } = useThree();

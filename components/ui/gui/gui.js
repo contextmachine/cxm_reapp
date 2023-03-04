@@ -150,8 +150,6 @@ const GUI = () => {
     });
   }, [data, linksStructure, id, uuid]);
 
-  console.log("g_gui", g_gui);
-
   const handleClose = () => {
     setGUIData(null);
   };
@@ -189,8 +187,6 @@ const GUI = () => {
       return res;
     }
   }, [GUIData, linksStructure]);
-
-  console.log("g_gui", g_gui);
 
   if (!GUIData) return <></>;
 

@@ -126,7 +126,6 @@ const Chat = ({ handleInputChange = () => {}, object_id }) => {
         setErrorMessage(
           "You got wrong response from chatGPT. Please resubmit you task!"
         );
-        console.log("error with parse", error);
       }
     } catch (error) {
       setErrorMessage("There is an error while sending response to chatGPT");
