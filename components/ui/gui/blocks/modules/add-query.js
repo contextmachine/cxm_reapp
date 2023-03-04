@@ -5,7 +5,7 @@ import LayerTreemap from "../../../../../pages/scene/topbar/blocks/layer-treemap
 import Editor from "./blocks/editor";
 import Endpoint from "./blocks/endpoint";
 import { ADD_QUERY, EDIT_QUERY, QUERIES, QUERY } from "./blocks/gql";
-import { Btn, Flex, Form } from "./__styles";
+import { Btn, Flex, Form, GlobalStyles } from "./__styles";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -13,20 +13,6 @@ import client from "../../../../apollo/apollo-client";
 import { useMemo } from "react";
 import { useRouter } from "next/router";
 import Tags from "./blocks/tags";
-
-const GlobalStyles = createGlobalStyle`
-    &&& {
-        & .query-modal .ant-modal {
-            width: 1200px !important;
-            max-width: calc(100vw - 40px) !important;
-            border-radius: 10px;
-
-            & .ant-modal-body {
-              padding: 0px;
-            }
-        }
-    }
-`;
 
 const AddQuery = ({ onClose, open: queryId }) => {
   const router = useRouter();
@@ -62,8 +48,6 @@ const AddQuery = ({ onClose, open: queryId }) => {
 
     if (data) {
       const { projects_queries_hub_by_pk: a } = data;
-
-      console.log("a", a);
 
       if (a) return { ...a };
     }

@@ -52,3 +52,64 @@ export const QUERIES = gql`
     }
   }
 `;
+
+export const INFOGRAPHICS_PK = gql`
+  query getInfographics_pk($id: uuid!) {
+    projects_infographics_hub_by_pk(id: $id) {
+      body
+      project_name
+      object_id
+      name
+      id
+      cr
+    }
+  }
+`;
+
+export const INFOGRAPHICS = gql`
+  query getInfographics($object_id: Int!, $project_name: String!) {
+    projects_infographics_hub(
+      where: {
+        object_id: { _eq: $object_id }
+        project_name: { _eq: $project_name }
+      }
+    ) {
+      project_name
+      object_id
+      name
+      body
+      cr
+      id
+    }
+  }
+`;
+
+export const ADD_INFOGRAPHICS = gql`
+  mutation addInfographics($object: projects_infographics_hub_insert_input!) {
+    insert_projects_infographics_hub_one(object: $object) {
+      id
+    }
+  }
+`;
+
+export const EDIT_INFOGRAPHICS = gql`
+  mutation editInfographics(
+    $id: uuid!
+    $object: projects_infographics_hub_set_input!
+  ) {
+    update_projects_infographics_hub_by_pk(
+      pk_columns: { id: $id }
+      _set: $object
+    ) {
+      id
+    }
+  }
+`;
+
+export const DELETE_INFOGRAPHICS = gql`
+  mutation deleteInfographics($id: uuid!) {
+    delete_projects_infographics_hub_by_pk(id: $id) {
+      id
+    }
+  }
+`;

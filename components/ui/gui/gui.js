@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import useStatusStore from "../../../store/status-store";
 import {
   Header,
@@ -22,6 +22,9 @@ import Modules from "./blocks/modules";
 import { Tabs } from "./blocks/__styles";
 import Queries from "./blocks/queries/queries";
 import { useRouter } from "next/router";
+import { useLazyQuery } from "@apollo/client";
+import { INFOGRAPHICS } from "./blocks/modules/blocks/gql";
+import client from "../../apollo/apollo-client";
 
 const { Text } = Typography;
 
@@ -77,7 +80,77 @@ const GUI = () => {
 
   const linksStructure = useStatusStore(({ linksStructure }) => linksStructure);
 
-  const { name, id, gui = [], logId } = GUIData ? GUIData : {};
+  const { name, id, gui = [], logId, uuid } = GUIData ? GUIData : {};
+
+  /* */
+  const [getInfographics, { data, loading }] = useLazyQuery(INFOGRAPHICS, {
+    client,
+  });
+
+  useEffect(() => {
+    if (!(pid && typeof id === "number")) return;
+
+    getInfographics({
+      variables: {
+        object_id: id,
+        project_name: pid,
+      },
+    });
+  }, [pid, id]);
+
+  const g_gui = useMemo(() => {
+    if (!(data && linksStructure && typeof id === "number")) return [];
+
+    const { projects_infographics_hub: a = [] } = data;
+    return a.map((item = {}) => {
+      const { name, body = {}, id: _id } = item;
+      const { key } = body;
+
+      let values = {};
+      let data_ = [];
+
+      const object = linksStructure.getObjectById(id);
+
+      if (object) {
+        /* Поиск, используя аттрибут "key" */
+        object.traverseVisible((obj = {}) => {
+          const { userData } = obj;
+          if (userData) {
+            const { properties = {} } = userData;
+            const foundKey = properties ? properties[key] : null;
+
+            if (foundKey) {
+              if (!values[foundKey]) values[foundKey] = 0;
+              values[foundKey] += 1;
+            }
+          }
+        });
+      }
+
+      Object.keys(values).map((name) => {
+        const count = values[name];
+
+        data_.push({ id: name, value: count });
+      });
+
+      const nn = {
+        id: "size-linechart",
+        name: "график по размерам",
+        type: "chart",
+        require: body.type,
+        key: name,
+        colors: "default",
+        data: data_,
+        isCustom: true,
+        uuid: _id,
+        object_id: uuid,
+      };
+
+      return nn;
+    });
+  }, [data, linksStructure, id, uuid]);
+
+  console.log("g_gui", g_gui);
 
   const handleClose = () => {
     setGUIData(null);
@@ -117,6 +190,8 @@ const GUI = () => {
     }
   }, [GUIData, linksStructure]);
 
+  console.log("g_gui", g_gui);
+
   if (!GUIData) return <></>;
 
   return (
@@ -148,7 +223,8 @@ const GUI = () => {
             </Tabs.TabPane>
 
             {gui &&
-              gui.filter((item = {}) => {
+              g_gui &&
+              [...g_gui, ...gui].filter((item = {}) => {
                 const { type } = item;
                 return type === "chart";
               }).length > 0 && (
@@ -156,7 +232,7 @@ const GUI = () => {
                   <Overflow>
                     <List>
                       <HR />
-                      {gui.map((item = {}, i) => {
+                      {[...g_gui, ...gui].map((item = {}, i) => {
                         const { type } = item;
 
                         return (
