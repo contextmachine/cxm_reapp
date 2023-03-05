@@ -13,16 +13,21 @@ export default async function handler(req, res) {
     return new Response("Please send your prompt", { status: 400 });
   }
 
-  const aiResult = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: `${prompt}`,
-    temperature: 0.9,
-    max_tokens: 2048,
-    frequency_penalty: 0.5,
-    presence_penalty: 0,
-  });
+  try {
+    const aiResult = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: `${prompt}`,
+      temperature: 0.9,
+      max_tokens: 2048,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+    });
 
-  const response =
-    aiResult.data.choices[0].text?.trim() || "Sorry, there was a problem";
-  res.status(200).json({ text: response, data: aiResult.data });
+    const response =
+      aiResult.data.choices[0].text?.trim() || "Sorry, there was a problem";
+    res.status(200).json({ text: response, data: aiResult.data });
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 }

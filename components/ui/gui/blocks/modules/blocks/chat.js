@@ -128,6 +128,7 @@ const Chat = ({ handleInputChange = () => {}, object_id }) => {
         );
       }
     } catch (error) {
+      console.log("error", error);
       setErrorMessage("There is an error while sending response to chatGPT");
     }
 
