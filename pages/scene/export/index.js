@@ -88,10 +88,8 @@ const Export = ({
                 let sceneJSON;
 
                 const handleDownload = (json) => {
-                  console.log("json", json);
 
                   if (json && typeof json === "object") {
-                    console.log("json", json);
                     const output = JSON.stringify(json);
                     let blob = new Blob([output], {
                       type: "application/json",
@@ -129,7 +127,7 @@ const Export = ({
                             typeof object[i] !== "function"
                           )
                         )
-                          console.log("object", object);
+                         
                       }
                     }
                   }); */

@@ -103,6 +103,8 @@ const useStatusStore = create((set, get) => ({
   /* */
   queryModal: null,
   setQueryModal: (e) => set({ queryModal: e }),
+  IGModal: null,
+  setIGModal: (e) => set({ IGModal: e }),
 }));
 
 export default useStatusStore;

@@ -136,9 +136,6 @@ const GUIProvider = () => {
               /* что делаем */
               let wrappers = [];
 
-              console.log("wrappers", wrappers);
-              console.log("tags", tags);
-
               scene.traverse((obj) => {
                 const { userData } = obj;
                 if (userData) {

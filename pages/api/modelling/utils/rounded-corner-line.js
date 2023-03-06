@@ -8,13 +8,9 @@ function roundedCornerLine(points, radius, smoothness, closed, radiuses) {
   let newGeometry = new THREE.BufferGeometry();
 
   if (points === undefined) {
-    console.log("RoundedCornerLine: 'points' is undefined");
     return newGeometry;
   }
   if (points.length < 3) {
-    console.log(
-      "RoundedCornerLine: 'points' has insufficient length (should be equal or greater than 3)"
-    );
     return newGeometry.setFromPoints(points);
   }
 

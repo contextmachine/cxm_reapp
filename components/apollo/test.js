@@ -20,9 +20,6 @@ const TestApollo = () => {
     getProjects();
   }, []);
 
-  /* if (data) console.log("data hasura", data);
-  if (error) console.log("error", error); */
-
   return <></>;
 };
 
