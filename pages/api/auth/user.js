@@ -3,7 +3,6 @@ import { withIronSessionApiRoute } from "iron-session/next";
 export default withIronSessionApiRoute(
   function userRoute(req, res) {
     const env = process.env.APP_ENV;
-    console.log("env", env);
 
     if (env === "development") {
       res.json({

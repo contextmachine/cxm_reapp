@@ -1,5 +1,19 @@
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { Button, Form as AntForm } from "antd";
+
+export const GlobalStyles = createGlobalStyle`
+    &&& {
+        & .query-modal .ant-modal {
+            width: 1200px !important;
+            max-width: calc(100vw - 40px) !important;
+            border-radius: 10px;
+
+            & .ant-modal-body {
+              padding: 0px;
+            }
+        }
+    }
+`;
 
 export const Form = styled(AntForm)`
   &&& > * + * {
@@ -7,7 +21,8 @@ export const Form = styled(AntForm)`
   }
 
   &&&&&& .ant-form-item input,
-  .ant-select-selector {
+  .ant-select-selector,
+  .ant-input {
     border: 1px solid #c4c4c4 !important;
     border-radius: 10px !important;
   }
@@ -20,6 +35,21 @@ export const Form = styled(AntForm)`
   && .ant-form-item-label {
     font-size: 16px;
     font-weight: 500;
+  }
+`;
+
+export const ChatForm = styled(AntForm)`
+  &&&&&&&&&&& {
+    & .ant-form-item {
+      padding: 0px;
+    }
+
+    & .ant-btn {
+      border-radius: 10px;
+      height: 30px
+    }
+
+    margin-bottom: 24px;
   }
 `;
 

@@ -10,8 +10,31 @@ import { Tag } from "../__styles";
 import stc from "string-to-color";
 import useStatusStore from "../../../../store/status-store";
 
+import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { DELETE_INFOGRAPHICS, INFOGRAPHICS } from "./modules/blocks/gql";
+import client from "../../../apollo/apollo-client";
+
 const ChartBlock = ({ data: props }) => {
-  let { type, require = [], data = [], key } = props;
+  let {
+    type,
+    require = [],
+    data = [],
+    key,
+    isCustom = false,
+    uuid,
+    object_id,
+  } = props;
+
+  const setIGModal = useStatusStore(({ setIGModal }) => setIGModal);
+
+  const cfgs = {
+    client,
+    refetchQueries: [{ query: INFOGRAPHICS }, "getInfographics"],
+  };
+
+  const [deleteInfographics] = useMutation(DELETE_INFOGRAPHICS, cfgs);
 
   data = data.map((item = {}, i) => {
     return { ...item, color: stc(i), label: `sdfs${i}` };
@@ -35,7 +58,30 @@ const ChartBlock = ({ data: props }) => {
     <>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Row justify="space-between">
-          <div style={{ fontSize: "18px", marginBottom: "18px" }}>{key}</div>
+          <div
+            style={{
+              display: "flex",
+              marginBottom: "18px",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ fontSize: "18px" }}>{key}</div>
+
+            {isCustom && (
+              <div style={{ display: "flex", marginLeft: "12px" }}>
+                <EditOutlined
+                  onClick={() => setIGModal({ id: uuid, object_id })}
+                  style={{ cursor: "pointer" }}
+                />
+                <DeleteOutlined
+                  onClick={() =>
+                    deleteInfographics({ variables: { id: uuid } })
+                  }
+                  style={{ marginLeft: "8px", cursor: "pointer" }}
+                />
+              </div>
+            )}
+          </div>
 
           {require && require.length > 0 && (
             <Space>

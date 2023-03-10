@@ -24,7 +24,7 @@ const sendSceneData = async (sceneId, lastVisitedDate, createdDate) => {
     .then((res) => {
       return res;
     })
-    .catch((e) => console.log(e));
+    .catch((e) => {});
 };
 
 const updateScenePreviewData = async (
@@ -72,7 +72,7 @@ export const useHandleUpdateInfo = ({ previewImage }) => {
             setSceneData(data);
           }
         })
-        .catch((e) => console.log(e))
+        .catch((e) => {})
         .finally(() => {
           setNeedsUpdate(false);
         });

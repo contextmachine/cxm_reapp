@@ -25,7 +25,6 @@ const UpdateForm = ({ body, id, endpoint, tags = [] }) => {
   };
 
   const handleFinish = (e) => {
-    console.log("e", e);
   };
 
   return (
