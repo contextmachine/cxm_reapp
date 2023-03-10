@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
@@ -53,7 +54,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
-
-ENV PORT 3000
+ENV NODE_ENV=development \
+    APP_ENV=development \
+    NEXT_PUBLIC_SANITY_WRITE_KEY=skVhm3VhF0mO6TUkcO4kwRJv3q50N4er8uZt79MdUiDLgu8WNjIA3rhEWZp9IikKtn65Jw3xL8lPY0GlMfgphFVL2ORg2uxKhSCFUo6qv5vFezfM7wpzSAk3FzJErFy4CocRWJzjGCXytBAIs8H8fVsQ9NVDg177zsw3fgSpRbDXdmfRds5V \
+    NEXT_PUBLIC_SANITY_DATASET=cmx-data \
+    NEXT_PUBLIC_SANITY_ID=4llqmfig \
+    NEXT_SHARP_PATH="/tmp/node_modules/sharp" \
+    OPENAI_API_KEY=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 \
+    PORT=3000
 
 CMD ["node", "server.js"]

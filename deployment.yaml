@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cxm-viewer
+  name: cxm-viewer
+  namespace: default
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: cxm-viewer
+  template:
+    metadata:
+      labels:
+        app: cxm-viewer
+    spec:
+      containers:
+        - image: sthv/cxm-viewer:latest
+          imagePullPolicy: IfNotPresent
+          name: cxm-viewer
+          env:
+            - name: NODE_ENV
+              value: development
+            - name: APP_ENV
+              value: development
+            - name: NEXT_PUBLIC_SANITY_WRITE_KEY
+              value: skVhm3VhF0mO6TUkcO4kwRJv3q50N4er8uZt79MdUiDLgu8WNjIA3rhEWZp9IikKtn65Jw3xL8lPY0GlMfgphFVL2ORg2uxKhSCFUo6qv5vFezfM7wpzSAk3FzJErFy4CocRWJzjGCXytBAIs8H8fVsQ9NVDg177zsw3fgSpRbDXdmfRds5V
+            - name: NEXT_PUBLIC_SANITY_DATASET
+              value: cxm-viewer
+            - name: NEXT_PUBLIC_SANITY_ID
+              value: 4llqmfig
+            - name: NEXT_SHARP_PATH
+              value: /tmp/node_modules/sharp
+            - name: OPENAI_API_KEY
+              value: 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
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources: {}
+
