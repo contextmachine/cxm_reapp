@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cxm-viewer
+  name: cxm-viewer
+  namespace: default
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  selector:
+    app: cxm-viewer
+  type: LoadBalancer
