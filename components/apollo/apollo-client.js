@@ -13,7 +13,7 @@ const defaultOptions = {
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: "http://84.201.140.137:8080/v1/graphql",
+    uri: "http://62.84.116.219:8081/v1/graphql",
     headers: {
       "x-hasura-admin-secret": "mysecretkey",
       /* Authorization: `Bearer ${authToken}`, */
